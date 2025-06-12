@@ -24,6 +24,10 @@ app.add_middleware(
     allow_headers=["*"],      # 모든 헤더 허용
 )
 
+@app.on_event("startup")
+def startup_event():
+    job_service.load_sample_jobs()  # ✅ 초기 데이터 주입
+
 @app.get("/")
 def read_root():
     return {"message": "Welcome to the Job Navigator API"}
