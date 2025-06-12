@@ -1,59 +1,42 @@
-import { useState, useEffect } from 'react'
+import { useEffect, useState } from 'react';
 
-function App() {
-  const [jobs, setJobs] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
-  const [query, setQuery] = useState('developer') // 실제 검색 쿼리
-  const [inputValue, setInputValue] = useState('developer') // 입력창 값
+function Jobs() {
+  const [jobs, setJobs] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    fetch(`http://localhost:8000/api/v1/jobs/?query=${encodeURIComponent(query)}`)
+    fetch("http://localhost:8000/api/v1/jobs/")
       .then((res) => {
-        if (!res.ok) throw new Error('Network response was not ok')
-        return res.json()
+        if (!res.ok) throw new Error("네트워크 오류");
+        return res.json();
       })
       .then((data) => {
-        setJobs(data)
-        setLoading(false)
+        setJobs(data);
+        setLoading(false);
       })
       .catch((err) => {
-        setError(err.message)
-        setLoading(false)
-      })
-  }, [query])
+        setError(err.message);
+        setLoading(false);
+      });
+  }, []);
 
-  const handleSearch = () => {
-    setLoading(true)
-    setQuery(inputValue) // 이때 쿼리가 바뀌면서 useEffect 실행됨
-  }
+  if (loading) return <p>로딩 중...</p>;
+  if (error) return <p>에러: {error}</p>;
 
   return (
-    <div style={{ padding: 24 }}>
-      <h1>Jobs List (from FastAPI)</h1>
-      <input
-        type="text"
-        value={inputValue}
-        onChange={(e) => setInputValue(e.target.value)}
-        placeholder="검색어 입력"
-        style={{ marginBottom: 12 }}
-      />
-      <button onClick={handleSearch}>검색</button>
-      {loading && <p>Loading...</p>}
-      {error && <p style={{ color: 'red' }}>{error}</p>}
+    <div style={{ padding: "1rem" }}>
+      <h2>채용공고 목록</h2>
       <ul>
-        {Array.isArray(jobs) && jobs.length > 0 ? (
-          jobs.map((job, idx) => (
-            <li key={idx}>
-              {typeof job === 'object' ? JSON.stringify(job) : job}
-            </li>
-          ))
-        ) : (
-          !loading && <p>데이터가 없습니다.</p>
-        )}
+        {jobs.map((job) => (
+          <li key={job.id}>
+            <strong>{job.title}</strong> - {job.company} ({job.location})
+            <p>{job.description}</p>
+          </li>
+        ))}
       </ul>
     </div>
-  )
+  );
 }
 
-export default App
+export default Jobs;
