@@ -1,7 +1,8 @@
 from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware  # ✅ CORS import
+from fastapi.middleware.cors import CORSMiddleware
 from app.api.v1 import job
 from app.services import job_service
+from app.core.config import get_allowed_origins
 
 app = FastAPI(
     title="Job Navigator API",
@@ -9,25 +10,20 @@ app = FastAPI(
     version="1.0.0"
 )
 
-# ✅ CORS 설정 추가
-origins = [
-    "*",    # 모든 도메인 허용 (개발용)
-    # "http://localhost:3000",      # React 개발 서버
-    # "http://127.0.0.1:3000",
-    # "https://your-production-frontend.com",  # 실제 배포 주소 추가 가능
-]
+# ✅ .env로부터 CORS origin 목록 읽기
+origins = get_allowed_origins()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=origins,          # ✅ 유연하게 CORS Origin 설정
     allow_credentials=True,
-    allow_methods=["*"],      # 모든 메서드 허용
-    allow_headers=["*"],      # 모든 헤더 허용
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 @app.on_event("startup")
 def startup_event():
-    job_service.load_sample_jobs()  # ✅ 초기 데이터 주입
+    job_service.load_sample_jobs()
 
 @app.get("/")
 def read_root():
