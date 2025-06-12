@@ -1,0 +1,4 @@
+PyPDF2
+keybert
+sentence-transformers
+scikit-learn
