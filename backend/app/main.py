@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware  # ✅ CORS import
 from app.api.v1 import job
+from app.services import job_service
 
 app = FastAPI(
     title="Job Navigator API",
