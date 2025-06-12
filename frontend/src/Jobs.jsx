@@ -1,14 +1,19 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 
 function Jobs() {
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  const baseURL = import.meta.env.VITE_API_BASE_URL;
+
   useEffect(() => {
-    fetch("http://localhost:8000/api/v1/jobs/")
-      .then((res) => {
-        if (!res.ok) throw new Error("네트워크 오류");
+    fetch(`${baseURL}/api/v1/jobs/`)
+      .then(async (res) => {
+        if (!res.ok) {
+          const text = await res.text();
+          throw new Error(`HTTP ${res.status}: ${text}`);
+        }
         return res.json();
       })
       .then((data) => {
@@ -22,7 +27,7 @@ function Jobs() {
   }, []);
 
   if (loading) return <p>로딩 중...</p>;
-  if (error) return <p>에러: {error}</p>;
+  if (error) return <p>에러 발생: {error}</p>;
 
   return (
     <div style={{ padding: "1rem" }}>
@@ -33,8 +38,7 @@ function Jobs() {
             <strong>{job.title}</strong> - {job.company} ({job.location})
             <p>{job.description}</p>
           </li>
-        ))}
-      </ul>
+        ))}</ul>
     </div>
   );
 }
