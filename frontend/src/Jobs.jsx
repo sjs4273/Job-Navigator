@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react';
 
 function Jobs() {
   const [jobs, setJobs] = useState([]);
@@ -30,7 +30,7 @@ function Jobs() {
   if (error) return <p>에러 발생: {error}</p>;
 
   return (
-    <div style={{ padding: "1rem" }}>
+    <div style={{ padding: '1rem' }}>
       <h2>채용공고 목록</h2>
       <ul>
         {jobs.map((job) => (
@@ -38,7 +38,8 @@ function Jobs() {
             <strong>{job.title}</strong> - {job.company} ({job.location})
             <p>{job.description}</p>
           </li>
-        ))}</ul>
+        ))}
+      </ul>
     </div>
   );
 }

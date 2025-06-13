@@ -1,4 +1,4 @@
-import Jobs from "./Jobs";
+import Jobs from './Jobs';
 
 function App() {
   return (
