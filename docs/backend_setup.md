@@ -1,6 +1,6 @@
-# 🛠️ Backend 개발 환경 설정 가이드 (FastAPI)
+# 🛠️ Backend 개발 환경 설정 가이드 (FastAPI 기반)
 
-이 문서는 `job-navigator/backend` 디렉터리의 FastAPI 프로젝트를 로커보다 설치하고 실행하는 방법을 설명합니다. Windows, macOS, Linux 사용자를 모두 고려해 작성되어 있습니다.
+이 문서는 `job-navigator/backend` 디렉터리의 FastAPI 프로젝트를 로컬에서 설치하고 실행하는 방법을 안내합니다. Windows, macOS, Linux 환경을 모두 고려해 작성되었습니다.
 
 ---
 
@@ -14,7 +14,7 @@
 
 ---
 
-## 📋 1. 프로젝트 클론
+## 📥 1. 프로젝트 클론
 
 ```bash
 git clone https://github.com/your-org/job-navigator.git
@@ -61,23 +61,23 @@ pip install -r requirements.txt
 
 ## 🔐 4. 환경 변수 파일 생성
 
-### ✅ 초기 설치
+### ✅ 초기 설정
 
-`.env.example` 파일을 복사하여 `.env` 파일을 만듭니다:
+`.env` 파일을 수동으로 생성하거나 `.env.example` 파일을 기준으로 복사합니다:
 
 ```bash
 cp .env.example .env
 ```
 
-### ✅ `.env.example` 예제:
+### ✅ `.env.example` 예시
 
 ```dotenv
 APP_NAME="Job Navigator"
 ENVIRONMENT=development
-ALLOWED_ORIGINS=http://localhost:5173
+CORS_ALLOWED_ORIGINS=http://localhost:5173
 ```
 
-> 📌 `.env` 파일은 Git에 커린되지 않게 `.gitignore`에 포함됩니다. 개인적 환경에 따라 가격 수정해야 합니다.
+> 📌 `.env` 파일은 Git에 커밋되지 않도록 `.gitignore`에 포함되어야 하며, 필요 시 `.env.example`을 사용하여 공유합니다.
 
 ---
 
@@ -90,11 +90,11 @@ uvicorn app.main:app --reload
 ### ▶️ 기본 접속 경로
 
 * 메인 페이지: [http://127.0.0.1:8000](http://127.0.0.1:8000)
-* API 문서: [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
+* Swagger API 문서: [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
 
 ---
 
-## 🧪 6. 테스트 실행 (선택)
+## 🧪 6. 테스트 실행 (선택 사항)
 
 ```bash
 pytest
@@ -102,22 +102,26 @@ pytest
 
 ---
 
-## 🗂️ 디렉터리 구조 요약
+## 📁 디렉터리 구조 요약
 
 ```
 backend/
-├── app/               # FastAPI 애플리케이션 코드
-├── tests/             # 테스트 코드
-├── requirements.txt   # 의존성 목록
-├── .env               # 환경 변수 (직접 생성 필요)
-├── .env.example       # 탐플릿 파일 (Git에 포함)
-└── .venv/             # 가상환경 (Git에서 제외)
+├── app/
+│   ├── core/              # 설정 관련 파일 (환경변수 등)
+│   ├── main.py            # FastAPI 앱 엔트리포인트
+│   ├── models/            # Pydantic 모델 정의
+│   ├── routes/            # API 라우터 정의
+│   └── services/          # 비즈니스 로직
+├── tests/                 # 테스트 코드
+├── requirements.txt       # Python 의존성 목록
+├── .env                   # 로컬 환경 변수 파일 (직접 생성)
+└── .venv/                 # Python 가상환경 (Git 제외)
 ```
 
 ---
 
 ## ⚠️ 주의 사항
 
-* `.venv/` 디렉터리는 반드시 `.gitignore`에 포함되어야 합니다.
-* `.env` 파일은 로컬 전용이며 무작위 정보(예: API 키) 또는 개인적 환경은 커린되어서는 안 됩니다.
-* 환경 변수 관리가 필요한 경우 프로마로 `.env.example`을 포함해 개발 환경 공유에 포함해주세요.
+* `.venv/`와 `.env` 파일은 반드시 `.gitignore`에 포함되어야 합니다.
+* 환경 설정은 `.env.example`을 통해 안전하게 공유할 수 있도록 유지합니다.
+* 프로젝트 구조는 FastAPI 권장 구조를 따르며, 추후 DB 연동, 인증 도입 시에도 쉽게 확장할 수 있도록 설계되어 있습니다.

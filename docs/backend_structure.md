@@ -1,6 +1,6 @@
 # 📘 Job Navigator 백엔드 구조 문서 (FastAPI 기반)
 
-이 문서는 FastAPI에 익술하지 않은 초기 개발자를 위해 작성된 백엔드 구조 안내서입니다. 프로젝트의 주요 구성 요소, 역할, 요청 흑망, 확장 포인트 등을 설명합니다.
+이 문서는 FastAPI에 익숙하지 않은 초기 개발자를 위해 작성된 백엔드 구조 안내서입니다. 프로젝트의 주요 구성 요소, 역할, 요청 흐름, 확장 포인트 등을 설명합니다.
 
 ---
 
@@ -8,39 +8,39 @@
 
 ```
 backend/
-├── app/                     # FastAPI 애플리케이션 루트
+├── app/
 │   ├── main.py              # 앱 진입점 (FastAPI 객체 생성 및 라우터 등록)
-│   ├── api/                 # API 라우터 정의
-│   │   └── v1/              # 버전별 API (현재는 v1 사용)
-│   │       └── job.py       # 채용공고 관련 CRUD 라우터 정의
-│   ├── models/              # Pydantic 모델 (데이터 검증 및 직력화)
-│   │   └── job.py           # JobCreate, JobUpdate, JobOut 모델 정의
-│   ├── services/            # 비즈니스 로직 처리 계층
-│   │   └── job_service.py   # 인메모리 CRUD 및 샜항 데이터 생성 로직
-│   ├── core/                # 앱 설정 및 공통 종소성 관리
-│   │   ├── config.py        # 환경설정 및 config 변수 정의
-│   │   └── dependencies.py  # 의존성 주입 함수 정의
-├── requirements.txt         # 프로젝트 의존성 정의 파일
-├── tests/                   # 테스트 코드 저장소
-│   └── test_job.py          # job API 테스트용 코드
-├── .env                     # 환경 변수 파일 (Git에서 제외)
-├── .env.example             # 탐플릿 환경 파일
-└── docs/                    # 문서 디렉터리
-    └── backend-structure.md # ← 현재 문서 위치
+│   ├── core/
+│   │   └── config.py        # 환경 설정 및 CORS 등 글로벌 설정
+│   ├── models/
+│   │   └── job.py           # Pydantic 모델 정의 (JobCreate, JobUpdate, JobOut)
+│   ├── routes/
+│   │   └── job.py           # 채용공고 관련 API 라우터 정의
+│   └── services/
+│       └── job_service.py   # 비즈니스 로직 및 임시 데이터 처리
+├── tests/
+│   └── test_job.py          # job API 테스트 코드
+├── requirements.txt         # Python 의존성 정의
+├── .env                     # 환경 변수 파일 (Git 제외)
+└── .venv/                   # 가상환경 디렉토리 (Git 제외)
 ```
 
 ---
 
-## ⚙️ FastAPI 애플리케이션 요청 흑망
-
-1. 클라이언트가 `/api/v1/jobs/`로 요청을 보낸다
-2. `main.py`에서 해당 요청이 `job.py` 라우터로 전달된다
-3. `job.py` 라우터에서 `job_service.py`의 함수 호출
-4. `job_service.py`는 인메모리 DB에서 데이터 처리 후 반환
-5. `job.py`는 데이터를 Pydantic `JobOut` 모델로 직력화해서 응답
+## ⚙️ FastAPI 요청 흐름
 
 ```
-[Client] → [main.py] → [api.v1.job.py] → [services.job_service.py] → [models.job.JobOut] → 응답
+[Client]
+  ↓
+[main.py]
+  ↓
+[routes/job.py (라우팅)]
+  ↓
+[services/job_service.py (데이터 처리)]
+  ↓
+[models/job.py (출력 직렬화)]
+  ↓
+응답 반환
 ```
 
 ---
@@ -49,46 +49,45 @@ backend/
 
 ### `main.py`
 
-* FastAPI 인스턴스를 생성합니다.
-* CORS 미들워에에 구성을 포함합니다.
-* API 라우터를 등록합니다.
-* 앱 시작 시 샜항 데이터를 자동 등록합니다.
+* FastAPI 인스턴스를 생성하고 라우터를 등록합니다.
+* CORS 설정을 적용합니다 (`config.py`에서 설정값을 가져옴).
+* 서버 시작 시 `load_sample_jobs()`를 호출하여 임시 데이터 삽입.
 
-### `api/v1/job.py`
+### `routes/job.py`
 
-* HTTP 라우팅을 정의하는 곳입니다 (GET, POST, PUT, DELETE)
-* 실제 비즈니스 로직은 service에 위임합니다.
-
-### `models/job.py`
-
-* `JobCreate`: POST 요청에 사용할 생성용 모델
-* `JobUpdate`: PUT 요청에 사용할 수정용 모델
-* `JobOut`: GET 응답 시 사용할 출력 모델
+* `/api/v1/jobs` 경로에 대한 HTTP 라우팅 처리
+* GET, POST, PUT 등 API 엔드포인트를 정의하고 서비스 로직 호출
 
 ### `services/job_service.py`
 
-* 채용공고에 대한 CRUD 비즈니스 로직을 담당합니다.
-* 현재는 인메모리 리스트(`_fake_db`)를 통해 데이터 저장/조회가 이루어진다.
-* `load_sample_jobs()` 함수는 샜항 데이터를 미리 채워 넣습니다.
+* `JOBS_DB` 리스트를 활용한 임시 인메모리 CRUD 처리
+* 샘플 데이터 로딩 함수 `load_sample_jobs()` 포함
+
+### `models/job.py`
+
+* `JobCreate`: POST 요청에서 사용
+* `JobUpdate`: PUT 요청에서 사용
+* `JobOut`: 응답 데이터 직렬화에 사용
+
+### `core/config.py`
+
+* `.env` 파일을 로드하고, `CORS_ALLOWED_ORIGINS`를 처리하는 함수 포함
 
 ---
 
-## 🧪 테스트 및 개발 핀
+## 🧪 테스트 및 실행 예시
 
-### 1. 서버 실행
+### FastAPI 서버 실행
 
 ```bash
 uvicorn app.main:app --reload
 ```
 
-### 2. Swagger 문서 확인
+### Swagger 문서 접속
 
-* 브라우저에서 `http://localhost:8000/docs`
-* 자동 생성된 API 문서로 쉽게 테스트 가능
+* [http://localhost:8000/docs](http://localhost:8000/docs)
 
-### 3. 샜항 요청
-
-#### POST /api/v1/jobs
+### 예시 요청: POST /api/v1/jobs
 
 ```json
 {
@@ -100,28 +99,23 @@ uvicorn app.main:app --reload
 }
 ```
 
-### 4. GET /api/v1/jobs
+---
 
-샜항 채용공고 리스트 반환 (서버 시작 시 자동 생성됨)
+## 💡 구조 설계의 장점
+
+* 모든 컴포넌트를 분리하여 유지보수 용이
+* 경량 구조이나 확장성 확보 (DB, 인증, 배포 등 대응 가능)
+* 초보자도 요청 흐름을 따라가며 자연스럽게 FastAPI 구조 익힘
 
 ---
 
-## 💡 추가 설명
-
-* **FastAPI는 경량이고 매우 빠른 Python 웹 프레임워크**입니다. 타입 힌트를 기반으로 자동 문서화가 강력한 것이 장점입니다.
-* **Pydantic**은 데이터 유향성 검증을 위한 모델 선언 도구입니다. JSON ↔ Python 변환이 간편합니다.
-* \*\*서비스 레이어(service)\*\*를 분리하면 라우터에서 로직을 분리할 수 있어 유지보수와 테스트에 유니티 가장을 제공합니다.
-* 현재는 DB를 사용하지 않고 있지만, SQLAlchemy 등으로 연동이 가능하며 구조 변경 없이도 쉽게 확장할 수 있습니다.
-
----
-
-## 🚀 아프로 확장 가능 포인트
+## 🚀 추천 확장 포인트
 
 * ✅ PostgreSQL + SQLAlchemy 연동
-* ✅ 검색(query 파라미터) 및 정렬 기능 추가
-* ✅ 페이지네이션 구현
-* ✅ 사용자 인증 추가 (OAuth2, JWT)
-* ✅ 테스트 코드 작성 확대 (unit + integration)
+* ✅ 검색/정렬 기능 및 query param 지원
+* ✅ 페이지네이션 기능 추가
+* ✅ 사용자 인증 (OAuth2, JWT 등)
+* ✅ 유닛 테스트/통합 테스트 확대
 
 ---
 
@@ -129,5 +123,5 @@ uvicorn app.main:app --reload
 
 * [FastAPI 공식문서](https://fastapi.tiangolo.com/ko/)
 * [Pydantic 공식문서](https://docs.pydantic.dev/)
-* [Uvicorn ASGI 서버](https://www.uvicorn.org/)
-* [Swagger UI 사용법](https://swagger.io/tools/swagger-ui/)
+* [Uvicorn](https://www.uvicorn.org/)
+* [Swagger UI](https://swagger.io/tools/swagger-ui/)
