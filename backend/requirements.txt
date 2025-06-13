@@ -4,3 +4,5 @@ pydantic
 python-dotenv
 pydantic-settings
 black
+pytest
+httpx
