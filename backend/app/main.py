@@ -11,7 +11,7 @@ settings = get_settings()
 app = FastAPI(
     title=settings["APP_NAME"],
     description="채용공고 대시보드를 위한 백엔드 API",
-    version="1.0.0"
+    version="1.0.0",
 )
 
 # ✅ CORS 설정
@@ -23,12 +23,15 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
 @app.on_event("startup")
 def startup_event():
     job_service.load_sample_jobs()
 
+
 @app.get("/")
 def read_root():
     return {"message": f"Welcome to the {settings['APP_NAME']} API!"}
+
 
 app.include_router(job.router, prefix="/api/v1/jobs", tags=["Jobs"])

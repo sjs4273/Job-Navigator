@@ -5,9 +5,11 @@ from app.services import job_service
 
 router = APIRouter()
 
+
 @router.get("/", response_model=list[JobOut])
 def get_jobs():
     return job_service.JOBS_DB
+
 
 @router.post("/", response_model=JobOut)
 def create_job(job: JobCreate):
@@ -15,6 +17,7 @@ def create_job(job: JobCreate):
     new_job["id"] = str(uuid4())
     job_service.JOBS_DB.append(new_job)
     return new_job
+
 
 @router.put("/{job_id}", response_model=JobOut)
 def update_job(job_id: str, job: JobUpdate):
