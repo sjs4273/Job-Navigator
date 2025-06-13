@@ -1,16 +1,17 @@
 from pydantic import BaseModel
-from datetime import date
 from typing import Optional
+from datetime import date
 
-# 🔹 생성 시 사용할 모델
-class JobCreate(BaseModel):
+class JobBase(BaseModel):
     title: str
     company: str
     location: str
     posted_date: date
-    description: str
+    description: Optional[str] = None
 
-# 🔹 수정 시 사용할 모델 (모든 필드는 선택적)
+class JobCreate(JobBase):
+    pass
+
 class JobUpdate(BaseModel):
     title: Optional[str] = None
     company: Optional[str] = None
@@ -18,11 +19,5 @@ class JobUpdate(BaseModel):
     posted_date: Optional[date] = None
     description: Optional[str] = None
 
-# 🔹 응답용 출력 모델
-class JobOut(BaseModel):
-    id: int
-    title: str
-    company: str
-    location: str
-    posted_date: date
-    description: str
+class JobOut(JobBase):
+    id: str
