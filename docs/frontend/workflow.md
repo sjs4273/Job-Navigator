@@ -1,109 +1,105 @@
+# 🧭 Backend 개발 워크플로 가이드 (FastAPI)
 
-# 🧭 Frontend 개발 워크플로 가이드
-
-이 문서는 Vite + React 기반 프론트엔드 개발자가 따라야 할 기본적인 작업 흐름을 안내합니다.  
-로컬 개발 환경에서 프로젝트를 실행하고, 테스트하고, 코드 포맷팅 후 Git에 커밋/푸시하는 전반적인 과정을 포함합니다.
+이 문서는 FastAPI 기반 백엔드 개발자가 따라야 할 **기본 작업 후납**을 안내합니다.
+로컬 개발 환경에서 프로젝트를 실행하고, 테스트하고, 포맷팅 후 Git에 커미트/푸셔하는 전방적인 과정을 포함합니다.
 
 ---
 
 ## 📦 1. 개발 환경 준비
 
-1. 의존성 설치
+1. **의존성 설치**
+
 ```bash
-npm install
+python -m venv .venv       # 가상환경 생성
+source .venv/bin/activate  # macOS/Linux
+# 또는
+.venv\Scripts\activate.bat  # Windows CMD
+# 또는
+.venv\Scripts\Activate.ps1  # Windows PowerShell
+
+pip install --upgrade pip
+pip install -r requirements.txt
 ```
 
-2. 개발 서버 실행
-```bash
-npm run dev
+2. **환경 변수 설정**
+
+`.env` 파일을 생성하여 아래와 같이 입력하세요:
+
+```env
+APP_NAME="Job Navigator"
+ENVIRONMENT=development
 ```
 
-서버는 보통 http://localhost:5173 에서 실행됩니다.
+> `.env`는 로컬 전용이며 Git에 커미팅되지 않습니다.
 
 ---
 
-## 🧪 2. 테스트 실행 (Vitest)
+## 🚀 2. 개발 서버 실행
 
-1. 전체 테스트 실행
 ```bash
-npx vitest run
+uvicorn app.main:app --reload
 ```
 
-2. 테스트 UI 실행 (선택 사항)
-```bash
-npx vitest --ui
-```
+### ▶️ 접속 경로
 
-> 테스트 파일은 일반적으로 `src/__test__/` 또는 `*.test.jsx` 형태로 구성됩니다.
+* 메인 페이지: [http://127.0.0.1:8000](http://127.0.0.1:8000)
+* Swagger 문서: [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
 
 ---
 
-## 🎨 3. 코드 포맷팅 (Prettier + ESLint)
+## 🧪 3. 테스트 실행
 
-### Prettier 포맷팅
 ```bash
-npx prettier --write .
+pytest
 ```
 
-### ESLint 정적 분석
-```bash
-npx eslint . --ext .js,.jsx,.ts,.tsx
-```
-
-> 대부분의 경우 `package.json`에 스크립트로 정의되어 있으므로 아래처럼 실행 가능:
-```bash
-npm run lint
-npm run format
-```
+> 테스트 코드는 `tests/` 디렉터리에 위치합니다.
 
 ---
 
-## 💾 4. Git 커밋 & 푸시 흐름
+## 🎨 4. 코드 포맷팅 (Black)
 
-### 🔍 변경사항 확인
 ```bash
-git status
+black .
 ```
 
-### ➕ 변경 파일 추가
-```bash
-git add .
-```
+> 커미트 전에 목적적으로 실행하여 코드 스타일을 통일하세요.
 
-### 💬 커밋 메시지 작성
-```bash
-git commit -m "🎨 style: 헤더 컴포넌트 스타일 수정"
-```
+---
 
-> 🔸 커밋 메시지 접두사 예시
-- `✨ feat`: 새로운 기능 추가
-- `🐛 fix`: 버그 수정
-- `🎨 style`: 코드 포맷팅, UI 수정
-- `🧪 test`: 테스트 코드 추가
-- `🛠️ chore`: 설정 변경, 의존성 관리
+## 📂 5. Git 커미트 & 푸셔
 
-### ⬆️ GitHub에 푸시
 ```bash
+git status          # 변경사항 확인
+git add .           # 전체 변경사항 스테이지팅
+git commit -m "✨ feat: 신규 API 추가"  # 커미트
 git push origin main
 ```
 
+> 커미트 메시지 접두사 예시:
+>
+> * `✨ feat`: 기능 추가
+> * `🐛 fix`: 버그 수정
+> * `🎨 style`: 포맷팅, 세미콬론 제거 등
+> * `🧪 test`: 테스트 코드 추가
+> * `🛠️ chore`: 설정, 빌드 관련 변경
+
 ---
 
-## 🧭 전체 요약
+## 🔄 전체 후납 요약
 
 ```bash
-# 1. 코드 작성 전
+# 1. 초기사전: 경우 바꾸기 전에 현재 전수 확인
 git pull origin main
 
 # 2. 기능 개발
-(코드 작성)
+(코드 작업)
 
 # 3. 포맷팅 및 테스트
-npm run format
-npm run lint
-npx vitest run
+black .
+pytest
 
-# 4. 커밋 및 푸시
+# 4. 커미트 및 푸셔
 git add .
 git commit -m "✨ feat: ..."
 git push origin main
@@ -111,13 +107,13 @@ git push origin main
 
 ---
 
-## 🙋‍♀️ 협업 시 유의사항
+## 🙋‍♂️ 협업 시 유의사항
 
-- 기능 단위로 커밋하고 명확한 메시지를 작성하세요.
-- 포맷팅과 린트는 PR 전에 반드시 수행하세요.
-- `main` 대신 `feature/브랜치이름` 브랜치를 활용하는 것도 좋습니다.
+* 기능 단위로 커미트하고 명확한 메시지를 작성하세요.
+* 포맷팅과 테스트는 PR 전에 목적적으로 실행해야 합니다.
+* 협업을 할 경우 `main`대신 `feature/브랜치명`을 활용하면 좋습니다.
 
 ---
 
-이 문서는 초급 프론트엔드 개발자가 실수 없이 작업할 수 있도록 구성되었습니다.  
-필요에 따라 자유롭게 업데이트해주세요!
+이 가이드는 **FastAPI를 처음 접하는 개발자**도 실수 없이 작업할 수 있도록 설계되어 있습니다.
+필요할 경우 자신의 팀에 맞게 수정해서 타이르머리로 활용해보세요!
