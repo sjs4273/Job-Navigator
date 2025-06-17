@@ -16,11 +16,9 @@
   cursor: pointer;
 }
 
-
 .auth-links {
   margin-top: 15px;
   display: flex;
-
 }
 
 .auth-links .divider {
