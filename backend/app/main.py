@@ -43,4 +43,4 @@ def read_root():
 
 app.include_router(job.router, prefix="/api/v1/jobs", tags=["Jobs"])
 
-app.include_router(auth.router, prefix="api/v1/auth", tags=["auth"])
+app.include_router(auth.router, prefix="/api/v1/auth", tags=["auth"])
