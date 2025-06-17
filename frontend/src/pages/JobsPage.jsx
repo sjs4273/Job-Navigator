@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import Header from '../components/Header';
 
 function Jobs() {
   const [jobs, setJobs] = useState([]);
@@ -25,22 +26,26 @@ function Jobs() {
         setLoading(false);
       });
   }, []);
-
+  console.log(baseURL);
   if (loading) return <p>로딩 중...</p>;
   if (error) return <p>에러 발생: {error}</p>;
-
+  console.log('baseURL:', baseURL);
+  
   return (
-    <div style={{ padding: '1rem' }}>
-      <h2>채용공고 목록</h2>
-      <ul>
-        {jobs.map((job) => (
-          <li key={job.id}>
-            <strong>{job.title}</strong> - {job.company} ({job.location})
-            <p>{job.description}</p>
-          </li>
-        ))}
-      </ul>
-    </div>
+    <>
+      <Header />
+      <div style={{ padding: '1rem' }}>
+        <h2>채용공고 목록</h2>
+        <ul>
+          {jobs.map((job) => (
+            <li key={job.id}>
+              <strong>{job.title}</strong> - {job.company} ({job.location})
+              <p>{job.description}</p>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </>
   );
 }
 
