@@ -38,8 +38,10 @@ def create_access_token(data: dict, expires_delta: timedelta = None):
 
 # Google 로그인 엔드포인트
 @router.post("/google-login", response_model=UserResponse)
-def google_login(id_token_str, db: Session = Depends(get_db)):
+def google_login(request: UserCreate, db: Session = Depends(get_db)):
     try:
+        id_token_str = request.id_token_str
+
         # 구글 ID 토큰 검증
         id_info = id_token.verify_oauth2_token(
             id_token_str, google_requests.Request(), GOOGLE_CLIENT_ID
@@ -86,11 +88,12 @@ def google_login(id_token_str, db: Session = Depends(get_db)):
         return {
             "user_id": user.user_id,
             "social_provider": user.social_provider,
+            "social_id": user.social_id,
             "email": user.email,
             "name": user.name,
             "profile_image": user.profile_image,
             "is_active": user.is_active,
-            "create_at": user.create_at,
+            "created_at": user.created_at,
             "access_token": token,
         }
 
