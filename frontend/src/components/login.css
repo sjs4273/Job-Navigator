@@ -2,7 +2,6 @@
 body {
   margin: 0;
   background-color: #ffffff; /* 기본은 흰 배경 */
-  font-family: Arial, sans-serif;
 }
 
 /* 로그인 페이지에만 적용될 배경색 */
