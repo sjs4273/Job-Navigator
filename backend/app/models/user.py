@@ -1,13 +1,13 @@
 # 사용자(User) 테이블의 DB 모델 정의 파일
 
-from sqlalchemy import Column, Integer, String, Boolean, DataTime, func
+from sqlalchemy import Column, Integer, String, Boolean, DateTime, func
 from sqlalchemy.orm import declarative_base
 
 from pydantic import BaseModel, EmailStr
 from typing import Optional
 from datetime import datetime
 
-Base = declarative_base
+Base = declarative_base()
 
 
 # User 테이블 정의
@@ -32,16 +32,12 @@ class User(Base):
     name = Column(String(100))
     profile_image = Column(String(300))
     is_active = Column(Boolean, default=True)
-    create_at = Column(DataTime(timezone=True), server_default=func.now())
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
 
 
 # 회원가입 요청 시 사용할 데이터 구조(사용자 생성 시 프론트에서 넘어오는 데이터 구조)
 class UserCreate(BaseModel):
-    social_provider: str
-    social_id: str
-    email: EmailStr
-    name: Optional[str] = None
-    profile_image: Optional[str] = None
+    id_token_str: str
 
 
 # DB에 저장된 사용자 데이터를 클라이언트로 반환할 때 사용되는 스키마
@@ -53,7 +49,8 @@ class UserResponse(BaseModel):
     name: Optional[str] = None
     profile_image: Optional[str] = None
     is_active: bool
-    create_at: datetime
+    created_at: datetime
+    access_token: str
 
     class Config:
-        orm_mode = True
+        from_attribute = True
