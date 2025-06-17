@@ -1,0 +1,78 @@
+.main-container {
+  font-family: sans-serif;
+}
+
+/* 헤더 */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem 0.2rem;
+}
+
+.logo {
+  width: 120px;
+  height: 45px;
+  cursor: pointer;
+}
+
+
+.auth-links {
+  margin-top: 15px;
+  display: flex;
+
+}
+
+.auth-links .divider {
+  color: #999;
+  margin: -2.5px 1.2rem 0.6rem;
+}
+
+.auth-links a {
+  text-decoration: none;
+  color: #333;
+  font-weight: 400;
+  font-size: 14px;
+}
+
+.auth-links a:hover {
+  color: #1976d2;
+}
+
+/* 이미지 섹션 */
+.image-section {
+  margin-top: 10px;
+  background-color: #e7ecfb;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem 0;
+}
+
+.image-container {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  width: 90%;
+  max-width: 800px;
+}
+
+.image-container img {
+  width: 110px;
+  height: 280px;
+}
+
+/* 메시지 섹션 */
+.message-section {
+  padding: 3rem 1rem;
+  text-align: center;
+}
+
+.message-section h2 {
+  margin-bottom: 0.5rem;
+}
+
+.message-section p {
+  margin-top: 0.5rem;
+  color: #555;
+}
