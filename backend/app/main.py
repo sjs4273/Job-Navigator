@@ -31,11 +31,6 @@ app.add_middleware(
 Base.metadata.create_all(bind=engine)
 
 
-@app.on_event("startup")
-def startup_event():
-    job_service.load_sample_jobs()
-
-
 @app.get("/")
 def read_root():
     return {"message": f"Welcome to the {settings['APP_NAME']} API!"}
