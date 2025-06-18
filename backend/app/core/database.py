@@ -1,3 +1,4 @@
+# 데이터베이스 연결 설정 파일
 import os
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, Session

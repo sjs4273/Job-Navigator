@@ -2,7 +2,7 @@ import { Routes, Route } from 'react-router-dom';
 
 import Jobs from './Jobs';
 import MainPage from './components/MainPage';
-import Login from './components/Login';
+import Login from './components/login';
 
 function App() {
   return (
