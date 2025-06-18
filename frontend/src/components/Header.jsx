@@ -13,8 +13,6 @@ export default function Header() {
         </Link>
         <div className="auth-links">
           <Link to="/login">로그인</Link>
-          <span className="divider">|</span>
-          <Link to="/signup">회원가입</Link>
         </div>
       </header>
 
