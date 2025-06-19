@@ -1,14 +1,16 @@
+# 파일명: app/routes/auth.py
+
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import RedirectResponse
 from sqlalchemy.orm import Session
 from google.oauth2 import id_token
 from google.auth.transport import requests as google_requests
 from datetime import datetime, timedelta
-from jose import jwt
+from jose import jwt, JWTError
 import requests
 import os
 
-from app.core.database import SessionLocal
+from app.core.database import SessionLocal, get_db
 from app.models.user import User, UserCreate, UserResponse
 
 router = APIRouter()
@@ -207,3 +209,28 @@ def naver_callback(code: str, state: str, db: Session = Depends(get_db)):
 
     token = create_access_token(data={"user_id": user.user_id})
     return RedirectResponse(f"{FRONTEND_REDIRECT}?token={token}")
+
+# ✅ 현재 로그인된 사용자 정보 추출 함수 (JWT 디코딩용)
+from fastapi.security import OAuth2PasswordBearer
+
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")  # 실사용은 아님, FastAPI 구조상 필요
+
+@router.get("/verify-token")  # 테스트용 엔드포인트 (선택)
+def verify_token(current_user=Depends(lambda: get_current_user())):
+    return {"message": f"{current_user.email} 인증됨"}
+
+def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)) -> User:
+    try:
+        payload = jwt.decode(token, JWT_SECRET_KEY, algorithms=[JWT_ALGORITHM])
+        user_id = payload.get("user_id")
+        if user_id is None:
+            raise HTTPException(status_code=401, detail="유효하지 않은 토큰입니다.")
+
+        user = db.query(User).filter(User.user_id == user_id).first()
+        if user is None:
+            raise HTTPException(status_code=401, detail="사용자를 찾을 수 없습니다.")
+
+        return user
+
+    except JWTError:
+        raise HTTPException(status_code=401, detail="토큰이 유효하지 않습니다.")
