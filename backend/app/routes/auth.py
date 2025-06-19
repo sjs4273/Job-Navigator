@@ -1,23 +1,17 @@
-<<<<<<< Updated upstream
-from fastapi import APIRouter, Depends, HTTPException
-=======
+# 파일명: app/routes/auth.py
+
 from fastapi import APIRouter, Depends, HTTPException, Body
->>>>>>> Stashed changes
 from fastapi.responses import RedirectResponse
 from sqlalchemy.orm import Session
 from google.oauth2 import id_token
 from google.auth.transport import requests as google_requests
 from datetime import datetime, timedelta
-<<<<<<< Updated upstream
-from jose import jwt
-=======
 from jose import jwt, JWTError
 from fastapi.security import OAuth2PasswordBearer
->>>>>>> Stashed changes
 import requests
 import os
 
-from app.core.database import SessionLocal
+from app.core.database import SessionLocal, get_db
 from app.models.user import User, UserCreate, UserResponse
 
 router = APIRouter()
@@ -216,8 +210,6 @@ def naver_callback(code: str, state: str, db: Session = Depends(get_db)):
 
     token = create_access_token(data={"user_id": user.user_id})
     return RedirectResponse(f"{FRONTEND_REDIRECT}?token={token}")
-<<<<<<< Updated upstream
-=======
 
 # ✅ Naver 로그인 (프론트 POST 요청 처리용)
 @router.post("/naver-login", response_model=UserResponse)
@@ -306,4 +298,3 @@ def verify_token(current_user=Depends(get_current_user)):
         "created_at": current_user.created_at,
         "access_token": token,  # 다시 access_token 포함
     }
->>>>>>> Stashed changes
