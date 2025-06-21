@@ -1,25 +1,37 @@
-# 데이터베이스 연결 설정 파일
 import os
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker, Session
+from sqlalchemy.orm import sessionmaker
 from dotenv import load_dotenv
 
+# .env 파일 로드
 load_dotenv()
 
-POSTGRES_USER = os.getenv("POSTGRES_USER")
-POSTGRES_PASSWORD = os.getenv("POSTGRES_PASSWORD")
-POSTGRES_DB = os.getenv("POSTGRES_DB")
-POSTGRES_HOST = os.getenv("POSTGRES_HOST")
-POSTGRES_PORT = os.getenv("POSTGRES_PORT")
+# ENVIRONMENT 변수에 따라 DB 설정 분기
+ENV = os.getenv("ENVIRONMENT", "development")
 
-SQLALCHEMY_DATABASE_URL = f"postgresql://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{POSTGRES_HOST}:{POSTGRES_PORT}/{POSTGRES_DB}"
+if ENV == "production":
+    DB_USER = os.getenv("POSTGRES_USER")
+    DB_PASSWORD = os.getenv("POSTGRES_PASSWORD")
+    DB_HOST = os.getenv("POSTGRES_HOST", "localhost")
+    DB_PORT = os.getenv("POSTGRES_PORT", "5432")
+    DB_NAME = os.getenv("POSTGRES_DB")
+    SQLALCHEMY_DATABASE_URL = (
+        f"postgresql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
+    )
+else:
+    SQLITE_PATH = os.getenv("SQLITE_DB_PATH", "./app/sqlite.db")
+    SQLALCHEMY_DATABASE_URL = f"sqlite:///{SQLITE_PATH}"
 
-engine = create_engine(SQLALCHEMY_DATABASE_URL)
+# SQLite인 경우 다중 스레드 허용 옵션 추가
+connect_args = {"check_same_thread": False} if SQLALCHEMY_DATABASE_URL.startswith("sqlite") else {}
 
+# DB 엔진 및 세션 팩토리 생성
+engine = create_engine(SQLALCHEMY_DATABASE_URL, connect_args=connect_args)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
+# FastAPI 의존성 주입용 DB 세션 함수
 def get_db():
-    db: Session = SessionLocal()
+    db = SessionLocal()
     try:
         yield db
     finally:
