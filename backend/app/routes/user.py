@@ -7,12 +7,14 @@ from app.routes.auth import get_current_user
 
 router = APIRouter()
 
+
 # 현재 사용자 정보 조회
 @router.get("/me", response_model=UserOut)
 def read_my_user_info(
     current_user: User = Depends(get_current_user),
 ):
     return current_user
+
 
 # 현재 사용자 정보 수정
 @router.put("/me", response_model=UserOut)

@@ -1,12 +1,16 @@
 from sqlalchemy.orm import Session
 from typing import Optional
+
 import json
 
-from app.models import job as job_schema
-from app.models.job import JobORM  # 실제 ORM 테이블
+# ✅ ORM: DB 테이블 매핑
+from app.models.job import JobORM
+
+# ✅ 스키마: Pydantic 데이터 모델
+from app.schemas.job import JobOut, JobListResponse
 
 
-# 🔥 DB 연동 채용공고 조회 서비스 (필터링 + 페이징 + 개수 반환 지원)
+# ✅ 채용공고 목록 조회 서비스 (필터 + 페이징 + 총 개수 포함)
 def get_jobs(
     db: Session,
     page: int = 1,
@@ -14,27 +18,31 @@ def get_jobs(
     location: Optional[str] = None,
     job_type: Optional[str] = None,
     tech_stack: Optional[str] = None,
-) -> dict:
+) -> JobListResponse:
+    """
+    채용공고를 조회합니다.
+    - 필터링: location, job_type, tech_stack
+    - 페이징: page, size
+    - 반환: JobOut 목록 + 전체 개수
+    """
 
     query = db.query(JobORM)
 
-    # ✅ 부분 포함 필터
+    # ✅ 필터 조건 처리 (부분 일치)
     if location:
         query = query.filter(JobORM.location.ilike(f"%{location}%"))
-
     if job_type:
         query = query.filter(JobORM.job_type == job_type)
-
     if tech_stack:
         query = query.filter(JobORM.tech_stack.ilike(f"%{tech_stack}%"))
 
-    total_count = query.count()  # ✅ 전체 개수 먼저 계산
+    total_count = query.count()  # 전체 개수 계산
 
-    # 페이징 처리
+    # ✅ 페이징 처리
     jobs = query.offset((page - 1) * size).limit(size).all()
 
-    # 결과 직렬화
-    result = []
+    # ✅ 결과 변환: ORM → Pydantic 스키마
+    job_items = []
     for job in jobs:
         try:
             parsed_stack = json.loads(job.tech_stack)
@@ -43,8 +51,8 @@ def get_jobs(
         except Exception:
             parsed_stack = []
 
-        result.append(
-            job_schema.JobOut(
+        job_items.append(
+            JobOut(
                 id=job.id,
                 title=job.title,
                 company=job.company,
@@ -56,4 +64,5 @@ def get_jobs(
             )
         )
 
-    return {"items": result, "total_count": total_count}
+    # ✅ Pydantic 응답 스키마에 맞게 반환
+    return JobListResponse(items=job_items, total_count=total_count)
