@@ -3,7 +3,8 @@
 from sqlalchemy.orm import Session
 from app.core.database import SessionLocal
 from app.models.job import JobORM
-#from app.models.user import UserORM
+
+# from app.models.user import UserORM
 
 
 def insert_sample_data():
@@ -11,15 +12,15 @@ def insert_sample_data():
 
     # 기존 데이터 삭제 (개발/테스트 환경용)
     db.query(JobORM).delete()
-    #db.query(UserORM).delete()
+    # db.query(UserORM).delete()
 
     # 유저 예시
-    #user = UserORM(
+    # user = UserORM(
     #    email="admin@example.com",
     #    name="관리자",
     #    provider="local",
     #    profile_image="https://via.placeholder.com/150",
-    #)
+    # )
 
     # 잡 예시
     jobs = [
@@ -43,7 +44,7 @@ def insert_sample_data():
         ),
     ]
 
-    #db.add(user)
+    # db.add(user)
     db.add_all(jobs)
     db.commit()
     db.close()
