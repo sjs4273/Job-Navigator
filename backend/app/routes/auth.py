@@ -31,6 +31,7 @@ JWT_ALGORITHM = os.getenv("JWT_ALGORITHM")
 ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES"))
 FRONTEND_REDIRECT = "http://localhost:5173/login"
 
+
 # === DB 세션 ===
 def get_db():
     db = SessionLocal()
@@ -39,12 +40,14 @@ def get_db():
     finally:
         db.close()
 
+
 # === JWT 생성 ===
 def create_access_token(data: dict, expires_delta: timedelta = None):
     to_encode = data.copy()
     expire = datetime.utcnow() + (expires_delta or timedelta(minutes=15))
     to_encode.update({"exp": expire})
     return jwt.encode(to_encode, JWT_SECRET_KEY, algorithm=JWT_ALGORITHM)
+
 
 # ✅ Google 로그인
 @router.post("/google-login", response_model=UserResponse)
@@ -61,9 +64,13 @@ def google_login(request: UserCreate, db: Session = Depends(get_db)):
         name = id_info.get("name")
         profile_image = id_info.get("picture")
 
-        user = db.query(User).filter(
-            User.social_id == social_id, User.social_provider == social_provider
-        ).first()
+        user = (
+            db.query(User)
+            .filter(
+                User.social_id == social_id, User.social_provider == social_provider
+            )
+            .first()
+        )
 
         if not user:
             user = User(
@@ -98,6 +105,7 @@ def google_login(request: UserCreate, db: Session = Depends(get_db)):
     except ValueError:
         raise HTTPException(status_code=400, detail="Invalid Google token")
 
+
 # ✅ Kakao 로그인 (Redirect 방식)
 @router.get("/kakao-login")
 def kakao_login():
@@ -105,6 +113,7 @@ def kakao_login():
         f"https://kauth.kakao.com/oauth/authorize"
         f"?client_id={KAKAO_CLIENT_ID}&redirect_uri={KAKAO_REDIRECT_URI}&response_type=code"
     )
+
 
 @router.get("/kakao/callback")
 def kakao_callback(code: str, db: Session = Depends(get_db)):
@@ -136,9 +145,11 @@ def kakao_callback(code: str, db: Session = Depends(get_db)):
     name = kakao_info["properties"].get("nickname")
     profile_image = kakao_info["properties"].get("profile_image")
 
-    user = db.query(User).filter(
-        User.social_id == kakao_id, User.social_provider == "kakao"
-    ).first()
+    user = (
+        db.query(User)
+        .filter(User.social_id == kakao_id, User.social_provider == "kakao")
+        .first()
+    )
     if not user:
         user = User(
             social_provider="kakao",
@@ -155,6 +166,7 @@ def kakao_callback(code: str, db: Session = Depends(get_db)):
     token = create_access_token(data={"user_id": user.user_id})
     return RedirectResponse(f"{FRONTEND_REDIRECT}?token={token}")
 
+
 # ✅ Naver 로그인 (Redirect용 GET 방식)
 @router.get("/naver-login")
 def naver_login():
@@ -163,6 +175,7 @@ def naver_login():
         f"?client_id={NAVER_CLIENT_ID}&response_type=code"
         f"&redirect_uri={NAVER_REDIRECT_URI}&state=xyz"
     )
+
 
 @router.get("/naver/callback")
 def naver_callback(code: str, state: str, db: Session = Depends(get_db)):
@@ -195,9 +208,11 @@ def naver_callback(code: str, state: str, db: Session = Depends(get_db)):
     name = naver_info.get("name")
     profile_image = naver_info.get("profile_image")
 
-    user = db.query(User).filter(
-        User.social_id == naver_id, User.social_provider == "naver"
-    ).first()
+    user = (
+        db.query(User)
+        .filter(User.social_id == naver_id, User.social_provider == "naver")
+        .first()
+    )
     if not user:
         user = User(
             social_provider="naver",
@@ -213,6 +228,7 @@ def naver_callback(code: str, state: str, db: Session = Depends(get_db)):
 
     token = create_access_token(data={"user_id": user.user_id})
     return RedirectResponse(f"{FRONTEND_REDIRECT}?token={token}")
+
 
 # ✅ Naver 로그인 (프론트 POST 요청 처리용)
 @router.post("/naver-login", response_model=UserResponse)
@@ -234,9 +250,11 @@ def naver_login_post(payload: dict = Body(...), db: Session = Depends(get_db)):
     name = naver_info.get("name")
     profile_image = naver_info.get("profile_image")
 
-    user = db.query(User).filter(
-        User.social_id == naver_id, User.social_provider == "naver"
-    ).first()
+    user = (
+        db.query(User)
+        .filter(User.social_id == naver_id, User.social_provider == "naver")
+        .first()
+    )
     if not user:
         user = User(
             social_provider="naver",
@@ -267,10 +285,14 @@ def naver_login_post(payload: dict = Body(...), db: Session = Depends(get_db)):
         "access_token": token,
     }
 
+
 # ✅ JWT 기반 유저 정보 추출
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")  # 구조상 필수
 
-def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)) -> User:
+
+def get_current_user(
+    token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)
+) -> User:
     try:
         payload = jwt.decode(token, JWT_SECRET_KEY, algorithms=[JWT_ALGORITHM])
         user_id = payload.get("user_id")
@@ -285,6 +307,7 @@ def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(
 
     except JWTError:
         raise HTTPException(status_code=401, detail="토큰이 유효하지 않습니다.")
+
 
 # ✅ 토큰 유효성 확인 API (선택)
 @router.get("/verify-token", response_model=UserResponse)

@@ -55,6 +55,7 @@ class UserResponse(BaseModel):
     class Config:
         from_attributes = True
 
+
 # 내 정보 조회 시 반환할 스키마
 class UserOut(BaseModel):
     user_id: int
@@ -66,6 +67,7 @@ class UserOut(BaseModel):
 
     class Config:
         from_attributes = True
+
 
 # 사용자 정보 수정 시 사용되는 요청용 스키마
 class UserUpdate(BaseModel):
