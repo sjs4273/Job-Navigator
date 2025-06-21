@@ -1,3 +1,4 @@
+import os
 import pytest
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -8,8 +9,9 @@ from app.main import app
 
 from fastapi.testclient import TestClient
 
-# 테스트용 SQLite DB
-TEST_DATABASE_URL = "sqlite:///./tests/test.db"
+# ✅ 테스트용 SQLite DB 경로 지정
+TEST_DB_PATH = "tests/test.db"
+TEST_DATABASE_URL = f"sqlite:///./{TEST_DB_PATH}"
 engine = create_engine(TEST_DATABASE_URL, connect_args={"check_same_thread": False})
 TestingSessionLocal = sessionmaker(bind=engine, autocommit=False, autoflush=False)
 
@@ -63,8 +65,10 @@ def setup_database():
     db.close()
     yield
 
-    # 테스트 후 정리
+    # 3. 테스트 후 정리: 테이블 제거 및 DB 파일 삭제
     Base.metadata.drop_all(bind=engine)
+    if os.path.exists(TEST_DB_PATH):
+        os.remove(TEST_DB_PATH)
 
 
 # ✅ 공통 client fixture
