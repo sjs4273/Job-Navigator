@@ -4,6 +4,7 @@
 Google, Kakao, Naver 각각의 소셜 로그인 라우터를 통합하여
 main.py에서는 단 하나의 auth.router만 등록해도 전체 라우트가 활성화되도록 구성합니다.
 
+
 최종 라우팅 예:
   - POST /api/v1/auth/google-login
   - POST /api/v1/auth/kakao-login

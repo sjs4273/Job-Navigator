@@ -5,9 +5,11 @@ from app.routes.auth_utils.jwt_utils import create_access_token
 
 client = TestClient(app)
 
+
 # ✅ 테스트용 JWT 토큰 동적 생성
 def get_token():
     return create_access_token(data={"user_id": 3}, expires_delta=timedelta(minutes=60))
+
 
 def test_get_my_user_info_real_token():
     token = get_token()
@@ -18,6 +20,7 @@ def test_get_my_user_info_real_token():
     assert response.status_code == 200
     data = response.json()
     assert data["email"] in ["googleuser1@example.com", "googleuser2@example.com"]
+
 
 def test_update_my_user_info_real_token():
     token = get_token()
