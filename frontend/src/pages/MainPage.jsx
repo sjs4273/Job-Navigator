@@ -28,7 +28,7 @@ function MainPage() {
       <section className="message-section">
         <h2>개발자들 요즘머함?</h2>
         <p>
-          자신에게 필요한 기술스택을 추천받고 싶으면 계정을 만들거나
+          자신에게 필요한 기술스택을 추천받고 싶으면 <br class="mobile-break"></br>계정을 만들거나
           로그인하세요.
         </p>
         <Button 
