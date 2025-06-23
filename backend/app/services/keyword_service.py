@@ -1,11 +1,13 @@
 # backend/app/services/keyword_service.py
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../../ai")))
 
 import uuid
 import shutil
-import os
 import logging
 from fastapi import UploadFile
-from ai.extractor import extract_keywords_from_pdf  # AI 키워드 추출 함수
+from extractor import extract_keywords_from_pdf  # AI 키워드 추출 함수
 from app.core.database import SessionLocal
 from app.models.keyword import Keyword
 

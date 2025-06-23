@@ -1,6 +1,6 @@
 import os
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, declarative_base
 from dotenv import load_dotenv
 
 # ✅ .env 파일 로드 (.env 환경변수 사용 가능하게 설정)
@@ -43,6 +43,9 @@ SessionLocal = sessionmaker(
     autoflush=False,
     bind=engine,
 )
+
+# 공통 Base 클래스 정의
+Base = declarative_base()
 
 
 # ✅ FastAPI Dependency로 사용할 수 있는 DB 세션 생성 함수
