@@ -1,5 +1,6 @@
 from sqlalchemy.orm import Session
 from app.models.user import User, UserUpdate
+from typing import Optional
 
 
 # 사용자 조회 함수
@@ -27,4 +28,41 @@ def update_user(db: Session, user_id: int, user_update: UserUpdate):
 
     db.commit()
     db.refresh(user)
+    return user
+
+# ✅ 소셜 로그인 전용: 사용자 없으면 생성하고 반환
+def get_or_create_user(
+    db: Session,
+    user_info: dict,
+    social_provider: str,
+) -> User:
+    """
+    소셜 로그인 사용자 조회 또는 신규 생성 후 반환
+
+    Parameters:
+        db (Session): DB 세션
+        user_info (dict): 사용자 정보 (social_id, email, name, profile_image)
+        social_provider (str): 소셜 제공자 (google, kakao, naver)
+
+    Returns:
+        User: DB 사용자 객체
+    """
+    user = db.query(User).filter(
+        User.social_id == user_info["social_id"],
+        User.social_provider == social_provider,
+    ).first()
+
+    if not user:
+        user = User(
+            social_provider=social_provider,
+            social_id=user_info["social_id"],
+            email=user_info["email"],
+            name=user_info.get("name"),
+            profile_image=user_info.get("profile_image"),
+            is_active=True,
+        )
+        db.add(user)
+        db.commit()
+        db.refresh(user)
+
     return user
