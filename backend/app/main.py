@@ -3,9 +3,9 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.routes import job, user, auth  # ✅ auth 대신 개별 라우터 import
 from app.services import job_service
 from app.core.config import load_env, get_settings
-from app.models.user import Base
+from app.models.user import Base as UserBase
+from app.models.job import Base as JobBase
 from app.core.database import engine
-from app.core.config import load_env, get_settings
 
 # ✅ 환경 변수 로드 및 설정 초기화
 load_env()
@@ -27,8 +27,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# ✅ DB 테이블 생성 (PgAdmin에서 생성했다면 주석처리해도 무관)
-Base.metadata.create_all(bind=engine)
+# ✅ 개발 환경에서는 테이블 자동 생성 허용
+if settings.get("ENV") != "production":
+    UserBase.metadata.create_all(bind=engine)
+    JobBase.metadata.create_all(bind=engine)
 
 # ✅ 루트 경로 응답
 @app.get("/")
@@ -37,8 +39,6 @@ def read_root():
 
 # ✅ 라우터 등록
 app.include_router(job.router, prefix="/api/v1/jobs", tags=["Jobs"])
-
 app.include_router(auth.router, prefix="/api/v1/auth", tags=["Auth"])
-
 app.include_router(user.router, prefix="/api/v1/users", tags=["User"])
 
