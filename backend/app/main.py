@@ -1,9 +1,8 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.routes import job
+from app.routes import job, user, auth  # ✅ auth 대신 개별 라우터 import
 from app.services import job_service
 from app.core.config import load_env, get_settings
-from app.routes import auth, user
 from app.models.user import Base
 from app.core.database import engine
 
@@ -26,8 +25,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# DB 테이블 생성
-# PgAdmin에서 쿼리문으로 이미 테이블 생성했음 -> 주석처리해도 무관
+# ✅ DB 테이블 생성 (PgAdmin에서 생성했다면 주석처리해도 무관)
 Base.metadata.create_all(bind=engine)
 
 
@@ -36,8 +34,11 @@ def read_root():
     return {"message": f"Welcome to the {settings['APP_NAME']} API!"}
 
 
+# ✅ 라우터 등록
 app.include_router(job.router, prefix="/api/v1/jobs", tags=["Jobs"])
 
-app.include_router(auth.router, prefix="/api/v1/auth", tags=["auth"])
+app.include_router(auth.router, prefix="/api/v1/auth", tags=["Auth"])
 
 app.include_router(user.router, prefix="/api/v1/users", tags=["User"])
+
+
