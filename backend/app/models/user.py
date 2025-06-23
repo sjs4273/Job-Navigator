@@ -34,12 +34,6 @@ class User(Base):
     is_active = Column(Boolean, default=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
-
-# 회원가입 요청 시 사용할 데이터 구조(사용자 생성 시 프론트에서 넘어오는 데이터 구조)
-class UserCreate(BaseModel):
-    id_token_str: str
-
-
 # DB에 저장된 사용자 데이터를 클라이언트로 반환할 때 사용되는 스키마
 class UserResponse(BaseModel):
     user_id: int
