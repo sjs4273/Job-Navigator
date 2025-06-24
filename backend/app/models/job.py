@@ -1,34 +1,37 @@
+# 파일명: job.py
+
 from sqlalchemy import Column, Integer, String, Text
-from sqlalchemy.orm import declarative_base
-
-# SQLAlchemy Base 클래스 선언 (모든 ORM 모델의 기반이 됨)
-Base = declarative_base()
+from sqlalchemy.dialects.postgresql import JSONB
+from app.core.database import Base
 
 
-# ✅ 잡 공고 정보를 저장하는 SQLAlchemy ORM 모델
+# 채용 공고 정보를 저장하는 SQLAlchemy ORM 모델입니다.
 class JobORM(Base):
-    __tablename__ = "jumpit_jobs"  # 테이블 이름 설정
+    __tablename__ = "jobs"
 
-    # 기본 키 (자동 증가 ID)
-    id = Column(Integer, primary_key=True, index=True)
+    # 공고 고유 ID (Primary Key, Auto Increment)
+    job_post_id = Column(Integer, primary_key=True, index=True)
 
     # 공고 제목
-    title = Column(String)
+    title = Column(String, nullable=False)
 
     # 회사명
-    company = Column(String)
+    company = Column(String, nullable=False)
 
     # 근무 지역
-    location = Column(String)
+    location = Column(String, nullable=True)
 
-    # 기술 스택 (쉼표로 구분된 문자열)
-    tech_stack = Column(Text)
+    # 경력 요건 (예: "신입", "1~3년")
+    experience = Column(String, nullable=True)
 
-    # 상세 공고 URL
-    url = Column(String)
+    # 기술 스택 (예: ["Python", "Django", "AWS"])
+    tech_stack = Column(JSONB, nullable=True)
 
-    # 마감일 (예: "채용 시 마감" 같은 텍스트)
-    due_date_text = Column(String)
+    # 마감일 텍스트 (예: "채용 시 마감")
+    due_date_text = Column(Text, nullable=True)
 
-    # 정규직/계약직/인턴 등 고용 형태
-    job_type = Column(String)
+    # 공고 URL
+    url = Column(String, unique=True, nullable=False)
+
+    # 고용 형태 (예: "정규직", "계약직")
+    job_type = Column(String, nullable=True)
