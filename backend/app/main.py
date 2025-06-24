@@ -3,8 +3,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.routes import job, user, auth, keyword_extract
 from app.services import job_service
 from app.core.config import load_env, get_settings
-from app.models.user import Base as UserBase
-from app.models.job import Base as JobBase
+# from app.models.user import Base as UserBase
+# from app.models.job import Base as JobBase
 from app.core.database import engine
 
 # ✅ 환경 변수 로드 및 설정 초기화
@@ -28,9 +28,9 @@ app.add_middleware(
 )
 
 # ✅ 개발 환경에서는 테이블 자동 생성 허용
-if settings.get("ENV") != "production":
-    UserBase.metadata.create_all(bind=engine)
-    JobBase.metadata.create_all(bind=engine)
+#if settings.get("ENV") != "production":
+#    UserBase.metadata.create_all(bind=engine)
+#    JobBase.metadata.create_all(bind=engine)
 
 # ✅ 루트 경로 응답
 @app.get("/")
