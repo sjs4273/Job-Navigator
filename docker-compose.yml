@@ -2,15 +2,11 @@ version: '3.8'
 
 services:
   db:
-    image: postgres:15
+    image: postgres:17
     container_name: job-navigator-db
+    restart: always
     env_file:
       - ./backend/.env
-    restart: always
-    environment:
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_DB}
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./backend/sql/20250624_db.sql:/docker-entrypoint-initdb.d/20250624_db.sql
@@ -27,8 +23,11 @@ services:
       - db
     volumes:
       - ./backend/app:/app/app
+      - ./ai:/app/ai
     ports:
       - "8000:8000"
+    environment:
+      - PYTHONPATH=/app
     command: >
       sh -c "while ! nc -z db 5432; do sleep 1; done &&
              uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"
