@@ -35,7 +35,6 @@ from google.oauth2 import id_token
 from google.auth.transport import requests as google_requests
 
 from app.core.database import get_db
-from app.models.user import User
 from app.schemas.user import UserResponse
 from app.routes.auth_utils.jwt_utils import create_access_token
 from app.services.user_service import get_or_create_user

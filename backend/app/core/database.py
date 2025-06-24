@@ -1,7 +1,9 @@
 import os
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, declarative_base
 from dotenv import load_dotenv
+
+Base = declarative_base()
 
 # ✅ .env 파일 로드 (.env 환경변수 사용 가능하게 설정)
 load_dotenv()
