@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.core.database import get_db
-from app.models.user import User
+from app.models.user import UserORM
 from app.schemas.user import UserOut, UserUpdate
 from app.services import user_service
 from app.routes.auth_utils.jwt_utils import get_current_user
@@ -12,7 +12,7 @@ router = APIRouter()
 # 현재 사용자 정보 조회
 @router.get("/me", response_model=UserOut)
 def read_my_user_info(
-    current_user: User = Depends(get_current_user),
+    current_user: UserORM = Depends(get_current_user),
 ):
     return current_user
 
@@ -21,7 +21,7 @@ def read_my_user_info(
 @router.put("/me", response_model=UserOut)
 def update_my_user_info(
     user_update: UserUpdate,
-    current_user: User = Depends(get_current_user),
+    current_user: UserORM = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
     try:

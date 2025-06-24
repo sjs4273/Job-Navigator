@@ -25,7 +25,7 @@ import os
 import logging
 
 from app.core.database import get_db
-from app.models.user import User
+from app.models.user import UserORM
 from app.core.config import (
     get_jwt_secret_key,
     get_jwt_algorithm,
@@ -66,7 +66,7 @@ def create_access_token(data: dict, expires_delta: timedelta = None) -> str:
     return token
 
 
-def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)) -> User:
+def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)) -> UserORM:
     """
     요청 헤더의 JWT 토큰을 기반으로 현재 로그인한 사용자 정보를 반환합니다.
 
@@ -90,7 +90,7 @@ def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(
             logger.warning("⚠️ 토큰에 user_id가 없음")
             raise HTTPException(status_code=401, detail="유효하지 않은 토큰입니다.")
 
-        user = db.query(User).filter(User.user_id == user_id).first()
+        user = db.query(UserORM).filter(UserORM.user_id == user_id).first()
         if user is None:
             logger.warning(f"⚠️ 사용자(user_id={user_id})를 DB에서 찾을 수 없음")
             raise HTTPException(status_code=401, detail="사용자를 찾을 수 없습니다.")
