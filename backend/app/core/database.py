@@ -46,6 +46,9 @@ SessionLocal = sessionmaker(
     bind=engine,
 )
 
+# 공통 Base 클래스 정의
+Base = declarative_base()
+
 
 # ✅ FastAPI Dependency로 사용할 수 있는 DB 세션 생성 함수
 # - 요청마다 호출되어 DB 연결을 생성하고, 작업 후 종료

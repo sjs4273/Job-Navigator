@@ -1,8 +1,6 @@
 from sqlalchemy.orm import Session
 from typing import Optional
 
-import json
-
 # ✅ ORM: DB 테이블 매핑
 from app.models.job import JobORM
 
@@ -34,7 +32,7 @@ def get_jobs(
     if job_type:
         query = query.filter(JobORM.job_type == job_type)
     if tech_stack:
-        query = query.filter(JobORM.tech_stack.ilike(f"%{tech_stack}%"))
+        query = query.filter(JobORM.tech_stack.cast(String).ilike(f"%{tech_stack}%"))
 
     total_count = query.count()  # 전체 개수 계산
 
@@ -42,27 +40,19 @@ def get_jobs(
     jobs = query.offset((page - 1) * size).limit(size).all()
 
     # ✅ 결과 변환: ORM → Pydantic 스키마
-    job_items = []
-    for job in jobs:
-        try:
-            parsed_stack = json.loads(job.tech_stack)
-            if not isinstance(parsed_stack, list):
-                parsed_stack = []
-        except Exception:
-            parsed_stack = []
-
-        job_items.append(
-            JobOut(
-                id=job.id,
-                title=job.title,
-                company=job.company,
-                location=job.location,
-                tech_stack=parsed_stack,
-                url=job.url,
-                due_date_text=job.due_date_text,
-                job_type=job.job_type,
-            )
+    job_items = [
+        JobOut(
+            id=job.job_post_id,  # <- 수정됨
+            title=job.title,
+            company=job.company,
+            location=job.location,
+            tech_stack=job.tech_stack or [],  # PostgreSQL JSONB는 이미 list
+            url=job.url,
+            due_date_text=job.due_date_text,
+            job_type=job.job_type,
         )
+        for job in jobs
+    ]
 
     # ✅ Pydantic 응답 스키마에 맞게 반환
     return JobListResponse(items=job_items, total_count=total_count)
