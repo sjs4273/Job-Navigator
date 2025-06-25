@@ -11,7 +11,7 @@ import {
   MenuItem,
 } from '@mui/material';
 import { useState } from 'react';
-import logoImg from '../assets/logo.png';
+
 import './Header.css';
 
 export default function Header({ userInfo, setUserInfo }) {
@@ -31,7 +31,7 @@ export default function Header({ userInfo, setUserInfo }) {
     <>
       <header className="header">
         <Link to="/">
-          <img src={logoImg} alt="로고" className="logo" />
+          <img src="/logo.png" alt="로고" className="logo" />
         </Link>
 
         <div className="auth-links">
