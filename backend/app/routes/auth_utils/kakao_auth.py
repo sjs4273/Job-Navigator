@@ -52,14 +52,7 @@ class KakaoLoginRequest(BaseModel):
 
 async def get_kakao_user_info(code: str) -> dict:
     """
-    5~8단계: 카카오 인가코드를 통해 사용자 정보를 조회하여 딕셔너리로 반환합니다.
-    Google 로그인과의 구조적 일관성을 맞추기 위해 딕셔너리 형태로 구성합니다.
-
-    Parameters:
-        code (str): 카카오 인가코드
-
-    Returns:
-        dict: 사용자 정보 (social_id, email, name, profile_image)
+    5~8단계: 카카오 인가코드를 통해 사용자 정보를 조회하여 딕셔너리로 반환
     """
     token_url = "https://kauth.kakao.com/oauth/token"
     token_data = {
@@ -70,16 +63,17 @@ async def get_kakao_user_info(code: str) -> dict:
     }
 
     async with httpx.AsyncClient() as client:
-        # access_token 요청
+        # [5] access_token 요청
         token_res = await client.post(token_url, data=token_data)
         if token_res.status_code != 200:
             logger.error("❌ [5] access_token 요청 실패")
             raise HTTPException(status_code=400, detail="Failed to get Kakao token")
 
-        token_json = await token_res.json()
+        token_json = token_res.json()  # ✅ await 제거
         access_token = token_json.get("access_token")
         logger.info("✅ [6] access_token 발급 성공")
 
+        # [7] 사용자 정보 요청
         profile_res = await client.get(
             "https://kapi.kakao.com/v2/user/me",
             headers={"Authorization": f"Bearer {access_token}"}
@@ -88,7 +82,7 @@ async def get_kakao_user_info(code: str) -> dict:
             logger.error("❌ [7] 사용자 정보 요청 실패")
             raise HTTPException(status_code=400, detail="Failed to get Kakao user info")
 
-        profile = await profile_res.json()
+        profile = profile_res.json()  # ✅ await 제거
         kakao_id = str(profile["id"])
         kakao_account = profile.get("kakao_account", {})
         email = kakao_account.get("email", f"{kakao_id}@kakao.com")
@@ -108,21 +102,14 @@ async def get_kakao_user_info(code: str) -> dict:
 @router.post("/kakao-login")
 async def kakao_login(request: KakaoLoginRequest, db: Session = Depends(get_db)):
     """
-    4~11단계: 카카오 인가코드를 받아 로그인 및 회원가입 처리 후 JWT 토큰을 반환합니다.
-
-    Parameters:
-        request (KakaoLoginRequest): 프론트에서 전달한 인가코드
-        db (Session): FastAPI 의존성 주입 DB 세션
-
-    Returns:
-        dict: 사용자 정보 + JWT access_token 포함 JSON 응답
+    4~11단계: 카카오 인가코드를 받아 로그인/회원가입 처리 후 JWT 토큰 반환
     """
     logger.info("🚀 [4] 카카오 로그인 요청 수신")
 
     # [5~8] 사용자 정보 추출
     user_info = await get_kakao_user_info(request.code)
 
-    # [9] DB에서 사용자 조회
+    # [9] 사용자 조회 or 생성
     user = get_or_create_user(db, user_info=user_info, social_provider="kakao")
 
     # [10] JWT 발급
