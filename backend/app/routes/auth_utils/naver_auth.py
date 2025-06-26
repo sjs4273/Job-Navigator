@@ -51,7 +51,7 @@ logging.basicConfig(level=logging.INFO)
 
 class NaverLoginRequest(BaseModel):
     code: str
-    state: str  # 네이버는 CSRF 방지를 위해 state도 함께 보내줌
+    state: str
 
 
 async def get_naver_user_info(code: str, state: str) -> dict:
@@ -68,25 +68,48 @@ async def get_naver_user_info(code: str, state: str) -> dict:
         "redirect_uri": NAVER_REDIRECT_URI,
     }
 
+    logger.info(f"📡 [DEBUG] 토큰 요청 파라미터: {token_params}")
+
     async with httpx.AsyncClient() as client:
         token_res = await client.post(token_url, params=token_params)
+
+        logger.info(f"🧾 [DEBUG] token_res.status_code = {token_res.status_code}")
+        logger.info(f"🧾 [DEBUG] token_res.text = {token_res.text}")
+
         if token_res.status_code != 200:
-            logger.error("❌ [5] access_token 요청 실패")
             raise HTTPException(status_code=400, detail="Failed to get Naver token")
 
-        token_json = await token_res.json()
+        try:
+            token_json = await token_res.json()
+        except Exception as e:
+            logger.error(f"❌ JSON 디코딩 실패: {e}")
+            logger.error(f"🧾 응답 원문: {token_res.text}")
+            raise HTTPException(status_code=500, detail="Naver token 응답 파싱 실패")
+
         access_token = token_json.get("access_token")
+        if not access_token:
+            logger.error("❌ access_token 없음. 응답 내용:", token_json)
+            raise HTTPException(status_code=400, detail="access_token 없음")
+
         logger.info("✅ [6] access_token 발급 성공")
 
         profile_res = await client.get(
             "https://openapi.naver.com/v1/nid/me",
             headers={"Authorization": f"Bearer {access_token}"}
         )
+
+        logger.info(f"🧾 [DEBUG] profile_res.status_code = {profile_res.status_code}")
+        logger.info(f"🧾 [DEBUG] profile_res.text = {profile_res.text}")
+
         if profile_res.status_code != 200:
-            logger.error("❌ [7] 사용자 정보 요청 실패")
             raise HTTPException(status_code=400, detail="Failed to get Naver user info")
 
-        profile_json = await profile_res.json()
+        try:
+            profile_json = await profile_res.json()
+        except Exception as e:
+            logger.error(f"❌ 사용자 정보 JSON 파싱 실패: {e}")
+            raise HTTPException(status_code=500, detail="사용자 정보 파싱 실패")
+
         profile = profile_json.get("response", {})
         naver_id = str(profile.get("id"))
         email = profile.get("email", f"{naver_id}@naver.com")
@@ -111,20 +134,17 @@ async def naver_login(request: NaverLoginRequest, db: Session = Depends(get_db))
     """
     logger.info("🚀 [4] 네이버 로그인 요청 수신")
 
-    # [5~8] 사용자 정보 추출
     user_info = await get_naver_user_info(request.code, request.state)
 
-    # [9] 사용자 조회
-    user = get_or_create_user(db, user_info = user_info, social_provider="naver")
+    user = get_or_create_user(db, user_info=user_info, social_provider="naver")
 
-    # [10] JWT 발급
     token = create_access_token(
         data={"user_id": user.user_id},
         expires_delta=timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES),
     )
+
     logger.info(f"🎫 JWT 발급 완료 - user_id: {user.user_id}")
 
-    # [11] 사용자 정보 + 토큰 반환
     return {
         "user_id": user.user_id,
         "social_provider": user.social_provider,
