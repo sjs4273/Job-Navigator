@@ -6,6 +6,9 @@ from app.core.config import load_env, get_settings
 # from app.models.user import Base as UserBase
 # from app.models.job import Base as JobBase
 from app.core.database import engine
+from app.routes import user
+from fastapi.staticfiles import StaticFiles
+
 
 # ✅ 환경 변수 로드 및 설정 초기화
 load_env()
@@ -42,4 +45,4 @@ app.include_router(job.router, prefix="/api/v1/jobs", tags=["Jobs"])
 app.include_router(auth.router, prefix="/api/v1/auth", tags=["Auth"])
 app.include_router(user.router, prefix="/api/v1/users", tags=["User"])
 app.include_router(keyword_extract.router, prefix="/api/v1/keywords/extract", tags=["Keyword"])
-
+app.mount("/static", StaticFiles(directory="static"), name="static")
