@@ -1,5 +1,5 @@
 // 📄 src/pages/Analysis.jsx
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
 import "./Jobanalysispage.css";
@@ -8,10 +8,21 @@ function Analysis() {
   const navigate = useNavigate();
   const [selectedJob, setSelectedJob] = useState('backend');
   const [selectedSkills, setSelectedSkills] = useState([]);
+  const [userInfo, setUserInfo] = useState(null);
+
+  useEffect(() => {
+    const storedUserInfo = localStorage.getItem("userInfo");
+    if (storedUserInfo) {
+      setUserInfo(JSON.parse(storedUserInfo));
+    } else {
+      alert("로그인이 필요합니다.");
+      navigate("/login");
+    }
+  }, []);
 
   const selectJob = (job) => {
     setSelectedJob(job);
-    setSelectedSkills([]); // 직무 바뀔 때 선택 초기화
+    setSelectedSkills([]);
   };
 
   const toggleSkill = (skill) => {
@@ -21,6 +32,12 @@ function Analysis() {
   };
 
   const generateGptRoadmap = async () => {
+    if (!userInfo) {
+      alert("로그인이 필요합니다.");
+      navigate("/login");
+      return;
+    }
+
     if (selectedSkills.length === 0) {
       alert("기술을 하나 이상 선택해주세요!");
       return;
@@ -44,27 +61,21 @@ function Analysis() {
 
       const result = await res.json();
       console.log("📊 분석 결과:", result);
-
-      // 예시: 결과 페이지로 이동하거나 상태 저장 가능
       navigate("/roadmap-result", { state: result });
-
     } catch (error) {
       console.error("❌ 분석 실패:", error);
       alert("분석 중 오류가 발생했습니다.");
-      
     }
   };
 
   return (
     <div>
-      {/* 탭바 */}
       <div className="tab-bar">
-        <button className="tab active" onClick={() => navigate("/resume")}>PDF분석</button>
-        <button className="tab">직무분석</button>
+        <button className="tab" onClick={() => navigate("/resume")}>PDF분석</button>
+        <button className="tab active">직무분석</button>
         <button className="analyze-btn" onClick={generateGptRoadmap}>분석시작</button>
       </div>
 
-      {/* 직군 선택 */}
       <section className="section">
         <h3>개발 직군</h3>
         <div className="button-group" id="job-buttons">
@@ -76,7 +87,6 @@ function Analysis() {
         </div>
       </section>
 
-      {/* 카테고리별 언어 및 도구 */}
       {renderCategory("Backend", [
         ["Python", "Java", "Node.js", "Ruby", "Go", "Rust", "Kotlin", "TypeScript"],
         ["Django", "Spring Boot", "Express.js", "Laravel", "NestJS", "Flask", "FastAPI", "Gin", "Ruby on Rails"]
@@ -105,7 +115,6 @@ function Analysis() {
   );
 }
 
-// 카테고리 렌더링 함수
 function renderCategory(type, [langs, tools], selectedJob, selectedSkills, toggleSkill) {
   if (type !== selectedJob) return null;
 
