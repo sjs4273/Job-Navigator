@@ -1,11 +1,13 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.routes import job, user, auth, keyword_extract
+from app.routes import job, user, auth
 from app.services import job_service
 from app.core.config import load_env, get_settings
 # from app.models.user import Base as UserBase
 # from app.models.job import Base as JobBase
 from app.core.database import engine
+from app.routes import resume
+from app.core.swagger import custom_openapi
 
 # ✅ 환경 변수 로드 및 설정 초기화
 load_env()
@@ -41,5 +43,7 @@ def read_root():
 app.include_router(job.router, prefix="/api/v1/jobs", tags=["Jobs"])
 app.include_router(auth.router, prefix="/api/v1/auth", tags=["Auth"])
 app.include_router(user.router, prefix="/api/v1/users", tags=["User"])
-app.include_router(keyword_extract.router, prefix="/api/v1/keywords/extract", tags=["Keyword"])
+app.include_router(resume.router, prefix="/api/v1/resume", tags=["Resume"])
 
+# ✅ Swagger JWT 인증 커스터마이징 적용
+app.openapi = lambda: custom_openapi(app)
