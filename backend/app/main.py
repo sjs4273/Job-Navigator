@@ -46,4 +46,4 @@ app.include_router(job.router, prefix="/api/v1/jobs", tags=["Jobs"])
 app.include_router(auth.router, prefix="/api/v1/auth", tags=["Auth"])
 app.include_router(user.router, prefix="/api/v1/users", tags=["User"])
 app.include_router(keyword_extract.router, prefix="/api/v1/keywords/extract", tags=["Keyword"])
-app.include_router(pdf_upload.router, prefix="/api/v1", tags=["PDF"])
+
