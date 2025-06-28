@@ -1,27 +1,23 @@
 from sqlalchemy.orm import Session
 from app.models.user import UserORM
-from app.schemas.user import  UserUpdate
+from app.schemas.user import UserUpdate
 from typing import Optional
 
-
-# 사용자 조회 함수
+# 사용자 조회
 def get_user_by_id(db: Session, user_id: int):
     return db.query(UserORM).filter(UserORM.user_id == user_id).first()
 
-
-# 사용자 수정 함수
+# 사용자 정보 수정
 def update_user(db: Session, user_id: int, user_update: UserUpdate):
     user = db.query(UserORM).filter(UserORM.user_id == user_id).first()
     if not user:
         return None
 
-    # 이메일 중복 체크
     if user_update.email and user_update.email != user.email:
         email_exists = db.query(UserORM).filter(UserORM.email == user_update.email).first()
         if email_exists:
             raise ValueError("이미 사용 중인 이메일입니다.")
 
-    # 변경할 필드 적용
     for key, value in user_update.dict(exclude_unset=True).items():
         if hasattr(value, "__str__"):
             value = str(value)
@@ -31,27 +27,23 @@ def update_user(db: Session, user_id: int, user_update: UserUpdate):
     db.refresh(user)
     return user
 
-# ✅ 소셜 로그인 전용: 사용자 없으면 생성하고 반환
+# ✅ 소셜 로그인 전용: 유저 없으면 생성, 있으면 업데이트
 def get_or_create_user(
     db: Session,
     user_info: dict,
     social_provider: str,
 ) -> UserORM:
-    """
-    소셜 로그인 사용자 조회 또는 신규 생성 후 반환
-
-    Parameters:
-        db (Session): DB 세션
-        user_info (dict): 사용자 정보 (social_id, email, name, profile_image)
-        social_provider (str): 소셜 제공자 (google, kakao, naver)
-
-    Returns:
-        User: DB 사용자 객체
-    """
     user = db.query(UserORM).filter(
         UserORM.social_id == user_info["social_id"],
         UserORM.social_provider == social_provider,
     ).first()
+
+    # 1차 조회 실패 시 이메일로 유저 조회
+    if not user:
+        user = db.query(UserORM).filter(UserORM.email == user_info["email"]).first()
+        if user:
+            user.social_provider = social_provider
+            user.social_id = user_info["social_id"]
 
     if not user:
         user = UserORM(
@@ -63,7 +55,7 @@ def get_or_create_user(
             is_active=True,
         )
         db.add(user)
-        db.commit()
-        db.refresh(user)
 
+    db.commit()
+    db.refresh(user)
     return user

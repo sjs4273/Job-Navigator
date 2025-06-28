@@ -17,10 +17,18 @@ export default function Header({ userInfo, setUserInfo }) {
   const [anchorEl, setAnchorEl] = useState(null);
 
   const handleLogout = () => {
-    localStorage.removeItem('userInfo');
+    localStorage.removeItem("userInfo");
+    localStorage.removeItem("token");
+    localStorage.removeItem("access_token");
+    localStorage.removeItem("userId");
+    localStorage.removeItem("userNick");
+    localStorage.removeItem("signupData");
+    localStorage.removeItem("kakao_state");
+    localStorage.removeItem("com.naverid.oauth.state_token");
+
     setUserInfo(null);
     navigate('/');
-  };
+};
 
   const handleMenuOpen = (event) => setAnchorEl(event.currentTarget);
   const handleMenuClose = () => setAnchorEl(null);
@@ -29,7 +37,7 @@ export default function Header({ userInfo, setUserInfo }) {
     <>
       <header className="header">
         <Link to="/">
-          <img src="/logo.png" alt="로고" className="logo" />
+          <img src={logoImg} alt="로고" className="logo" />
         </Link>
 
         <div className="auth-links">

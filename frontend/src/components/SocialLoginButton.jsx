@@ -14,47 +14,71 @@ export default function SocialLoginButton({ setUserInfo }) {
   useEffect(() => {
     const queryParams = new URLSearchParams(window.location.search);
 
-    // ✅ 네이버 로그인 처리
+    // ✅ 공통 사전 처리: 기존 유저 정보 제거
+    localStorage.removeItem("userInfo");
+
+    // ✅ 네이버 로그인 처리 (인가코드 방식)
     const naverCode = queryParams.get("code");
     const naverState = queryParams.get("state");
+
     if (naverCode && naverState) {
       fetch(`${API_BASE_URL}/api/v1/auth/naver-login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ code: naverCode, state: naverState }),
       })
-        .then((res) => res.json())
-        .then((user) => {
+        .then(async (res) => {
+          if (!res.ok) {
+            const error = await res.json();
+            console.error("❌ 네이버 로그인 실패:", error);
+            alert("네이버 로그인 실패: " + (error.detail || "알 수 없는 오류"));
+            navigate("/login");
+            return;
+          }
+
+          const user = await res.json();
+          console.log("✅ 네이버 로그인 응답:", user);
           localStorage.setItem("access_token", user.access_token);
           localStorage.setItem("userInfo", JSON.stringify(user));
           setUserInfo(user);
           navigate("/");
         })
         .catch((err) => {
-          console.error("❌ 네이버 로그인 실패:", err);
-          navigate("/");
+          console.error("❌ 네이버 로그인 네트워크 오류:", err);
+          alert("네이버 로그인 중 네트워크 오류 발생");
+          navigate("/login");
         });
       return;
     }
 
     // ✅ 카카오 로그인 처리
     const kakaoCode = queryParams.get("code");
-    if (kakaoCode) {
+    if (kakaoCode && !naverState) {
       fetch(`${API_BASE_URL}/api/v1/auth/kakao-login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ code: kakaoCode }),
       })
-        .then((res) => res.json())
-        .then((user) => {
+        .then(async (res) => {
+          if (!res.ok) {
+            const error = await res.json();
+            console.error("❌ 카카오 로그인 실패:", error);
+            alert("카카오 로그인 실패: " + (error.detail || "알 수 없는 오류"));
+            navigate("/login");
+            return;
+          }
+
+          const user = await res.json();
+          console.log("✅ 카카오 로그인 응답:", user);
           localStorage.setItem("access_token", user.access_token);
           localStorage.setItem("userInfo", JSON.stringify(user));
           setUserInfo(user);
           navigate("/");
         })
         .catch((err) => {
-          console.error("❌ 카카오 로그인 실패:", err);
-          navigate("/");
+          console.error("❌ 카카오 로그인 네트워크 오류:", err);
+          alert("카카오 로그인 중 네트워크 오류 발생");
+          navigate("/login");
         });
       return;
     }
@@ -71,7 +95,7 @@ export default function SocialLoginButton({ setUserInfo }) {
       );
     }
 
-    // ✅ 토큰 인증 상태 유지
+    // ✅ 토큰 기반 로그인 유지 처리
     const token = queryParams.get("token");
     if (token) {
       localStorage.setItem("access_token", token);
@@ -79,20 +103,29 @@ export default function SocialLoginButton({ setUserInfo }) {
         method: "GET",
         headers: { Authorization: `Bearer ${token}` },
       })
-        .then((res) => res.json())
-        .then((user) => {
+        .then(async (res) => {
+          if (!res.ok) {
+            const error = await res.json();
+            console.error("❌ 토큰 인증 실패:", error);
+            alert("로그인 세션이 만료되었거나 유효하지 않습니다.");
+            navigate("/login");
+            return;
+          }
+
+          const user = await res.json();
+          console.log("✅ 토큰 인증 응답:", user);
           localStorage.setItem("userInfo", JSON.stringify(user));
           setUserInfo(user);
           navigate("/");
         })
         .catch((err) => {
-          console.error("❌ 유저 정보 조회 실패:", err);
-          navigate("/");
+          console.error("❌ 인증 요청 실패:", err);
+          navigate("/login");
         });
     }
   }, []);
 
-  // ✅ Google 로그인 콜백
+  // ✅ 구글 로그인 콜백
   const handleGoogleLogin = async (response) => {
     const id_token = response.credential;
     try {
@@ -101,24 +134,34 @@ export default function SocialLoginButton({ setUserInfo }) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id_token_str: id_token }),
       });
+
+      if (!res.ok) {
+        const error = await res.json();
+        console.error("❌ 구글 로그인 실패:", error);
+        alert("구글 로그인 실패: " + (error.detail || "알 수 없는 오류"));
+        return;
+      }
+
       const data = await res.json();
+      console.log("✅ 구글 로그인 응답:", data);
       localStorage.setItem("access_token", data.access_token);
       localStorage.setItem("userInfo", JSON.stringify(data));
       setUserInfo(data);
       navigate("/");
     } catch (err) {
-      console.error("❌ 구글 로그인 실패:", err);
+      console.error("❌ 구글 로그인 네트워크 오류:", err);
     }
   };
 
-  // ✅ 로그인 요청
+  // ✅ 카카오 로그인 요청
   const handleKakaoLogin = () => {
     const kakaoAuthUrl = `https://kauth.kakao.com/oauth/authorize?client_id=${KAKAO_CLIENT_ID}&redirect_uri=${KAKAO_REDIRECT_URI}&response_type=code&prompt=login`;
     window.location.href = kakaoAuthUrl;
   };
 
+  // ✅ 네이버 로그인 요청
   const handleNaverLogin = () => {
-    const state = crypto.randomUUID();
+    const state = crypto.randomUUID(); // CSRF 방지용
     const redirectUri = `${window.location.origin}/login`;
     const naverAuthUrl = `https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=${NAVER_CLIENT_ID}&redirect_uri=${redirectUri}&state=${state}&auth_type=reprompt`;
     window.location.href = naverAuthUrl;

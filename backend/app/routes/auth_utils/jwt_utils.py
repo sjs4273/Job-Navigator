@@ -1,3 +1,5 @@
+#backend/routes/auth_utils/jwt_utils.py
+
 """
 📌 JWT 토큰 발급 및 인증 흐름 시퀀스 다이어그램
 
@@ -43,7 +45,7 @@ ACCESS_TOKEN_EXPIRE_MINUTES = get_access_token_expiry_minutes()
 
 # ✅ OAuth2 스키마 설정
 # ⚠️ 실제 사용 안함. FastAPI docs에서 Authorize 버튼 생성을 위한 용도임
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="not-used")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/google-login")
 
 
 def create_access_token(data: dict, expires_delta: timedelta = None) -> str:
@@ -81,6 +83,7 @@ def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(
         HTTPException: 토큰이 유효하지 않거나 사용자가 존재하지 않는 경우
     """
     try:
+        logger.info(f"🪪 수신된 토큰: {token}")
         logger.info("🔍 JWT 디코딩 시도")
         payload = jwt.decode(token, JWT_SECRET_KEY, algorithms=[JWT_ALGORITHM])
         user_id = payload.get("user_id")
