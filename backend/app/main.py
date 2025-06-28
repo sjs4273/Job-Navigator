@@ -6,6 +6,8 @@ from app.core.config import load_env, get_settings
 # from app.models.user import Base as UserBase
 # from app.models.job import Base as JobBase
 from app.core.database import engine
+from app.routes import user
+from fastapi.staticfiles import StaticFiles
 from app.routes import resume
 from app.core.swagger import custom_openapi
 
@@ -38,6 +40,8 @@ app.add_middleware(
 @app.get("/")
 def read_root():
     return {"message": f"Welcome to the {settings['APP_NAME']} API!"}
+  
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
 # ✅ 라우터 등록
 app.include_router(job.router, prefix="/api/v1/jobs", tags=["Jobs"])
