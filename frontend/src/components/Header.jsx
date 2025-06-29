@@ -37,7 +37,7 @@ export default function Header({ userInfo, setUserInfo }) {
     <>
       <header className="header">
         <Link to="/">
-          <img src={logoImg} alt="로고" className="logo" />
+          <img src="logo.png" alt="로고" className="logo" />
         </Link>
 
         <div className="auth-links">
