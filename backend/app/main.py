@@ -1,3 +1,4 @@
+import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.routes import job, user, auth, bookmark
@@ -14,6 +15,8 @@ from app.core.swagger import custom_openapi
 # ✅ 환경 변수 로드 및 설정 초기화
 load_env()
 settings = get_settings()
+
+os.makedirs("static", exist_ok=True)
 
 # ✅ FastAPI 애플리케이션 인스턴스 생성
 app = FastAPI(
