@@ -12,6 +12,16 @@ import JobCard from '../components/JobCard';
 import Pagination from '../components/Pagination';
 import JobFilter from '../components/JobFilter';
 
+// ✅ 경력 필터 매핑
+const experienceMap = {
+  '무관': { min: null, max: null },
+  '신입 포함': { min: 0, max: 0 },
+  '1년 이상': { min: 1, max: null },
+  '3년 이상': { min: 3, max: null },
+  '5년 이상': { min: 5, max: null },
+  '10년 이상': { min: 10, max: null },
+};
+
 function Jobs() {
   const [jobs, setJobs] = useState([]);
   const [totalCount, setTotalCount] = useState(0);
@@ -37,6 +47,15 @@ function Jobs() {
     if (filters.location) params.append('location', filters.location);
     if (search) params.append('tech_stack', search); // 또는 'keyword', 'query' 등 변경 가능
 
+    // ✅ 경력 필터를 숫자 범위로 변환하여 추가
+    const { min, max } = experienceMap[filters.experience] || {};
+    if (min !== null && min !== undefined) {
+      params.append('min_experience', min);
+    }
+    if (max !== null && max !== undefined) {
+      params.append('max_experience', max);
+    }
+    
     fetch(
       `${import.meta.env.VITE_API_BASE_URL}/api/v1/jobs?${params.toString()}`
     )

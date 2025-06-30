@@ -61,23 +61,9 @@ const JobFilter = ({ filters, onChange }) => {
           >
             <MenuItem value="">전체</MenuItem>
             {[
-              '서울',
-              '경기',
-              '인천',
-              '대전',
-              '부산',
-              '광주',
-              '대구',
-              '울산',
-              '세종',
-              '강원',
-              '충북',
-              '충남',
-              '전북',
-              '전남',
-              '경북',
-              '경남',
-              '제주',
+              '서울','경기','인천','대전','부산','광주','대구',
+              '울산','세종','강원','충북','충남','전북','전남',
+              '경북','경남','제주',
             ].map((region) => (
               <MenuItem key={region} value={region}>
                 {region}
@@ -96,11 +82,11 @@ const JobFilter = ({ filters, onChange }) => {
             sx={{}}
           >
             <MenuItem value="">전체</MenuItem>
-            <MenuItem value="무관">무관</MenuItem>
-            <MenuItem value="신입">신입</MenuItem>
-            <MenuItem value="1~3년">1~3년</MenuItem>
-            <MenuItem value="3~5년">3~5년</MenuItem>
+            <MenuItem value="신입 포함">신입 포함</MenuItem>
+            <MenuItem value="1년 이상">1년 이상</MenuItem>
+            <MenuItem value="3년 이상">3년 이상</MenuItem>
             <MenuItem value="5년 이상">5년 이상</MenuItem>
+            <MenuItem value="10년 이상">10년 이상</MenuItem>
           </Select>
         </FormControl>
       </Stack>

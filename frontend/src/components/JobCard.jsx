@@ -14,6 +14,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 function JobCard({ job }) {
   const [expanded, setExpanded] = useState(false);
+  console.log("📦 JobCard - job:", job);
 
   return (
     <Card
@@ -61,7 +62,7 @@ function JobCard({ job }) {
             {job.company} · {job.location}
           </Typography>
           <Typography variant="body2" mt={1} color="text.secondary">
-            📅 마감: {job.description || '미정'}
+            📅 마감: {job.due_date_text || '미정'}
           </Typography>
         </CardContent>
 
