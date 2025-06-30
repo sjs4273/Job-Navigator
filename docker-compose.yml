@@ -23,7 +23,7 @@ services:
       - db
     volumes:
       - ./backend/app:/app/app
-      - ./ai:/app/ai
+      - ./backend/ai:/app/ai
     ports:
       - "8000:8000"
     environment:
