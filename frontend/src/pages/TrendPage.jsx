@@ -1,10 +1,4 @@
 import { useState, useEffect } from 'react';
-import {
-  backendTrendMock,
-  frontendTrendMock,
-  mobileTrendMock,
-  aiTrendMock,
-} from '../mock/trendsBackend';
 import './TrendPage.css';
 
 function TrendPage() {
@@ -52,16 +46,32 @@ function TrendPage() {
   };
 
   useEffect(() => {
-    let data;
-    if (activeTab === '백엔드') data = backendTrendMock;
-    else if (activeTab === '프론트엔드') data = frontendTrendMock;
-    else if (activeTab === '모바일') data = mobileTrendMock;
-    else if (activeTab === 'AI') data = aiTrendMock;
+  const fetchTrendData = async () => {
+    try {
+      const tabToQueryParam = {
+        '백엔드': 'backend',
+        '프론트엔드': 'frontend',
+        '모바일': 'mobile',
+        'AI': 'data',
+      };
+      const roleQuery = tabToQueryParam[activeTab];
+      
+      const response = await fetch(`http://localhost:8000/api/v1/trends/roles/${roleQuery}`);
+      if (!response.ok) throw new Error('응답 실패');
 
-    setTrendData(data.technologies);
-    setSummary(data.summary);
-    setSelectedSkills([]);
-  }, [activeTab]);
+      const data = await response.json();
+      setTrendData(data.top_5);
+      setSummary(data.summary);
+      setSelectedSkills([]);
+    } catch (error) {
+      console.error('📛 기술 트렌드 데이터를 불러오는 중 오류 발생:', error);
+      setTrendData([]);
+      setSummary('데이터를 불러오지 못했습니다.');
+    }
+  };
+
+  fetchTrendData();
+}, [activeTab]);
 
   return (
     <div className="container">
