@@ -4,6 +4,7 @@ import './TrendPage.css';
 function TrendPage() {
   const [trendData, setTrendData] = useState([]);
   const [summary, setSummary] = useState('');
+  const [displayedSummary, setDisplayedSummary] = useState('');
   const [activeTab, setActiveTab] = useState('백엔드');
   const [selectedSkills, setSelectedSkills] = useState([]);
   const [tabClicked, setTabClicked] = useState(() => {
@@ -12,15 +13,7 @@ function TrendPage() {
 
   const skillCategories = {
     백엔드: {
-      languages: [
-        'Python',
-        'Java',
-        'Node.js',
-        'Go',
-        'Rust',
-        'Kotlin',
-        'TypeScript',
-      ],
+      languages: ['Python', 'Java', 'Node.js', 'Go', 'Rust', 'Kotlin', 'TypeScript'],
       frameworks: ['Django', 'Spring Boot', 'Express.js', 'FastAPI', 'NestJS'],
     },
     프론트엔드: {
@@ -38,40 +31,61 @@ function TrendPage() {
   };
 
   const toggleSkill = (skill) => {
-    if (selectedSkills.includes(skill)) {
-      setSelectedSkills(selectedSkills.filter((s) => s !== skill));
-    } else {
-      setSelectedSkills([...selectedSkills, skill]);
-    }
+    setSelectedSkills((prev) =>
+      prev.includes(skill) ? prev.filter((s) => s !== skill) : [...prev, skill]
+    );
   };
 
   useEffect(() => {
-  const fetchTrendData = async () => {
-    try {
-      const tabToQueryParam = {
-        '백엔드': 'backend',
-        '프론트엔드': 'frontend',
-        '모바일': 'mobile',
-        'AI': 'data',
-      };
-      const roleQuery = tabToQueryParam[activeTab];
-      
-      const response = await fetch(`http://localhost:8000/api/v1/trends/roles/${roleQuery}`);
-      if (!response.ok) throw new Error('응답 실패');
+    const fetchTrendData = async () => {
+      try {
+        const tabToQueryParam = {
+          '백엔드': 'backend',
+          '프론트엔드': 'frontend',
+          '모바일': 'mobile',
+          'AI': 'data',
+        };
+        const roleQuery = tabToQueryParam[activeTab];
+        const baseUrl = import.meta.env.VITE_API_BASE_URL;
 
-      const data = await response.json();
-      setTrendData(data.top_5);
-      setSummary(data.summary);
-      setSelectedSkills([]);
-    } catch (error) {
-      console.error('📛 기술 트렌드 데이터를 불러오는 중 오류 발생:', error);
-      setTrendData([]);
-      setSummary('데이터를 불러오지 못했습니다.');
-    }
-  };
+        const response = await fetch(`${baseUrl}/api/v1/trends/roles/${roleQuery}`);
+        if (!response.ok) throw new Error('응답 실패');
 
-  fetchTrendData();
-}, [activeTab]);
+        const data = await response.json();
+        setTrendData(data.top_5);
+        setSummary(data.summary);
+        setSelectedSkills([]);
+      } catch (error) {
+        console.error('📛 기술 트렌드 데이터를 불러오는 중 오류 발생:', error);
+        setTrendData([]);
+        setSummary('데이터를 불러오지 못했습니다.');
+      }
+    };
+
+    fetchTrendData();
+  }, [activeTab]);
+
+  useEffect(() => {
+    if (!summary) return;
+
+    const processed = summary.replace(/\. /g, '.\n');
+    const chars = Array.from(processed);
+    setDisplayedSummary(''); // 초기화
+
+    let isCancelled = false;
+
+    const streamText = async (i) => {
+      if (i >= chars.length || isCancelled) return;
+      setDisplayedSummary((prev) => prev + chars[i]);
+      setTimeout(() => streamText(i + 1), 30);
+    };
+
+    streamText(0);
+
+    return () => {
+      isCancelled = true; // 언마운트 시 인터럽트
+    };
+  }, [summary]);
 
   return (
     <div className="container">
@@ -102,9 +116,9 @@ function TrendPage() {
       {/* 언어 필터 */}
       <div className={`select-box ${trendData.length > 0 ? 'active' : ''}`}>
         <div className="tab-menu">
-          {skillCategories[activeTab].languages.map((lang, idx) => (
+          {skillCategories[activeTab].languages.map((lang) => (
             <button
-              key={idx}
+              key={lang}
               className={`pill ${selectedSkills.includes(lang) ? 'active' : ''}`}
               onClick={() => toggleSkill(lang)}
             >
@@ -117,9 +131,9 @@ function TrendPage() {
       {/* 프레임워크 필터 */}
       <div className={`select-box ${trendData.length > 0 ? 'active' : ''}`}>
         <div className="tab-menu">
-          {skillCategories[activeTab].frameworks.map((fw, idx) => (
+          {skillCategories[activeTab].frameworks.map((fw) => (
             <button
-              key={idx}
+              key={fw}
               className={`pill ${selectedSkills.includes(fw) ? 'active' : ''}`}
               onClick={() => toggleSkill(fw)}
             >
@@ -151,19 +165,12 @@ function TrendPage() {
         ))}
       </div>
 
-      {/* 요약 */}
+      {/* 기술 요약 */}
       <div className="summary-box">
-        {(() => {
-          const sentences = summary.match(/[^.!?]*(?:다|요|니다)\./g) || [
-            summary,
-          ];
-          return (
-            <>
-              <p className="summary-title">{sentences[0]}</p>
-              <p>{sentences.slice(1).join(' ')}</p>
-            </>
-          );
-        })()}
+        <p className="summary-title">기술 요약</p>
+        {displayedSummary.split('\n').map((line, idx) => (
+          <p key={idx}>{line}</p>
+        ))}
       </div>
     </div>
   );
