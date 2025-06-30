@@ -1,7 +1,7 @@
 import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.routes import job, user, auth, bookmark
+from app.routes import job, user, auth, bookmark, trend
 from app.services import job_service
 from app.core.config import load_env, get_settings
 # from app.models.user import Base as UserBase
@@ -52,6 +52,7 @@ app.include_router(auth.router, prefix="/api/v1/auth", tags=["Auth"])
 app.include_router(user.router, prefix="/api/v1/users", tags=["User"])
 app.include_router(resume.router, prefix="/api/v1/resume", tags=["Resume"])
 app.include_router(bookmark.router, prefix="/api/v1/bookmarks", tags=["Bookmark"])
+app.include_router(trend.router, prefix="/api/v1/trends", tags=["Trends"])
 
 # ✅ Swagger JWT 인증 커스터마이징 적용
 app.openapi = lambda: custom_openapi(app)
