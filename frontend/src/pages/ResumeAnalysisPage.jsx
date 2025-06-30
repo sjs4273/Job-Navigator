@@ -7,7 +7,7 @@ export default function ResumeAnalysisPage() {
   const navigate = useNavigate();
   const [pdfFile, setPdfFile] = useState(null);
 
-  // 직무분석 페이지 이동
+  // 직무분석 페이지 이동 (로그인 여부 확인 X)
   const goToJobPage = () => {
     navigate("/analysis");
   };
@@ -19,11 +19,11 @@ export default function ResumeAnalysisPage() {
 
   // PDF 업로드 함수
   const uploadPDF = async () => {
-    const token = localStorage.getItem("access_token"); // ✅ 로그인 토큰 확인
+    const token = localStorage.getItem("access_token");
 
     if (!token) {
       alert("로그인이 필요합니다.");
-      navigate("/login"); // ❗ 로그인 페이지 경로에 맞게 조정
+      navigate("/login");
       return;
     }
 
@@ -39,7 +39,7 @@ export default function ResumeAnalysisPage() {
       const response = await fetch("http://localhost:8000/api/v1/upload-pdf", {
         method: "POST",
         headers: {
-          Authorization: `Bearer ${token}`, // ✅ 인증 토큰 포함
+          Authorization: `Bearer ${token}`,
         },
         body: formData,
       });
@@ -72,23 +72,24 @@ export default function ResumeAnalysisPage() {
 
   return (
     <div>
-      {/* 탭바 */}
-      <div className="tab-bar">
-        <button className="tab active2">PDF분석</button>
-        <button className="tab2" onClick={goToJobPage}>직무분석</button>
-      </div>
+      <div className="resume-pdf-upload-container">
+  <div className="resume-tab-bar">
+    <button type="button" className="resume-tab-active2">PDF분석</button>
+    <button type="button" className="resume-tab2" onClick={goToJobPage}>직무분석</button>
+  </div>
 
-      {/* PDF 업로드 영역 */}
-      <div className="pdf-upload-container">
-        <input
-          type="file"
-          accept="application/pdf"
-          className="pdf-input"
-          placeholder="PDF파일을 올려주세요"
-          onChange={handleFileChange}
-        />
-        <button className="pdf-upload-button" onClick={uploadPDF}>분석시작</button>
-      </div>
+  <div className="resume-input-button-row">
+    <input
+      type="file"
+      accept="application/pdf"
+      className="resume-pdf-input"
+      onChange={handleFileChange}
+      placeholder="PDF파일을 올려주세요"
+    />
+    <button type="button" className="resume-pdf-upload-button" onClick={uploadPDF}>분석시작</button>
+  </div>
+</div>
+
     </div>
   );
 }
