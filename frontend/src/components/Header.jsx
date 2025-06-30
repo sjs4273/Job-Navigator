@@ -10,7 +10,6 @@ import {
   MenuItem,
 } from '@mui/material';
 import { useState } from 'react';
-import logoImg from '../assets/logo.png';
 import './Header.css';
 
 export default function Header({ userInfo, setUserInfo }) {
