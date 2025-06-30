@@ -31,7 +31,10 @@
   white-space: nowrap;
   cursor: pointer;
   user-select: none;
-  transition: background-color 0.2s, color 0.2s, border-color 0.2s;
+  transition:
+    background-color 0.2s,
+    color 0.2s,
+    border-color 0.2s;
   appearance: none;
 }
 
@@ -78,9 +81,7 @@
   max-height: 300px;
   opacity: 1;
   transform: translateY(0);
-
 }
-
 
 /* 트렌드 타이틀 */
 .title {
@@ -102,7 +103,7 @@
   background: #fff;
   padding: 18px;
   border-radius: 14px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
   margin-bottom: 16px;
 }
 
@@ -148,7 +149,7 @@
   background: #f9fafb;
   padding: 16px;
   border-radius: 14px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
   margin-bottom: 30px;
 }
 
@@ -175,7 +176,7 @@
 
 /* 꼬리 테두리 */
 .tab-guide-bubble::before {
-  content: "";
+  content: '';
   position: absolute;
   top: 100%;
   left: 24px;
@@ -189,7 +190,7 @@
 
 /* 꼬리 배경 */
 .tab-guide-bubble::after {
-  content: "";
+  content: '';
   position: absolute;
   top: 100%;
   left: 25px;
@@ -202,6 +203,12 @@
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(-5px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
