@@ -11,6 +11,7 @@ class JobBase(BaseModel):
     url: str  # 상세 URL
     due_date_text: Optional[str] = None  # 마감일 텍스트 (선택)
     job_type: Optional[str] = None  # 고용 형태 (선택)
+    experience: Optional[str]
 
 
 # ✅ 새 공고 등록 시 사용

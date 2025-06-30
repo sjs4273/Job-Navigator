@@ -1,7 +1,7 @@
 # 파일명: job.py
 
-from sqlalchemy import Column, Integer, String, Text
-from sqlalchemy.dialects.postgresql import JSONB
+from sqlalchemy import Column, Integer, String, Text, Boolean
+from app.models.json_type import JSONType
 from app.core.database import Base
 
 
@@ -25,7 +25,7 @@ class JobORM(Base):
     experience = Column(String, nullable=True)
 
     # 기술 스택 (예: ["Python", "Django", "AWS"])
-    tech_stack = Column(JSONB, nullable=True)
+    tech_stack = Column(JSONType, nullable=True)
 
     # 마감일 텍스트 (예: "채용 시 마감")
     due_date_text = Column(Text, nullable=True)
@@ -33,5 +33,14 @@ class JobORM(Base):
     # 공고 URL
     url = Column(String, unique=True, nullable=False)
 
-    # 고용 형태 (예: "정규직", "계약직")
+    # 직무분야 (ex: backend, frontend)
     job_type = Column(String, nullable=True)
+
+    # 마감 여부 (True: 활성 공고, False: 마감된 공고)
+    is_active = Column(Boolean, nullable=False, default=True)
+
+    # 최소 경력
+    min_experience = Column(Integer, nullable=True)
+
+    # 최대 경력 
+    max_experience = Column(Integer, nullable=True)

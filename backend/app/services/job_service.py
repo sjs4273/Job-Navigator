@@ -16,6 +16,9 @@ def get_jobs(
     location: Optional[str] = None,
     job_type: Optional[str] = None,
     tech_stack: Optional[str] = None,
+    min_experience: Optional[int] = None,
+    max_experience: Optional[int] = None,
+    experience: Optional[str] = None
 ) -> JobListResponse:
     """
     채용공고를 조회합니다.
@@ -24,7 +27,10 @@ def get_jobs(
     - 반환: JobOut 목록 + 전체 개수
     """
 
-    query = db.query(JobORM)
+    query = db.query(JobORM).filter(JobORM.is_active == True)
+
+    # ✅ 기본 필터: job_type이 'other'가 아닌 것만
+    query = query.filter(JobORM.job_type != "other")
 
     # ✅ 필터 조건 처리 (부분 일치)
     if location:
@@ -33,6 +39,11 @@ def get_jobs(
         query = query.filter(JobORM.job_type == job_type)
     if tech_stack:
         query = query.filter(JobORM.tech_stack.cast(String).ilike(f"%{tech_stack}%"))
+    if min_experience is not None:
+        query = query.filter(JobORM.max_experience >= min_experience)
+    if max_experience is not None:
+        query = query.filter(JobORM.min_experience <= max_experience)
+
 
     total_count = query.count()  # 전체 개수 계산
 
@@ -50,6 +61,7 @@ def get_jobs(
             url=job.url,
             due_date_text=job.due_date_text,
             job_type=job.job_type,
+            experience=job.experience,
         )
         for job in jobs
     ]

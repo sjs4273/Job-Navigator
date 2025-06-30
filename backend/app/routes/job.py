@@ -17,6 +17,9 @@ def read_jobs(
     location: Optional[str] = None,
     job_type: Optional[str] = None,
     tech_stack: Optional[str] = None,
+    min_experience: Optional[int] = Query(None, ge=0),
+    max_experience: Optional[int] = Query(None, ge=0),
+    experience: Optional[str] = None,
     db: Session = Depends(get_db),
 ):
     """
@@ -31,6 +34,9 @@ def read_jobs(
         location=location,
         job_type=job_type,
         tech_stack=tech_stack,
+        min_experience=min_experience,
+        max_experience=max_experience,
+        experience=experience,
     )
 
 
