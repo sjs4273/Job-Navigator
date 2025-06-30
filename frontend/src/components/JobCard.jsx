@@ -1,4 +1,5 @@
-import { useState } from 'react';
+// components/JobCard.jsx
+import { useState, useEffect } from 'react';
 import {
   Card,
   CardContent,
@@ -11,53 +12,63 @@ import {
   Box,
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 
-function JobCard({ job }) {
+function JobCard({ job, favoriteIds = [] }) {
   const [expanded, setExpanded] = useState(false);
-  console.log("📦 JobCard - job:", job);
+  const [isBookmarked, setIsBookmarked] = useState(false);
+  const token = localStorage.getItem('access_token');
+
+  useEffect(() => {
+    if (Array.isArray(favoriteIds)) {
+      setIsBookmarked(favoriteIds.includes(job.id));
+    }
+  }, [favoriteIds, job.id]);
+
+  const handleBookmark = async () => {
+    if (!token) {
+      alert('로그인이 필요합니다');
+      return;
+    }
+
+    const headers = {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    };
+
+    try {
+      if (isBookmarked) {
+        const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/v1/bookmarks/${job.id}`, {
+          method: 'DELETE',
+          headers,
+        });
+        if (!res.ok) throw new Error('삭제 실패');
+        setIsBookmarked(false);
+      } else {
+        const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/v1/bookmarks`, {
+          method: 'POST',
+          headers,
+          body: JSON.stringify({ job_post_id: job.id }),
+        });
+        if (!res.ok) throw new Error('추가 실패');
+        setIsBookmarked(true);
+      }
+    } catch (err) {
+      console.error('❌ 즐겨찾기 오류:', err);
+    }
+  };
 
   return (
-    <Card
-      sx={{
-        borderRadius: '16px',
-        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
-        p: 2,
-        mb: 2,
-        position: 'relative',
-        transition: '0.2s',
-      }}
-    >
-      {/* ✅ 제목 + 아이콘 정렬박스 */}
-      <Box
-        display="flex"
-        justifyContent="space-between"
-        alignItems="center"
-        sx={{ flexWrap: 'nowrap' }}
-      >
-        {/* ✅ 제목, 회사, 마감일 */}
+    <Card sx={{ borderRadius: '16px', boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)', p: 2, mb: 2, position: 'relative' }}>
+      <Box display="flex" justifyContent="space-between" alignItems="center">
         <CardContent
-          sx={{
-            flex: 1,
-            paddingRight: 1,
-            minWidth: 0,
-            cursor: 'pointer',
-          }}
+          sx={{ flex: 1, paddingRight: 1, minWidth: 0, cursor: 'pointer' }}
           onClick={() => setExpanded(!expanded)}
         >
-          <Typography
-            variant="h6"
-            fontWeight="bold"
-            noWrap={!expanded}
-            title={job.title}
-            sx={{
-              whiteSpace: expanded ? 'normal' : 'nowrap',
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-            }}
-          >
+          <Typography variant="h6" fontWeight="bold" noWrap={!expanded}>
             {job.title}
           </Typography>
-
           <Typography variant="subtitle2" color="text.secondary">
             {job.company} · {job.location}
           </Typography>
@@ -66,21 +77,18 @@ function JobCard({ job }) {
           </Typography>
         </CardContent>
 
-        {/* ✅ 토글 화살표 */}
+        <IconButton onClick={handleBookmark} sx={{ position: 'absolute', bottom: 12, right: 15 }}>
+          {isBookmarked ? <FavoriteIcon sx={{ color: '#6EA8FE' }} /> : <FavoriteBorderIcon sx={{ color: 'gray' }} />}
+        </IconButton>
+
         <IconButton
           onClick={() => setExpanded(!expanded)}
-          sx={{
-            color: 'rgba(0, 0, 0, 0.4)',
-            transform: expanded ? 'rotate(180deg)' : 'rotate(0deg)',
-            transition: '0.3s',
-            flexShrink: 0,
-          }}
+          sx={{ position: 'absolute', top: 12, right: 15, color: 'rgba(0, 0, 0, 0.4)' }}
         >
           <ExpandMoreIcon />
         </IconButton>
       </Box>
 
-      {/* ✅ 상세 내용 확장 영역 */}
       <Collapse in={expanded}>
         <Divider sx={{ my: 1 }} />
         <CardContent>
@@ -90,7 +98,6 @@ function JobCard({ job }) {
           <Typography variant="body2" gutterBottom>
             <strong>경력:</strong> {job.experience || '무관'}
           </Typography>
-
           {Array.isArray(job.tech_stack) && job.tech_stack.length > 0 && (
             <>
               <Typography variant="body2" gutterBottom>
@@ -98,12 +105,7 @@ function JobCard({ job }) {
               </Typography>
               <Stack direction="row" spacing={1} flexWrap="wrap">
                 {job.tech_stack.map((tech, idx) => (
-                  <Chip
-                    key={idx}
-                    label={tech.trim()}
-                    variant="outlined"
-                    size="small"
-                  />
+                  <Chip key={idx} label={tech.trim()} variant="outlined" size="small" />
                 ))}
               </Stack>
             </>

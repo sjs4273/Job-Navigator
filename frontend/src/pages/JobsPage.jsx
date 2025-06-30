@@ -12,6 +12,8 @@ import JobCard from '../components/JobCard';
 import Pagination from '../components/Pagination';
 import JobFilter from '../components/JobFilter';
 
+
+
 // ✅ 경력 필터 매핑
 const experienceMap = {
   '무관': { min: null, max: null },
@@ -27,8 +29,10 @@ function Jobs() {
   const [totalCount, setTotalCount] = useState(0);
   const [search, setSearch] = useState('');
   const [input, setInput] = useState('');
+  const [favoriteIds, setFavoriteIds] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const jobsPerPage = 10;
+  
 
   const [filters, setFilters] = useState({
     job_type: '',
@@ -66,6 +70,21 @@ function Jobs() {
       })
       .catch(console.error);
   }, [currentPage, filters, search]);
+
+    useEffect(() => {
+    const token = localStorage.getItem('access_token');
+    if (!token) return;
+
+    fetch(`${import.meta.env.VITE_API_BASE_URL}/api/v1/bookmarks`, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        const ids = data.map((b) => b.job_post_id); // ✅ 즐겨찾기 ID 목록 추출
+        setFavoriteIds(ids);
+      })
+      .catch(console.error);
+  }, []);
 
   const handleSearch = () => {
     setSearch(input);
@@ -137,7 +156,7 @@ function Jobs() {
               minWidth: '280px', // 너무 작아지지 않게 최소 너비 제한
             }}
           >
-            <JobCard job={job} />
+            <JobCard job={job} favoriteIds={favoriteIds} />
           </Box>
         ))}
       </Box>

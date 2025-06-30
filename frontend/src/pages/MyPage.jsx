@@ -17,10 +17,12 @@ import {
   Alert,
 } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
+import BookmarkCard from '../components/BookmarkCard';
 
 export default function MyPage({ userInfo, setUserInfo }) {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [user, setUser] = useState(null);
+  const [bookmarkedJobs, setBookmarkedJobs] = useState([]);
 
   const handleImageChange = async (e) => {
     const file = e.target.files[0];
@@ -53,6 +55,28 @@ export default function MyPage({ userInfo, setUserInfo }) {
     setSnackbarOpen(true);
   };
 
+  useEffect(() => {
+  const fetchBookmarkedJobs = async () => {
+    try {
+      const token = localStorage.getItem('access_token');
+      const res = await fetch(
+        `${import.meta.env.VITE_API_BASE_URL}/favorites`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      const result = await res.json();
+      setBookmarkedJobs(result);
+    } catch (err) {
+      console.error('❌ 즐겨찾기 공고 불러오기 실패:', err);
+    }
+  };
+
+  fetchBookmarkedJobs();
+}, []);
+console.log('bookmarkedJobs:', bookmarkedJobs);
   useEffect(() => {
     const userData = localStorage.getItem('userInfo');
     if (userData) {
@@ -119,13 +143,23 @@ export default function MyPage({ userInfo, setUserInfo }) {
           ))}
         </Box>
       </Box>
-
+{/* 즐겨찾기 공고 데이터 매핑 */}
       <Box className="section-box">
-        <Typography variant="subtitle1" className="section-title">
-          채용 공고
-        </Typography>
-        {/* 공고 데이터 매핑 예정 */}
-      </Box>
+  <Typography variant="subtitle1" className="section-title">
+    즐겨찾기한 채용 공고
+  </Typography>
+  {bookmarkedJobs.length > 0 ? (
+    bookmarkedJobs.map((bookmark) => (
+      <BookmarkCard key={bookmark.bookmark_job_id} job={bookmark.job_post} />
+    ))
+  ) : (
+    <Typography variant="body2" color="text.secondary">
+      즐겨찾기한 채용공고가 없습니다.
+    </Typography>
+  )}
+</Box>
+
+
       <Snackbar
         open={snackbarOpen}
         autoHideDuration={2200}
