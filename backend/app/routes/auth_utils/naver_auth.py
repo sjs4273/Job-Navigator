@@ -25,6 +25,7 @@ from datetime import timedelta
 import httpx
 import logging
 
+# 📦 DB 세션 및 JWT 유틸리티, 설정값, 유저 서비스 함수 임포트
 from app.core.database import get_db
 from app.routes.auth_utils.jwt_utils import create_access_token
 from app.core.config import (
@@ -35,21 +36,30 @@ from app.core.config import (
 )
 from app.services.user_service import get_or_create_user
 
+# 🔀 네이버 인증 전용 라우터 생성
 naver_router = APIRouter()
 
+# 🔐 네이버 OAuth 설정값 불러오기
 NAVER_CLIENT_ID = get_naver_client_id()
 NAVER_CLIENT_SECRET = get_naver_client_secret()
 NAVER_REDIRECT_URI = get_naver_redirect_uri()
 ACCESS_TOKEN_EXPIRE_MINUTES = get_access_token_expiry_minutes()
 
+# 📝 로깅 설정
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
 
+# 📨 네이버 로그인 요청 바디 형식 정의
 class NaverLoginRequest(BaseModel):
-    code: str
-    state: str
+    code: str   # 인가 코드
+    state: str  # 상태 토큰(CSRF 방지용)
 
+# 🔍 네이버 API에서 사용자 정보 조회
 async def get_naver_user_info(code: str, state: str) -> dict:
+    """
+    네이버 인가 코드를 바탕으로 access_token을 요청하고,
+    해당 access_token으로 사용자 정보를 반환받아 가공합니다.
+    """
     token_url = "https://nid.naver.com/oauth2.0/token"
     token_params = {
         "grant_type": "authorization_code",
@@ -61,6 +71,7 @@ async def get_naver_user_info(code: str, state: str) -> dict:
     }
 
     async with httpx.AsyncClient() as client:
+        # 🔐 access_token 요청
         token_res = await client.post(
             token_url,
             data=token_params,
@@ -74,6 +85,7 @@ async def get_naver_user_info(code: str, state: str) -> dict:
         if not access_token:
             raise HTTPException(status_code=400, detail="access_token 없음")
 
+        # 👤 사용자 프로필 요청
         profile_res = await client.get(
             "https://openapi.naver.com/v1/nid/me",
             headers={"Authorization": f"Bearer {access_token}"}
@@ -82,6 +94,8 @@ async def get_naver_user_info(code: str, state: str) -> dict:
             raise HTTPException(status_code=400, detail="Failed to get Naver user info")
 
         profile = profile_res.json().get("response", {})
+
+        # 🧩 사용자 정보 파싱 (필수 필드가 없는 경우 기본값 지정)
         naver_id = str(profile.get("id"))
         email = profile.get("email", f"{naver_id}@naver.com")
         name = profile.get("name", "Naver User")
@@ -94,16 +108,28 @@ async def get_naver_user_info(code: str, state: str) -> dict:
             "profile_image": profile_image,
         }
 
+# ✅ 네이버 로그인 API 엔드포인트
 @naver_router.post("/naver-login")
 async def naver_login(request: NaverLoginRequest, db: Session = Depends(get_db)):
+    """
+    프론트엔드에서 전달받은 인가코드(code)와 상태값(state)을 통해
+    - 사용자 정보를 조회하고
+    - DB에 유저를 생성 또는 조회한 후
+    - JWT 액세스 토큰을 발급하여 반환합니다.
+    """
+    # 🔍 네이버에서 사용자 정보 가져오기
     user_info = await get_naver_user_info(request.code, request.state)
+
+    # 🗂️ 유저 생성 또는 조회 (social_id 기준)
     user = get_or_create_user(db, user_info=user_info, social_provider="naver")
 
+    # 🔐 JWT 액세스 토큰 생성
     token = create_access_token(
         data={"user_id": user.user_id},
         expires_delta=timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES),
     )
 
+    # 📤 사용자 정보 + JWT 토큰 반환
     return {
         "user_id": user.user_id,
         "social_provider": user.social_provider,
@@ -116,4 +142,5 @@ async def naver_login(request: NaverLoginRequest, db: Session = Depends(get_db))
         "access_token": token,
     }
 
+# 📡 라우터 등록 (외부에서 import 시 사용)
 router = naver_router

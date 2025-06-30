@@ -1,4 +1,4 @@
-# 파일명: favorite.py
+# 파일명: bookmark.py
 
 from sqlalchemy import Column, Integer, ForeignKey, DateTime, UniqueConstraint
 from sqlalchemy.sql import func
@@ -7,11 +7,11 @@ from app.core.database import Base
 
 
 # 사용자의 즐겨찾기한 채용공고 정보를 저장하는 ORM 모델입니다.
-class FavoriteJobORM(Base):
-    __tablename__ = "user_favorite_posts"
+class BookmarkJobORM(Base):
+    __tablename__ = "user_bookmarked_posts"
 
     # 즐겨찾기 고유 ID
-    favorite_job_id = Column(Integer, primary_key=True)
+    bookmark_job_id = Column(Integer, primary_key=True)
 
     # 사용자 ID (외래키)
     user_id = Column(Integer, ForeignKey("users.user_id", ondelete="CASCADE"))
@@ -24,7 +24,7 @@ class FavoriteJobORM(Base):
 
     # 유니크 제약조건 (user_id + job_post_id)
     __table_args__ = (
-        UniqueConstraint("user_id", "job_post_id", name="uq_favorite"),
+        UniqueConstraint("user_id", "job_post_id", name="uq_bookmark"),
     )
 
-    user = relationship("UserORM", backref="favorite_jobs")
+    user = relationship("UserORM", backref="bookmarked_jobs")
