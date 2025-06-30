@@ -1,4 +1,4 @@
-/* 로그인 박스 */
+/* ✅ 로그인 컨테이너 */
 .social-login-wrapper {
   max-width: 250px;
   margin: 100px auto;
@@ -9,39 +9,33 @@
   gap: 12px;
 }
 
-/* 공통 버튼 */
+/* ✅ 공통 버튼 스타일 */
 .social-button {
+  width: 250px;         /* 구글 버튼 기준 */
+  height: 48px;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  position: relative;
-  height: 48px;
-  font-size: 14px;
-  font-weight: bold;
-  border-radius: 6px;
-  cursor: pointer;
   border: none;
   padding: 0;
   background: none;
+  border-radius: 6px;
+  overflow: hidden;     /* 이미지가 버튼 크기에 딱 맞도록 자르기 */
+  cursor: pointer;
 }
 
-/* 네이버 */
+/* ✅ 네이버 이미지 버튼 */
 .naver-img-button {
   width: 100%;
-  height: auto;
-  object-fit: contain;
-  border-radius: 6px;
+  height: 100%;
+  object-fit: cover;    /* 이미지 비율 맞춤 및 꽉 채우기 */
 }
 
-
-
-
-/* 카카오 */
+/* ✅ 카카오 이미지 버튼 */
 .kakao-img-button {
   width: 100%;
-  height: auto;
-  object-fit: contain;
+  height: 100%;
+  object-fit: cover;
 }
 
-/* 구글은 직접 렌더링되므로 별도 스타일링 필요 없음 */
+/* ✅ 구글 버튼은 SDK가 직접 렌더링하므로 별도 스타일 필요 없음 */

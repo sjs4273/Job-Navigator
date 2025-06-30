@@ -1,0 +1,214 @@
+.container {
+  max-width: 880px;
+  margin: 40px auto;
+  padding: 20px;
+  font-family: 'Noto Sans KR', sans-serif;
+}
+
+/* 공통 pill 스타일 (탭 + 필터) */
+.pill {
+  all: unset;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  box-sizing: border-box;
+  width: auto;
+  min-height: 32px; /* 버튼 높이 고정 */
+  padding: 8px 16px;
+
+  font-size: 14px;
+  font-family: inherit;
+  font-weight: 500; /* 고정: 선택 전후 동일 */
+  line-height: 1;
+  vertical-align: middle;
+
+  background-color: #ffffff;
+  color: #374151;
+  border: 1.5px solid #d1d5db;
+  border-radius: 9999px;
+
+  white-space: nowrap;
+  cursor: pointer;
+  user-select: none;
+  transition:
+    background-color 0.2s,
+    color 0.2s,
+    border-color 0.2s;
+  appearance: none;
+}
+
+.pill:hover {
+  background-color: #f3f4f6;
+}
+
+.pill.active {
+  background-color: #2563eb;
+  color: white;
+  border-color: #2563eb;
+  /* font-weight 그대로 유지함 → 흔들림 없음 */
+}
+
+.top-tab .pill {
+  background-color: #e0edff;
+  color: #000000;
+  border: 1.5px solid #bfdbfe;
+  margin-top: 10px;
+}
+
+.top-tab .pill.active {
+  background-color: #2563eb;
+  color: white;
+  border-color: #2563eb;
+}
+
+/* 탭 메뉴 */
+.tab-menu {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+/* 기술 필터 */
+.select-box {
+  overflow: hidden;
+  max-height: 0;
+  opacity: 0;
+}
+
+.select-box.active {
+  max-height: 300px;
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* 트렌드 타이틀 */
+.title {
+  font-size: 22px;
+  font-weight: 700;
+  color: #111827;
+  border-bottom: 2px solid #3b82f6;
+  padding-bottom: 6px;
+  margin-bottom: 24px;
+}
+
+/* 트렌드 카드 */
+.trend-list {
+  margin-top: 30px;
+  margin-bottom: 40px;
+}
+
+.trend-card {
+  background: #fff;
+  padding: 18px;
+  border-radius: 14px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  margin-bottom: 16px;
+}
+
+.trend-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.tech-name {
+  font-weight: 600;
+  color: #111827;
+}
+
+.tech-percent {
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.progress-bar {
+  background: #e5e7eb;
+  border-radius: 9999px;
+  overflow: hidden;
+  height: 10px;
+}
+
+.progress-fill {
+  background: #f87171;
+  height: 100%;
+  transition: width 0.4s ease;
+}
+
+.job-count {
+  display: block;
+  text-align: right;
+  font-size: 12px;
+  color: #6b7280;
+  margin-top: 4px;
+}
+
+/* 요약 */
+.summary-box {
+  background: #f9fafb;
+  padding: 16px;
+  border-radius: 14px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+  margin-bottom: 30px;
+}
+
+/* 설명 말풍선 */
+.tab-wrapper {
+  position: relative;
+  margin-bottom: 24px;
+}
+
+.tab-guide-bubble {
+  position: absolute;
+  top: -50px;
+  left: 16px;
+  background-color: #fef9c3;
+  color: #92400e;
+  border: 1px solid #fde68a;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 14px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  animation: fadeIn 0.3s ease-in-out;
+  z-index: 10;
+}
+
+/* 꼬리 테두리 */
+.tab-guide-bubble::before {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 24px;
+  width: 0;
+  height: 0;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-top: 8px solid #fde68a; /* 테두리색 */
+  z-index: 0;
+}
+
+/* 꼬리 배경 */
+.tab-guide-bubble::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 25px;
+  width: 0;
+  height: 0;
+  border-left: 7px solid transparent;
+  border-right: 7px solid transparent;
+  border-top: 7px solid #fef9c3; /* 말풍선 배경색 */
+  z-index: 1;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
