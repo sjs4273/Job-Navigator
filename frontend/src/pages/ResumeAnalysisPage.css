@@ -1,12 +1,12 @@
-
-.tab-bar {
+.resume-tab-bar {
   display: flex;
-  align-items: center;
-  padding: 16px 24px;
   gap: 12px;
+  justify-content: flex-start;
+  width: 400px;
+  margin-left: -110px;
 }
 
-.tab2 {
+.resume-tab2 {
   padding: 8px 16px;
   border: none;
   background-color: #eee;
@@ -15,7 +15,7 @@
   cursor: pointer;
 }
 
-.tab.active2 {
+.resume-tab-active2 {
   background-color: #1e90ff;
   color: white;
   padding: 8px 16px;
@@ -24,25 +24,29 @@
   cursor: pointer;
 }
 
-
-
-
-.pdf-upload-container {
+.resume-pdf-upload-container {
   margin-top: 80px;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: 8px;
+  gap: 16px;
 }
 
-.pdf-input {
+.resume-input-button-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.resume-pdf-input {
   width: 400px;
   padding: 8px;
   border: 1px solid #999;
   border-radius: 4px;
 }
 
-.pdf-upload-button {
+.resume-pdf-upload-button {
   background-color: black;
   color: white;
   padding: 8px 16px;
