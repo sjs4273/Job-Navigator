@@ -3,7 +3,7 @@
 from sqlalchemy import Column, Integer, ForeignKey, String, Float, DateTime
 from sqlalchemy.sql import func
 from sqlalchemy.orm import relationship
-from sqlalchemy.dialects.postgresql import JSONB
+from app.models.json_type import JSONType
 from app.core.database import Base
 
 
@@ -21,7 +21,7 @@ class RoadmapORM(Base):
     resume_id = Column(Integer, ForeignKey("resumes.resume_id", ondelete="CASCADE"))
 
     # 생성된 로드맵 내용
-    generated_roadmap = Column(JSONB)
+    generated_roadmap = Column(JSONType)
 
     # 유사도 점수
     similarity_score = Column(Float)

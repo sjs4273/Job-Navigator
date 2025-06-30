@@ -3,7 +3,7 @@
 from sqlalchemy import Column, Integer, String, ForeignKey, DateTime
 from sqlalchemy.sql import func
 from sqlalchemy.orm import relationship
-from sqlalchemy.dialects.postgresql import JSONB
+from app.models.json_type import JSONType
 from app.core.database import Base
 
 
@@ -21,7 +21,7 @@ class ResumeORM(Base):
     file_path = Column(String(500))
 
     # 추출된 키워드 (JSON 배열)
-    extracted_keywords = Column(JSONB)
+    extracted_keywords = Column(JSONType)
 
     # 이력서를 통해 분류된 직무 카테고리
     job_category = Column(String(100))
