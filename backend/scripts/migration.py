@@ -14,7 +14,7 @@ from app.models.user import UserORM
 from app.models.job import JobORM
 from app.models.resume import ResumeORM
 from app.models.roadmap import RoadmapORM
-from app.models.favorite import FavoriteJobORM
+from backend.app.models.bookmark import FavoriteJobORM
 from app.models.tech_trend import TechTrendORM
 
 # ✅ .env 로드 (.env 경로를 절대경로로 처리)

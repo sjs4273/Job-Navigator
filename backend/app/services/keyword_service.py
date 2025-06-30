@@ -1,28 +1,28 @@
 # backend/app/services/keyword_service.py
-import sys
-import os
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../../ai")))
 
+import os
 import uuid
 import shutil
 import logging
 from fastapi import UploadFile
+from sqlalchemy.orm import Session
 from ai.extractor import extract_keywords_from_pdf  # AI 키워드 추출 함수
 from app.core.database import SessionLocal
-from app.models.resume import ResumeORM  # ✅ Resume 테이블로 변경
+from app.models.resume import ResumeORM
+from app.models.user import UserORM
 
 logger = logging.getLogger(__name__)
 
-async def extract_and_save_keywords(current_user: dict, pdf_file: UploadFile) -> dict:
+async def extract_and_save_keywords(current_user: UserORM, pdf_file: UploadFile) -> ResumeORM:
     """
     PDF 파일을 저장한 후 키워드를 추출하고, 관련 정보를 Resume 테이블에 저장합니다.
-    
+
     Parameters:
-        current_user (dict): 인증된 사용자 정보
+        current_user (UserORM): 인증된 사용자 객체
         pdf_file (UploadFile): 업로드된 PDF 파일 객체
 
     Returns:
-        dict: 추출된 키워드 및 파일 식별 정보를 담은 응답
+        ResumeORM: 저장된 이력서 ORM 객체
     """
     # 1. 임시 파일로 저장
     file_id = str(uuid.uuid4())
@@ -43,17 +43,19 @@ async def extract_and_save_keywords(current_user: dict, pdf_file: UploadFile) ->
 
     logger.info(f"🧠 키워드 추출 결과: {keywords}")
 
-    # 3. DB 저장 (ResumeORM 사용)
-    db = SessionLocal()
+    # 3. DB 저장
+    db: Session = SessionLocal()
     try:
         resume_entry = ResumeORM(
-            user_id=current_user["user_id"],
+            user_id=current_user.user_id,
             file_path=file_path,
             extracted_keywords=keywords,
-            job_category="",  # 아직 분류 미정이면 빈 문자열로 처리
+            job_category="",  # 분류 결과는 아직 없음
         )
         db.add(resume_entry)
         db.commit()
+        db.refresh(resume_entry)  # 저장된 ORM 객체 정보 최신화
+        return resume_entry       # ✅ 스키마와 일치하는 ORM 객체 반환
     except Exception as e:
         db.rollback()
         logger.error("❌ Resume 저장 실패", exc_info=True)
@@ -61,9 +63,3 @@ async def extract_and_save_keywords(current_user: dict, pdf_file: UploadFile) ->
     finally:
         db.close()
 
-    # 4. 응답 반환
-    return {
-        "file_id": file_id,
-        "filename": filename,
-        "keywords": keywords
-    }
