@@ -3,7 +3,7 @@ import {
   backendTrendMock,
   frontendTrendMock,
   mobileTrendMock,
-  aiTrendMock
+  aiTrendMock,
 } from '../mock/trendsBackend';
 import './TrendPage.css';
 
@@ -12,27 +12,35 @@ function TrendPage() {
   const [summary, setSummary] = useState('');
   const [activeTab, setActiveTab] = useState('백엔드');
   const [selectedSkills, setSelectedSkills] = useState([]);
-const [tabClicked, setTabClicked] = useState(() => {
-  return localStorage.getItem("trend_tab_visited") === "true";
-});
+  const [tabClicked, setTabClicked] = useState(() => {
+    return localStorage.getItem('trend_tab_visited') === 'true';
+  });
 
   const skillCategories = {
     백엔드: {
-      languages: ['Python', 'Java', 'Node.js', 'Go', 'Rust', 'Kotlin', 'TypeScript'],
-      frameworks: ['Django', 'Spring Boot', 'Express.js', 'FastAPI', 'NestJS']
+      languages: [
+        'Python',
+        'Java',
+        'Node.js',
+        'Go',
+        'Rust',
+        'Kotlin',
+        'TypeScript',
+      ],
+      frameworks: ['Django', 'Spring Boot', 'Express.js', 'FastAPI', 'NestJS'],
     },
     프론트엔드: {
       languages: ['HTML', 'CSS', 'JavaScript', 'TypeScript'],
-      frameworks: ['React', 'Vue.js', 'Angular', 'Next.js', 'Svelte']
+      frameworks: ['React', 'Vue.js', 'Angular', 'Next.js', 'Svelte'],
     },
     모바일: {
       languages: ['Kotlin', 'JavaScript', 'Swift', 'Dart'],
-      frameworks: ['Flutter', 'React Native']
+      frameworks: ['Flutter', 'React Native'],
     },
     AI: {
       languages: ['Python', 'R', 'SQL'],
-      frameworks: ['TensorFlow', 'PyTorch', 'Scikit-learn', 'HuggingFace']
-    }
+      frameworks: ['TensorFlow', 'PyTorch', 'Scikit-learn', 'HuggingFace'],
+    },
   };
 
   const toggleSkill = (skill) => {
@@ -59,33 +67,31 @@ const [tabClicked, setTabClicked] = useState(() => {
     <div className="container">
       {/* 상단 탭 */}
       <div className="tab-wrapper">
-  {!tabClicked && (
-    <div className="tab-guide-bubble">
-      탭을 클릭해서 최신 공고를 확인해보세요!
-    </div>
-  )}
-  <div className="tab-menu top-tab">
-    {['백엔드', '프론트엔드', '모바일', 'AI'].map((tab) => (
-      <button
-        key={tab}
-        className={`pill ${activeTab === tab ? 'active' : ''}`}
-        onClick={() => {
-  setActiveTab(tab);
-  setTabClicked(true);
-  localStorage.setItem("trend_tab_visited", "true");
-}}
-      >
-        {tab}
-      </button>
-    ))}
-  </div>
-</div>
-
+        {!tabClicked && (
+          <div className="tab-guide-bubble">
+            탭을 클릭해서 최신 공고를 확인해보세요!
+          </div>
+        )}
+        <div className="tab-menu top-tab">
+          {['백엔드', '프론트엔드', '모바일', 'AI'].map((tab) => (
+            <button
+              key={tab}
+              className={`pill ${activeTab === tab ? 'active' : ''}`}
+              onClick={() => {
+                setActiveTab(tab);
+                setTabClicked(true);
+                localStorage.setItem('trend_tab_visited', 'true');
+              }}
+            >
+              {tab}
+            </button>
+          ))}
+        </div>
+      </div>
 
       {/* 언어 필터 */}
       <div className={`select-box ${trendData.length > 0 ? 'active' : ''}`}>
         <div className="tab-menu">
-          
           {skillCategories[activeTab].languages.map((lang, idx) => (
             <button
               key={idx}
@@ -128,7 +134,9 @@ const [tabClicked, setTabClicked] = useState(() => {
                 style={{ width: `${tech.percentage}%` }}
               ></div>
             </div>
-            <span className="job-count">{tech.count.toLocaleString()}개 공고</span>
+            <span className="job-count">
+              {tech.count.toLocaleString()}개 공고
+            </span>
           </div>
         ))}
       </div>
@@ -136,14 +144,16 @@ const [tabClicked, setTabClicked] = useState(() => {
       {/* 요약 */}
       <div className="summary-box">
         {(() => {
-  const sentences = summary.match(/[^.!?]*(?:다|요|니다)\./g) || [summary];
-  return (
-    <>
-      <p className="summary-title">{sentences[0]}</p>
-      <p>{sentences.slice(1).join(' ')}</p>
-    </>
-  );
-})()}
+          const sentences = summary.match(/[^.!?]*(?:다|요|니다)\./g) || [
+            summary,
+          ];
+          return (
+            <>
+              <p className="summary-title">{sentences[0]}</p>
+              <p>{sentences.slice(1).join(' ')}</p>
+            </>
+          );
+        })()}
       </div>
     </div>
   );
