@@ -10,7 +10,7 @@ import TrendPage from './pages/TrendPage';
 import ResumeAnalysisPage from './pages/ResumeAnalysisPage';
 import Header from './components/Header';
 import Jobanalysispage from './pages/Jobanalysispage';
-import RoadmapResult from './pages/Roadmapresult';
+import AnalysisResult from './pages/AnalysisResult';
 import MyPage from './pages/MyPage';
 
 import './global.css';
@@ -35,7 +35,7 @@ function App() {
         <Route path="/trend" element={<TrendPage />} />
         <Route path="/resume" element={<ResumeAnalysisPage />} />
         <Route path="/analysis" element={<Jobanalysispage />} />
-        <Route path="/roadmap-result" element={<RoadmapResult />} />
+        <Route path="/analysis-result" element={<AnalysisResult />} />
 
         {/* 이미지 변경시 헤더이미지 즉시 반영, MyPage에서 setUserInfo() 호출 시 App.jsx의 userInfo 상태가 업데이트}*/}
         <Route path="/mypage" element={<MyPage userInfo={userInfo} setUserInfo={setUserInfo} />} /> 
