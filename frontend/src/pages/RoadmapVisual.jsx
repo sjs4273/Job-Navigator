@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { VerticalTimeline, VerticalTimelineElement } from "react-vertical-timeline-component";
+import WorkIcon from "@mui/icons-material/Work";
 import "react-vertical-timeline-component/style.min.css";
 import "./RoadmapVisual.css";
 
@@ -10,7 +11,6 @@ export default function RoadmapVisual() {
   const [data, setData] = useState(null);
 
   useEffect(() => {
-    // ✅ 실제로는 GPT API 응답 받아서 설정
     const mockData = {
       roadmap_steps: [
         {
@@ -39,24 +39,28 @@ export default function RoadmapVisual() {
         }
       ]
     };
-
     setData(mockData);
   }, []);
 
   if (!data) return <p>로드맵 로딩 중...</p>;
 
+  const colors = ["#2563eb", "#22c55e", "#f97316", "#10b981", "#9333ea", "#f43f5e"];
+
   return (
     <div className="roadmap-visual-container">
       <h2>커리어 로드맵</h2>
-      <VerticalTimeline>
+      <VerticalTimeline lineColor="#2563eb">
         {data.roadmap_steps.map((step, index) => (
           <VerticalTimelineElement
             key={index}
             date={`Step ${index + 1}`}
-            iconStyle={{ background: "#2563eb", color: "#fff" }}
+            iconStyle={{ background: colors[index % colors.length], color: "#fff" }}
+            icon={<WorkIcon />}
+            contentStyle={{ background: "#f9fafb", boxShadow: "0 4px 12px rgba(0,0,0,0.1)", borderRadius: "12px" }}
+            contentArrowStyle={{ borderRight: "7px solid #f9fafb" }}
           >
-            <h3>{step.title}</h3>
-            <p>{step.description}</p>
+            <h3 className="roadmap-title">{step.title}</h3>
+            <p className="roadmap-description">{step.description}</p>
           </VerticalTimelineElement>
         ))}
       </VerticalTimeline>
