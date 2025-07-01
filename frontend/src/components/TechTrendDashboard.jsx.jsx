@@ -160,18 +160,102 @@ const TechTrendDashboard = () => {
       {trendData?.popular_libraries?.length > 0 && (
         <div className="trend-list">
           <h2 className="summary-title">인기 오픈소스 라이브러리</h2>
-          <p className="chart-description">NPM 또는 PyPI 등에서 많이 다운로드된 오픈소스 라이브러리 순위를 보여줍니다.</p>
+          <p className="chart-description">
+            NPM 또는 PyPI 등에서 많이 다운로드된 오픈소스 라이브러리 순위를 보여줍니다.
+          </p>
           <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={trendData.popular_libraries}>
+            <BarChart
+              data={trendData.popular_libraries}
+              margin={{ top: 20, right: 10, left: 10, bottom: 20 }}
+            >
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="name" />
-              <YAxis />
-              <Tooltip />
-              <Bar dataKey="downloads" fill="#82ca9d" />
+              <YAxis
+                tickFormatter={(value) => {
+                  if (value >= 1_000_000) return `${value / 1_000_000}M`;
+                  if (value >= 1_000) return `${value / 1_000}K`;
+                  return value;
+                }}
+              />
+              <Tooltip formatter={(value) => value.toLocaleString()} />
+              <Bar dataKey="downloads" fill="#82ca9d" barSize={60} />
             </BarChart>
           </ResponsiveContainer>
         </div>
       )}
+
+      {trendData?.google_trends?.length > 0 && (
+        <div className="trend-list">
+          <h2 className="summary-title">📈 Google 검색 트렌드 변화</h2>
+          <p className="chart-description">주간 기준으로 기술 키워드의 검색량 추이를 나타냅니다.</p>
+          <ResponsiveContainer width="100%" height={300}>
+            <LineChart data={trendData.google_trends}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="week" />
+              <YAxis />
+
+              {/* ✅ 커스텀 Tooltip */}
+              <Tooltip
+                content={({ active, payload, label }) => {
+                  if (active && payload && payload.length) {
+                    const sorted = [...payload].sort((a, b) => b.value - a.value);
+                    return (
+                      <div className="custom-tooltip" style={{ background: "#fff", padding: 10, border: "1px solid #ccc" }}>
+                        <p className="label">{label}</p>
+                        {sorted.map((entry) => (
+                          <p key={entry.name} style={{ color: entry.color, margin: 0 }}>
+                            {entry.name}: {entry.value}
+                          </p>
+                        ))}
+                      </div>
+                    );
+                  }
+                  return null;
+                }}
+              />
+
+              {/* ✅ 커스텀 Legend (전 주차 기준 정렬) */}
+              <Legend
+                content={({ payload }) => {
+                  const prev = trendData.google_trends.length - 2;  // 이전 주차
+                  const sorted = [...payload].sort(
+                    (a, b) =>
+                      trendData.google_trends[prev][b.value] -
+                      trendData.google_trends[prev][a.value]
+                  );
+                  return (
+                    <ul className="custom-legend" style={{ display: "flex", listStyle: "none", gap: "12px", marginTop: 10 }}>
+                      {sorted.map((entry) => (
+                        <li key={entry.value} style={{ color: entry.color }}>
+                          {entry.value}
+                        </li>
+                      ))}
+                    </ul>
+                  );
+                }}
+              />
+
+              {/* ✅ 최신 주차 기준 라인 정렬 */}
+              {Object.entries(
+                trendData.google_trends[trendData.google_trends.length - 1]
+              )
+                .filter(([key]) => key !== "week" && key !== "isPartial")
+                .sort(([, a], [, b]) => b - a)
+                .map(([tech]) => (
+                  <Line
+                    key={tech}
+                    type="monotone"
+                    dataKey={tech}
+                    stroke={LANGUAGE_COLOR_MAP[tech] || "#8884d8"}
+                    name={tech}
+                    dot={false}
+                  />
+                ))}
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+      )}
+
 
       {/* ✅ StackOverflow 설문 BarChart */}
       {trendData?.stackoverflow_survey?.length > 0 && (
