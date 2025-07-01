@@ -56,7 +56,6 @@ export default function Header({ userInfo, setUserInfo }) {
                       ? userInfo.profile_image
                       : `${import.meta.env.VITE_API_BASE_URL}${userInfo.profile_image}?t=${new Date().getTime()}`
                   }
-                  alt="프로필"
                   sx={{
                     width: 36,
                     height: 36,

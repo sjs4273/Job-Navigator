@@ -7,7 +7,14 @@ body {
   padding: 0;
 }
 
-html, body, #root {
+html,
+body,
+#root {
   height: 100%;
   overflow-y: auto;
+}
+
+.slick-list {
+  padding-left: 12px !important;
+  padding-right: 4px;
 }

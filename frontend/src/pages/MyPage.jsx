@@ -56,27 +56,29 @@ export default function MyPage({ userInfo, setUserInfo }) {
   };
 
   useEffect(() => {
-  const fetchBookmarkedJobs = async () => {
-    try {
-      const token = localStorage.getItem('access_token');
-      const res = await fetch(
-        `${import.meta.env.VITE_API_BASE_URL}/favorites`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      const result = await res.json();
-      setBookmarkedJobs(result);
-    } catch (err) {
-      console.error('❌ 즐겨찾기 공고 불러오기 실패:', err);
-    }
-  };
+    const fetchBookmarkedJobs = async () => {
+      try {
+        const token = localStorage.getItem('access_token');
+        const res = await fetch(
+          `${import.meta.env.VITE_API_BASE_URL}/api/v1/bookmarks`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        const result = await res.json();
+        console.log('즐겨찾기 응답:', result, Array.isArray(result));
 
-  fetchBookmarkedJobs();
-}, []);
-console.log('bookmarkedJobs:', bookmarkedJobs);
+        setBookmarkedJobs(result);
+      } catch (err) {
+        console.error('❌ 즐겨찾기 공고 불러오기 실패:', err);
+      }
+    };
+
+    fetchBookmarkedJobs();
+  }, []);
+
   useEffect(() => {
     const userData = localStorage.getItem('userInfo');
     if (userData) {
@@ -124,7 +126,7 @@ console.log('bookmarkedJobs:', bookmarkedJobs);
           <Box sx={{ marginLeft: '1.5rem' }}>
             <Typography variant="h6">{user.name || '이름 없음'}</Typography>
             <Typography variant="body2" color="text.secondary">
-              {user.email || '이메일 없음'}
+              {user.email || '이메일 없음'}f
             </Typography>
             <Typography variant="body2" color="text.secondary">
               {user.description || ''}
@@ -143,22 +145,22 @@ console.log('bookmarkedJobs:', bookmarkedJobs);
           ))}
         </Box>
       </Box>
-{/* 즐겨찾기 공고 데이터 매핑 */}
-      <Box className="section-box">
-  <Typography variant="subtitle1" className="section-title">
-    즐겨찾기한 채용 공고
-  </Typography>
-  {bookmarkedJobs.length > 0 ? (
-    bookmarkedJobs.map((bookmark) => (
-      <BookmarkCard key={bookmark.bookmark_job_id} job={bookmark.job_post} />
-    ))
-  ) : (
-    <Typography variant="body2" color="text.secondary">
-      즐겨찾기한 채용공고가 없습니다.
-    </Typography>
-  )}
-</Box>
 
+      {/* 즐겨찾기 공고 데이터 매핑 */}
+      <Box className="section-box" sx={{ mt: 4, mb: 6 }}>
+        <Typography variant="subtitle1" className="section-title">
+          즐겨찾기한 채용 공고
+        </Typography>
+        {bookmarkedJobs.length > 0 ? (
+          <Box>
+            <BookmarkCard bookmarkedJobs={bookmarkedJobs} />
+          </Box>
+        ) : (
+          <Typography variant="body2" color="text.secondary">
+            즐겨찾기한 채용공고가 없습니다.
+          </Typography>
+        )}
+      </Box>
 
       <Snackbar
         open={snackbarOpen}
