@@ -1,8 +1,3 @@
-// 이 파일은 프로필 이미지 변경 기능을 포함합니다.
-// 사용자가 이미지를 업로드하면 FormData로 서버에 전송되며,
-// 백엔드는 해당 이미지를 로컬 디렉토리에 저장하고, 경로를 반환합니다.
-// 반환된 경로는 user.profile_image로 관리됨.
-
 import React, { useState, useEffect } from 'react';
 import './MyPage.css';
 import {
@@ -71,7 +66,7 @@ export default function MyPage({ userInfo, setUserInfo }) {
               sx={{ width: 80, height: 80, border: '1px solid #e0e0e0' }}
               src={
                 user?.profile_image?.startsWith('http')
-                  ? user.profile_image // 절대 URL이면 그대로 사용 (ex. 구글 프로필 이미지 등)
+                  ? user.profile_image
                   : `${import.meta.env.VITE_API_BASE_URL}${user.profile_image}?t=${new Date().getTime()}`
               }
             />
@@ -111,7 +106,7 @@ export default function MyPage({ userInfo, setUserInfo }) {
 
       <Box className="section-box">
         <Typography variant="subtitle1" className="section-title">
-          나의 로드맵
+          나의 기술 스택
         </Typography>
         <Box className="chip-container">
           {(user?.skills || []).map((skill, idx) => (
@@ -122,10 +117,20 @@ export default function MyPage({ userInfo, setUserInfo }) {
 
       <Box className="section-box">
         <Typography variant="subtitle1" className="section-title">
-          채용 공고
+          나의 로드맵
         </Typography>
-        {/* 공고 데이터 매핑 예정 */}
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: '8px', mt: 1 }}>
+          {(user?.roadmap || []).map((step, idx) => (
+            <Paper key={idx} elevation={2} sx={{ padding: '8px' }}>
+              <Typography variant="subtitle2">{step.title}</Typography>
+              <Typography variant="body2" color="text.secondary">
+                {step.description}
+              </Typography>
+            </Paper>
+          ))}
+        </Box>
       </Box>
+
       <Snackbar
         open={snackbarOpen}
         autoHideDuration={2200}
