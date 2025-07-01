@@ -22,11 +22,8 @@
     "react-chartjs-2": "^5.3.0",
     "react-dom": "^19.1.0",
     "react-router-dom": "^7.6.2",
-<<<<<<< HEAD
+    "react-vertical-timeline-component": "^3.6.0",
     "recharts": "^3.0.2"
-=======
-    "react-vertical-timeline-component": "^3.6.0"
->>>>>>> 3980c5de2760b2efa6a67237e481a662b1dba068
   },
   "devDependencies": {
     "@eslint/js": "^9.25.0",
