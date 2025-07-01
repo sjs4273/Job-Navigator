@@ -158,34 +158,7 @@ export default function MyPage({ userInfo, setUserInfo }) {
         </Box>
       </Paper>
 
-      <Box className="section-box">
-        <Typography variant="subtitle1" className="section-title">
-          나의 기술 스택
-        </Typography>
-        <Box className="chip-container">
-          {(user?.skills || []).map((skill, idx) => (
-            <Chip key={idx} label={skill} className="skill-chip" />
-          ))}
-        </Box>
-      </Box>
-
-      {/* 즐겨찾기 공고 데이터 매핑 */}
-<Box className="section-box" sx={{ mt: 4, mb: 6 }}>
-  <Typography variant="subtitle1" className="section-title">
-    즐겨찾기한 채용 공고
-  </Typography>
-  {bookmarkedJobs.length > 0 ? (
-    <Box>
-      <BookmarkCard bookmarkedJobs={bookmarkedJobs} />
-    </Box>
-  ) : (
-    <Typography variant="body2" color="text.secondary">
-      즐겨찾기한 채용공고가 없습니다.
-    </Typography>
-  )}
-</Box>
-
-<Box className="section-box" sx={{ mt: 4, mb: 6 }}>
+      <Box className="section-box" sx={{ mt: 4, mb: 6 }}>
   <Typography variant="subtitle1" className="section-title">
     나의 로드맵
   </Typography>
@@ -224,6 +197,24 @@ export default function MyPage({ userInfo, setUserInfo }) {
     </Typography>
   )}
 </Box>
+
+      {/* 즐겨찾기 공고 데이터 매핑 */}
+<Box className="section-box" sx={{ mt: 4, mb: 6 }}>
+  <Typography variant="subtitle1" className="section-title">
+    즐겨찾기한 채용 공고
+  </Typography>
+  {bookmarkedJobs.length > 0 ? (
+    <Box>
+      <BookmarkCard bookmarkedJobs={bookmarkedJobs} />
+    </Box>
+  ) : (
+    <Typography variant="body2" color="text.secondary">
+      즐겨찾기한 채용공고가 없습니다.
+    </Typography>
+  )}
+</Box>
+
+
 
       <Snackbar
         open={snackbarOpen}
