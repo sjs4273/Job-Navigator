@@ -6,11 +6,15 @@ import {
   Typography,
   Chip,
   Paper,
-  Divider,
   IconButton,
   Snackbar,
   Alert,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
+  Button,
 } from '@mui/material';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import EditIcon from '@mui/icons-material/Edit';
 
 export default function MyPage({ userInfo, setUserInfo }) {
@@ -48,12 +52,36 @@ export default function MyPage({ userInfo, setUserInfo }) {
     setSnackbarOpen(true);
   };
 
+  const handleDeleteRoadmap = (index) => {
+    if (!user) return;
+
+    const updatedRoadmaps = [...(user.roadmaps || [])];
+    updatedRoadmaps.splice(index, 1);
+
+    const updatedUser = {
+      ...user,
+      roadmaps: updatedRoadmaps,
+    };
+
+    localStorage.setItem('userInfo', JSON.stringify(updatedUser));
+    setUser(updatedUser);
+    setUserInfo(updatedUser);
+  };
+
   useEffect(() => {
     const userData = localStorage.getItem('userInfo');
     if (userData) {
       setUser(JSON.parse(userData));
     }
   }, []);
+
+  const formatDate = (date) => {
+    const d = new Date(date);
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
 
   if (!user) return <Typography>로그인 정보 없음</Typography>;
 
@@ -119,16 +147,40 @@ export default function MyPage({ userInfo, setUserInfo }) {
         <Typography variant="subtitle1" className="section-title">
           나의 로드맵
         </Typography>
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: '8px', mt: 1 }}>
-          {(user?.roadmap || []).map((step, idx) => (
-            <Paper key={idx} elevation={2} sx={{ padding: '8px' }}>
-              <Typography variant="subtitle2">{step.title}</Typography>
-              <Typography variant="body2" color="text.secondary">
-                {step.description}
-              </Typography>
-            </Paper>
-          ))}
-        </Box>
+
+        {(user?.roadmaps || []).length > 0 ? (
+          (user.roadmaps).map((rm, rmIdx) => (
+            <Accordion key={rmIdx} sx={{ mt: 1 }}>
+              <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                <Typography variant="subtitle2">
+                  {formatDate(rm.date)} 커리어 로드맵
+                </Typography>
+              </AccordionSummary>
+              <AccordionDetails>
+                {rm.steps.map((step, idx) => (
+                  <Paper key={idx} elevation={2} sx={{ padding: '8px', mb: 1 }}>
+                    <Typography variant="subtitle2">{step.title}</Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      {step.description}
+                    </Typography>
+                  </Paper>
+                ))}
+                <Button
+                  variant="outlined"
+                  color="error"
+                  onClick={() => handleDeleteRoadmap(rmIdx)}
+                  sx={{ mt: 1 }}
+                >
+                  로드맵 삭제
+                </Button>
+              </AccordionDetails>
+            </Accordion>
+          ))
+        ) : (
+          <Typography variant="body2" color="text.secondary">
+            저장된 로드맵이 없습니다.
+          </Typography>
+        )}
       </Box>
 
       <Snackbar
