@@ -52,7 +52,19 @@ def read_job(
     job = job_service.get_job_by_id(db, job_id)
     if not job:
         raise HTTPException(status_code=404, detail="Job not found")
-    return job
+
+    # ✅ 명시적으로 Pydantic 스키마로 변환 (id 필드 매핑 포함)
+    return job_schema.JobOut(
+        id=job.job_post_id,
+        title=job.title,
+        company=job.company,
+        location=job.location,
+        tech_stack=job.tech_stack or [],
+        url=job.url,
+        due_date_text=job.due_date_text,
+        job_type=job.job_type,
+        experience=job.experience,
+    )
 
 
 # ✅ 3. 채용공고 생성
