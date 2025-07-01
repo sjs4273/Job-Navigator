@@ -1,0 +1,53 @@
+.roadmap-visual-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 30px;
+}
+
+.roadmap-visual-container h2 {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.roadmap-visual-container h3 {
+  margin-top: 30px;
+}
+
+.roadmap-visual-container ul {
+  padding-left: 20px;
+}
+
+.roadmap-visual-container li {
+  margin-bottom: 5px;
+}
+
+.roadmap-visual-container p {
+  background-color: #f9fafb;
+  padding: 10px;
+  border-radius: 6px;
+}
+
+
+.step-badge {
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  background-color: #2563eb;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+}
+
+.step-content h3 {
+  margin: 0;
+  font-size: 18px;
+}
+
+.step-content p {
+  margin: 5px 0 0;
+  color: #475569;
+  line-height: 1.5;
+}
