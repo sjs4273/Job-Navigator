@@ -10,7 +10,7 @@ export default function PDFRoadmapPage() {
   const roadmap = [
     {
       title: "1단계: 현재 스택 강점 유지 및 기본기 강화",
-      description: "기존 기술 스택을 기반으로 프로젝트 경험을 쌓고, 코드 품질, 테스트, 보안 등 기본기를 다집니다. 협업 문서화와 코드 리뷰도 중요합니다.",
+      description: "기존 기술 스택을 기반으로 프로젝트 경험을 쌓고, 코드 품질, 테스트, 보안 등 기본기를 다집니다.",
       icon: <FaCode />,
     },
     {
@@ -20,17 +20,17 @@ export default function PDFRoadmapPage() {
     },
     {
       title: "3단계: 스택 확장 및 역할 다변화",
-      description: "프론트, 백엔드, 클라우드, DevOps 등 다양한 기술을 접하며 시스템 설계 시야를 넓히고, 팀 리딩 및 멘토링 경험을 병행합니다.",
+      description: "프론트, 백엔드, 클라우드 등 다양한 기술을 접하며 팀 리딩 및 멘토링 경험을 병행합니다.",
       icon: <FaProjectDiagram />,
     },
     {
       title: "4단계: 시장 수요 기반 프로젝트 도전",
-      description: "오픈소스 참여, 기술 블로그, 대규모 프로젝트 리드 등으로 네트워크를 넓히고 실전 문제 해결 능력을 강화합니다.",
+      description: "오픈소스 참여, 블로그, 대규모 프로젝트 리드 등으로 네트워크와 문제 해결 능력을 강화합니다.",
       icon: <FaRocket />,
     },
     {
-      title: "5단계: 체계적인 장기 학습 계획 및 브랜딩",
-      description: "단기 기술 심화 → 중기 협업 및 문제 해결 → 장기 기술 리더십 준비. 컨퍼런스 발표와 커뮤니티 리더 활동으로 개인 브랜딩 강화.",
+      title: "5단계: 장기적 브랜딩 및 리더십 강화",
+      description: "기술 심화 → 협업 및 문제 해결 → 기술 리더십 준비. 발표 및 커뮤니티 활동으로 브랜딩.",
       icon: <FaUserTie />,
     },
   ];
@@ -55,14 +55,19 @@ export default function PDFRoadmapPage() {
       return;
     }
 
+    const newRoadmap = {
+      date: new Date().toISOString(),
+      steps: roadmapData,
+    };
+
     const updatedUserInfo = {
       ...userInfo,
-      roadmap: roadmapData,
+      roadmaps: [...(userInfo.roadmaps || []), newRoadmap],
     };
 
     localStorage.setItem("userInfo", JSON.stringify(updatedUserInfo));
 
-    alert("로드맵이 프로필에 임시로 저장되었습니다!");
+    alert("새로운 로드맵이 프로필에 저장되었습니다!");
   };
 
   return (
@@ -77,7 +82,7 @@ export default function PDFRoadmapPage() {
             iconStyle={{ background: "#0d6efd", color: "#fff" }}
             icon={step.icon}
           >
-            <h3 className="vertical-timeline-element-title">{step.title}</h3>
+            <h3>{step.title}</h3>
             <p>{step.description}</p>
           </VerticalTimelineElement>
         ))}
