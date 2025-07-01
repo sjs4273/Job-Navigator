@@ -10,6 +10,7 @@ function TrendPage() {
   const [tabClicked, setTabClicked] = useState(() => {
     return localStorage.getItem('trend_tab_visited') === 'true';
   });
+  const [animate, setAnimate] = useState(false); // ✅ 애니메이션 상태 추가
 
   const skillCategories = {
     백엔드: {
@@ -55,6 +56,8 @@ function TrendPage() {
         setTrendData(data.top_5);
         setSummary(data.summary);
         setSelectedSkills([]);
+        setAnimate(false); // ✅ 트렌드 데이터 초기화 시 애니메이션 리셋
+        setTimeout(() => setAnimate(true), 100); // ✅ 약간의 딜레이 후 애니메이션 시작
       } catch (error) {
         console.error('📛 기술 트렌드 데이터를 불러오는 중 오류 발생:', error);
         setTrendData([]);
@@ -70,7 +73,7 @@ function TrendPage() {
 
     const processed = summary.replace(/\. /g, '.\n');
     const chars = Array.from(processed);
-    setDisplayedSummary(''); // 초기화
+    setDisplayedSummary('');
 
     let isCancelled = false;
 
@@ -81,9 +84,8 @@ function TrendPage() {
     };
 
     streamText(0);
-
     return () => {
-      isCancelled = true; // 언마운트 시 인터럽트
+      isCancelled = true;
     };
   }, [summary]);
 
@@ -144,7 +146,7 @@ function TrendPage() {
       </div>
 
       {/* 기술 트렌드 */}
-      <h2 className="title">{activeTab} 기술 트렌드 (채용공고 기준)</h2>
+      <h2 className="title">{activeTab} 상위 5개 기술 트렌드 (채용공고 기준)</h2>
       <div className="trend-list">
         {trendData.map((tech, idx) => (
           <div key={idx} className="trend-card">
@@ -155,12 +157,14 @@ function TrendPage() {
             <div className="progress-bar">
               <div
                 className="progress-fill"
-                style={{ width: `${tech.percentage}%` }}
+                style={{
+                  width: animate ? `${tech.percentage}%` : 0,
+                  transition: 'width 1.2s ease-in-out',
+                  transitionDelay: `${idx * 0.1}s`,
+                }}
               ></div>
             </div>
-            <span className="job-count">
-              {tech.count.toLocaleString()}개 공고
-            </span>
+            <span className="job-count">{tech.count.toLocaleString()}개 공고</span>
           </div>
         ))}
       </div>
