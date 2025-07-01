@@ -158,63 +158,64 @@ export default function MyPage({ userInfo, setUserInfo }) {
         </Box>
       </Paper>
 
+      
+      {/* 로드맵 */}
       <Box className="section-box" sx={{ mt: 4, mb: 6 }}>
-  <Typography variant="subtitle1" className="section-title">
-    나의 로드맵
-  </Typography>
+        <Typography variant="subtitle1" className="section-title">
+          나의 로드맵
+        </Typography>
 
-  {(user?.roadmaps || []).length > 0 ? (
-    user.roadmaps.map((rm, rmIdx) => (
-      <Accordion key={rmIdx} sx={{ mt: 1 }}>
-        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-          <Typography variant="subtitle2">
-            {formatDate(rm.date)} 커리어 로드맵
+        {(user?.roadmaps || []).length > 0 ? (
+          user.roadmaps.map((rm, rmIdx) => (
+            <Accordion key={rmIdx} sx={{ mt: 1 }}>
+              <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                <Typography variant="subtitle2">
+                  {formatDate(rm.date)} 커리어 로드맵
+                </Typography>
+              </AccordionSummary>
+              <AccordionDetails>
+                {rm.steps.map((step, idx) => (
+                  <Paper key={idx} elevation={2} sx={{ padding: '8px', mb: 1 }}>
+                    <Typography variant="subtitle2">{step.title}</Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      {step.description}
+                    </Typography>
+                  </Paper>
+                ))}
+                <Button
+                  variant="outlined"
+                  color="error"
+                  onClick={() => handleDeleteRoadmap(rmIdx)}
+                  sx={{ mt: 1 }}
+                >
+                  로드맵 삭제
+                </Button>
+              </AccordionDetails>
+            </Accordion>
+          ))
+        ) : (
+          <Typography variant="body2" color="text.secondary">
+            저장된 로드맵이 없습니다.
           </Typography>
-        </AccordionSummary>
-        <AccordionDetails>
-          {rm.steps.map((step, idx) => (
-            <Paper key={idx} elevation={2} sx={{ padding: '8px', mb: 1 }}>
-              <Typography variant="subtitle2">{step.title}</Typography>
-              <Typography variant="body2" color="text.secondary">
-                {step.description}
-              </Typography>
-            </Paper>
-          ))}
-          <Button
-            variant="outlined"
-            color="error"
-            onClick={() => handleDeleteRoadmap(rmIdx)}
-            sx={{ mt: 1 }}
-          >
-            로드맵 삭제
-          </Button>
-        </AccordionDetails>
-      </Accordion>
-    ))
-  ) : (
-    <Typography variant="body2" color="text.secondary">
-      저장된 로드맵이 없습니다.
-    </Typography>
-  )}
-</Box>
+        )}
+      </Box>
+
 
       {/* 즐겨찾기 공고 데이터 매핑 */}
-<Box className="section-box" sx={{ mt: 4, mb: 6 }}>
-  <Typography variant="subtitle1" className="section-title">
-    즐겨찾기한 채용 공고
-  </Typography>
-  {bookmarkedJobs.length > 0 ? (
-    <Box>
-      <BookmarkCard bookmarkedJobs={bookmarkedJobs} />
-    </Box>
-  ) : (
-    <Typography variant="body2" color="text.secondary">
-      즐겨찾기한 채용공고가 없습니다.
-    </Typography>
-  )}
-</Box>
-
-
+      <Box className="section-box" sx={{ mt: 4, mb: 6 }}>
+        <Typography variant="subtitle1" className="section-title">
+          즐겨찾기한 채용 공고
+        </Typography>
+        {bookmarkedJobs.length > 0 ? (
+          <Box>
+            <BookmarkCard bookmarkedJobs={bookmarkedJobs} />
+          </Box>
+        ) : (
+          <Typography variant="body2" color="text.secondary">
+            즐겨찾기한 채용공고가 없습니다.
+          </Typography>
+        )}
+      </Box>
 
       <Snackbar
         open={snackbarOpen}
