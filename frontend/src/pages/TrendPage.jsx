@@ -1,4 +1,6 @@
 import { useState, useEffect } from 'react';
+import TechTrendDashboard from '../components/TechTrendDashboard.jsx';
+import SummaryBox from '../components/SummaryBox.jsx';
 import './TrendPage.css';
 
 function TrendPage() {
@@ -7,10 +9,9 @@ function TrendPage() {
   const [displayedSummary, setDisplayedSummary] = useState('');
   const [activeTab, setActiveTab] = useState('백엔드');
   const [selectedSkills, setSelectedSkills] = useState([]);
-  const [tabClicked, setTabClicked] = useState(() => {
-    return localStorage.getItem('trend_tab_visited') === 'true';
-  });
-  const [animate, setAnimate] = useState(false); // ✅ 애니메이션 상태 추가
+  const [tabClicked, setTabClicked] = useState(() => localStorage.getItem('trend_tab_visited') === 'true');
+  const [animate, setAnimate] = useState(false);
+  const [showSummaryBox, setShowSummaryBox] = useState(false); // ✅ 3초 후에 true로 변경
 
   const skillCategories = {
     백엔드: {
@@ -56,8 +57,10 @@ function TrendPage() {
         setTrendData(data.top_5);
         setSummary(data.summary);
         setSelectedSkills([]);
-        setAnimate(false); // ✅ 트렌드 데이터 초기화 시 애니메이션 리셋
-        setTimeout(() => setAnimate(true), 100); // ✅ 약간의 딜레이 후 애니메이션 시작
+        setAnimate(false);
+        setTimeout(() => setAnimate(true), 100);
+        setShowSummaryBox(false);
+        setTimeout(() => setShowSummaryBox(true), 5000); // ✅ 3초 후에 요약 박스 표시
       } catch (error) {
         console.error('📛 기술 트렌드 데이터를 불러오는 중 오류 발생:', error);
         setTrendData([]);
@@ -68,35 +71,12 @@ function TrendPage() {
     fetchTrendData();
   }, [activeTab]);
 
-  useEffect(() => {
-    if (!summary) return;
-
-    const processed = summary.replace(/\. /g, '.\n');
-    const chars = Array.from(processed);
-    setDisplayedSummary('');
-
-    let isCancelled = false;
-
-    const streamText = async (i) => {
-      if (i >= chars.length || isCancelled) return;
-      setDisplayedSummary((prev) => prev + chars[i]);
-      setTimeout(() => streamText(i + 1), 30);
-    };
-
-    streamText(0);
-    return () => {
-      isCancelled = true;
-    };
-  }, [summary]);
-
   return (
     <div className="container">
       {/* 상단 탭 */}
       <div className="tab-wrapper">
         {!tabClicked && (
-          <div className="tab-guide-bubble">
-            탭을 클릭해서 최신 공고를 확인해보세요!
-          </div>
+          <div className="tab-guide-bubble">탭을 클릭해서 최신 공고를 확인해보세요!</div>
         )}
         <div className="tab-menu top-tab">
           {['백엔드', '프론트엔드', '모바일', 'AI'].map((tab) => (
@@ -170,11 +150,23 @@ function TrendPage() {
       </div>
 
       {/* 기술 요약 */}
-      <div className="summary-box">
-        <p className="summary-title">기술 요약</p>
-        {displayedSummary.split('\n').map((line, idx) => (
-          <p key={idx}>{line}</p>
-        ))}
+      {showSummaryBox ? (
+        <SummaryBox
+          summary={summary}
+          displayedSummary={displayedSummary}
+          setDisplayedSummary={setDisplayedSummary}
+        />
+      ) : (
+        <div className="summary-box">
+          <p className="summary-title">기술 요약</p>
+          <p>✍️ 요약 생성 중입니다...</p>
+        </div>
+      )}
+
+      {/* 마켓 기반 기술 트렌드 시각화 */}
+      <div style={{ marginTop: '60px' }}>
+        <h2 className="title">📊 마켓 기반 기술 트렌드 분석</h2>
+        <TechTrendDashboard />
       </div>
     </div>
   );
