@@ -68,3 +68,11 @@ def get_jobs(
 
     # ✅ Pydantic 응답 스키마에 맞게 반환
     return JobListResponse(items=job_items, total_count=total_count)
+
+# ✅ 단일 채용공고 조회 함수 추가
+def get_job_by_id(db: Session, job_id: int) -> Optional[JobORM]:
+    """
+    특정 ID에 해당하는 채용공고 1건을 조회합니다.
+    """
+    return db.query(JobORM).filter(JobORM.job_post_id == job_id).first()
+

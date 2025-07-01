@@ -14,10 +14,14 @@
 | ------------ | ------------------------------- |
 | **TF-IDF**   | 전통적인 통계 기반 키워드 추출 방식            |
 | **KeyBERT**  | BERT 임베딩을 활용한 문장-단어 유사도 기반 추출   |
-| **YAKE**     | 비지도 학습 기반 키워드 추출 (언어 독립적)       |
 | **TextRank** | 그래프 기반 순위 알고리즘 (PageRank 유사 구조) |
+| **DictionaryOnly**       | 사전에 정의된 기술 키워드가 텍스트에 정확히 등장했는지 정규식으로 추출 |
+| **EmbeddingOnly**        | 문장과 기술 키워드 사전 간 임베딩 유사도를 계산해 추출 (정확히 등장하지 않아도 유사하면 포함) |
+| **HybridDict+Embedding** | 텍스트에 정확히 등장한 키워드와 임베딩 유사 키워드를 모두 포함해 추출  |
+| **GLiNER**                | 사전 학습된 NER 기반 키워드 인식 모델                      |
 
-> ✅ 현재 실험에서는 정답 키워드 수(`len(true_keywords)`)에 따라 `top_n`을 조정하여 평가의 공정성을 높였습니다.
+> TF-IDF, KeyBERT, TextRank 등 일부 알고리즘은 정답 키워드 수(`len(true_keywords)`)를 기준으로 `top_n` 값을 조정하여 평가의 공정성을 높였습니다.  
+> DictionaryOnly, EmbeddingOnly, HybridDict+Embedding, GLiNER 등은 `top_n`이 아닌 사전 매칭 또는 임계치 기반으로 작동합니다.
 
 ## 📂 디렉토리 구조
 
@@ -84,7 +88,7 @@ mlflow ui
 ## 🔍 코드 설명 (keyword\_extraction\_experiment.py)
 
 * `load_dataset()`: JSONL 데이터셋을 불러옵니다. 각 줄은 하나의 문장과 정답 키워드 리스트로 구성됩니다.
-* `extract_keywords()`: 지정된 알고리즘(`TF-IDF`, `KeyBERT`, `YAKE`, `TextRank`)에 따라 텍스트로부터 키워드를 추출합니다.
+* `extract_keywords()`: 지정된 알고리즘(`TF-IDF`, `KeyBERT`, `TextRank`)에 따라 텍스트로부터 키워드를 추출합니다.
 * `evaluate_keywords()`: 추출된 키워드와 정답 키워드를 비교하여 precision, recall, f1을 계산합니다.
 * `run_experiment()`: 전체 데이터셋에 대해 모델을 반복 실행하고, 결과를 MLflow에 로깅하고 아티팩트로 저장합니다.
 

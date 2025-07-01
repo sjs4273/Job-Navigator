@@ -52,7 +52,14 @@ function Analysis() {
 
       const result = await res.json();
       console.log("📊 분석 결과:", result);
-      navigate("/roadmap-result", { state: result });
+
+      navigate("/analysis-result", {
+      state: {
+        result,
+        selectedJob,
+        selectedSkills,
+      },
+    });
     } catch (error) {
       console.error("❌ 분석 실패:", error);
       alert("분석 중 오류가 발생했습니다.");
