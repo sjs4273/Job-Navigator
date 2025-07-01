@@ -13,25 +13,6 @@ function TrendPage() {
   const [animate, setAnimate] = useState(false);
   const [showSummaryBox, setShowSummaryBox] = useState(false); // ✅ 3초 후에 true로 변경
 
-  const skillCategories = {
-    백엔드: {
-      languages: ['Python', 'Java', 'Node.js', 'Go', 'Rust', 'Kotlin', 'TypeScript'],
-      frameworks: ['Django', 'Spring Boot', 'Express.js', 'FastAPI', 'NestJS'],
-    },
-    프론트엔드: {
-      languages: ['HTML', 'CSS', 'JavaScript', 'TypeScript'],
-      frameworks: ['React', 'Vue.js', 'Angular', 'Next.js', 'Svelte'],
-    },
-    모바일: {
-      languages: ['Kotlin', 'JavaScript', 'Swift', 'Dart'],
-      frameworks: ['Flutter', 'React Native'],
-    },
-    AI: {
-      languages: ['Python', 'R', 'SQL'],
-      frameworks: ['TensorFlow', 'PyTorch', 'Scikit-learn', 'HuggingFace'],
-    },
-  };
-
   const toggleSkill = (skill) => {
     setSelectedSkills((prev) =>
       prev.includes(skill) ? prev.filter((s) => s !== skill) : [...prev, skill]
@@ -90,36 +71,6 @@ function TrendPage() {
               }}
             >
               {tab}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* 언어 필터 */}
-      <div className={`select-box ${trendData.length > 0 ? 'active' : ''}`}>
-        <div className="tab-menu">
-          {skillCategories[activeTab].languages.map((lang) => (
-            <button
-              key={lang}
-              className={`pill ${selectedSkills.includes(lang) ? 'active' : ''}`}
-              onClick={() => toggleSkill(lang)}
-            >
-              {lang}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* 프레임워크 필터 */}
-      <div className={`select-box ${trendData.length > 0 ? 'active' : ''}`}>
-        <div className="tab-menu">
-          {skillCategories[activeTab].frameworks.map((fw) => (
-            <button
-              key={fw}
-              className={`pill ${selectedSkills.includes(fw) ? 'active' : ''}`}
-              onClick={() => toggleSkill(fw)}
-            >
-              {fw}
             </button>
           ))}
         </div>

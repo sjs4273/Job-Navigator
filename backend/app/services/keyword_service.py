@@ -1,12 +1,10 @@
-# backend/app/services/keyword_service.py
-
 import os
 import uuid
 import shutil
 import logging
 from fastapi import UploadFile
 from sqlalchemy.orm import Session
-from ai.extractor import extract_keywords_from_pdf  # AI 키워드 추출 함수
+from ai.extractor import extract_text_from_pdf, extract_keywords_from_text  # 텍스트 → 키워드 분리
 from app.core.database import SessionLocal
 from app.models.resume import ResumeORM
 from app.models.user import UserORM
@@ -15,7 +13,7 @@ logger = logging.getLogger(__name__)
 
 async def extract_and_save_keywords(current_user: UserORM, pdf_file: UploadFile) -> ResumeORM:
     """
-    PDF 파일을 저장한 후 키워드를 추출하고, 관련 정보를 Resume 테이블에 저장합니다.
+    PDF 파일을 저장한 후 텍스트를 추출하고, 키워드를 분석하여 Resume 테이블에 저장합니다.
 
     Parameters:
         current_user (UserORM): 인증된 사용자 객체
@@ -36,30 +34,32 @@ async def extract_and_save_keywords(current_user: UserORM, pdf_file: UploadFile)
 
     logger.info(f"📄 PDF 저장 완료: {file_path}")
 
-    # 2. AI 키워드 추출
+    # 2. PDF 텍스트 추출
     with open(file_path, "rb") as f:
         file_bytes = f.read()
-    keywords = extract_keywords_from_pdf(file_bytes)
+    text = extract_text_from_pdf(file_bytes)
+    logger.info(f"📝 텍스트 추출 완료 (길이: {len(text)}자)")
 
+    # 3. 텍스트 기반 키워드 추출
+    keywords = extract_keywords_from_text(text)
     logger.info(f"🧠 키워드 추출 결과: {keywords}")
 
-    # 3. DB 저장
+    # 4. DB 저장
     db: Session = SessionLocal()
     try:
         resume_entry = ResumeORM(
             user_id=current_user.user_id,
             file_path=file_path,
             extracted_keywords=keywords,
-            job_category="",  # 분류 결과는 아직 없음
+            job_category="",  # 추후 분류 예정
         )
         db.add(resume_entry)
         db.commit()
-        db.refresh(resume_entry)  # 저장된 ORM 객체 정보 최신화
-        return resume_entry       # ✅ 스키마와 일치하는 ORM 객체 반환
+        db.refresh(resume_entry)
+        return resume_entry
     except Exception as e:
         db.rollback()
         logger.error("❌ Resume 저장 실패", exc_info=True)
         raise e
     finally:
         db.close()
-
