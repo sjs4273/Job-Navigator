@@ -1,4 +1,4 @@
-# backend/app/routes/resume.py
+# 📄 backend/app/routes/resume.py
 
 from fastapi import APIRouter, UploadFile, File, Depends, HTTPException
 from sqlalchemy.orm import Session
@@ -31,7 +31,7 @@ async def upload_resume_and_extract_keywords(
         raise HTTPException(status_code=400, detail="PDF 파일만 업로드 가능합니다.")
 
     result = await extract_and_save_keywords(current_user, pdf_file)
-    return ResumeOut.model_validate(result)  # ✅ Pydantic v2 변환
+    return ResumeOut.model_validate(result)
 
 
 # ✅ 2. 내 이력서 목록 조회
@@ -43,7 +43,7 @@ async def get_my_resumes(current_user: UserORM = Depends(get_current_user)):
     db: Session = SessionLocal()
     resumes = db.query(ResumeORM).filter(ResumeORM.user_id == current_user.user_id).all()
     db.close()
-    return [ResumeOut.model_validate(r) for r in resumes]  # ✅ 리스트 반환 시 각 항목 변환
+    return [ResumeOut.model_validate(r) for r in resumes]
 
 
 # ✅ 3. 특정 이력서 상세 조회
@@ -61,4 +61,4 @@ async def get_resume_detail(resume_id: int, current_user: UserORM = Depends(get_
 
     if not resume:
         raise HTTPException(status_code=404, detail="해당 이력서를 찾을 수 없습니다.")
-    return ResumeOut.model_validate(resume)  # ✅ 단건 변환
+    return ResumeOut.model_validate(resume)
