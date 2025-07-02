@@ -1,4 +1,7 @@
+// 📄 src/pages/ResumeAnalysisDashboard.jsx
+
 import React, { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 import { Container, Box } from '@mui/material';
 import axios from 'axios';
 
@@ -10,11 +13,10 @@ import PositionFitAnalysis from '../components/PositionFitAnalysis';
 import LearningRoadmap from '../components/LearningRoadmap';
 
 const ResumeAnalysisDashboard = () => {
+  const { resumeId } = useParams(); // ✅ URL에서 resumeId 동적 추출
   const [activeTab, setActiveTab] = useState('skill-gap');
   const [gptData, setGptData] = useState(null);
   const [loading, setLoading] = useState(true);
-
-  const resumeId = 7; // 🧠 테스트용 resume_id 하드코딩
 
   useEffect(() => {
     const fetchResume = async () => {
@@ -42,7 +44,7 @@ const ResumeAnalysisDashboard = () => {
     };
 
     fetchResume();
-  }, []);
+  }, [resumeId]);
 
   if (loading) return <Box sx={{ p: 4 }}>로딩 중...</Box>;
   if (!gptData || Object.keys(gptData).length === 0 || !gptData.userProfile) {
@@ -60,7 +62,7 @@ const ResumeAnalysisDashboard = () => {
             <SkillGapAnalysis
               data={gptData.skillGapData}
               insights={gptData.strengthsAndWeaknesses ?? { strengths: [], weaknesses: [] }}
-              userProfile={gptData.userProfile} // ✅ 추가된 부분
+              userProfile={gptData.userProfile}
             />
           )}
           {activeTab === 'position-fit' &&
@@ -72,7 +74,7 @@ const ResumeAnalysisDashboard = () => {
                 difficultyData={gptData.difficultyData}
                 radarData={gptData.radarData}
                 insights={gptData.radarInsights}
-               />
+              />
             )}
           {activeTab === 'roadmap' &&
             Array.isArray(gptData.learningRoadmap) &&
@@ -81,7 +83,7 @@ const ResumeAnalysisDashboard = () => {
                 roadmapData={gptData.learningRoadmap}
                 resourcesData={gptData.recommendedResources}
                 totalPeriod={
-                    gptData.learningRoadmap?.length > 0
+                  gptData.learningRoadmap?.length > 0
                     ? gptData.learningRoadmap[gptData.learningRoadmap.length - 1].phase.match(/\((.*?)\)/)?.[1] || '6개월'
                     : '6개월'
                 }

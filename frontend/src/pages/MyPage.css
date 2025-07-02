@@ -1,36 +1,99 @@
+/* ✅ 전체 페이지 */
 .mypage-container {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 2rem;
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
-  font-family: 'Segoe UI', sans-serif;
+  max-width: 880px;
+  margin: 40px auto;
+  padding: 24px;
+  font-family: 'Noto Sans KR', sans-serif;
+  background-color: #ffffff;  /* ✅ 배경 제거 */
 }
 
+/* ✅ 카드 공통 */
+.profile-card,
+.section-box {
+  background-color: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  border: none;
+}
+
+/* ✅ 섹션 제목 */
+.section-title {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 1rem;
+  border-left: 4px solid #3b82f6;
+  padding-left: 10px;
+}
+
+/* ✅ 프로필 박스 */
 .profile-card {
   display: flex;
   align-items: center;
-  padding: 1.5rem;
-  border-radius: 16px;
+  gap: 1.5rem;
 }
 
-.section-card {
-  padding: 1.5rem;
-  border-radius: 16px;
+.profile-card .MuiAvatar-root {
+  border: 1px solid #e0e0e0;
 }
 
-.section-title {
-  font-weight: 600;
+.profile-card .MuiIconButton-root {
+  background-color: #fff;
+  width: 28px;
+  height: 28px;
+}
+
+/* ✅ 로드맵 요약 */
+.roadmap-card {
+  background-color: #f3f4f6;
+  padding: 1rem;
+  border-radius: 12px;
   margin-bottom: 1rem;
+  transition: background-color 0.2s;
 }
 
-.chip-container {
-  display: flex;
-  gap: 0.5rem;
-  flex-wrap: wrap;
+.roadmap-card:hover {
+  background-color: #e5e7eb;
 }
 
-.post-item {
-  margin-bottom: 1rem;
+/* ✅ 이력서 항목 */
+.resume-card {
+  padding: 1rem;
+  background-color: #f9fafb;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 12px;
+  margin-bottom: 12px;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.resume-card:hover {
+  background-color: #eff6ff;
+  border-color: #3b82f6;
+}
+
+/* ✅ 즐겨찾기 카드 */
+.bookmark-card {
+  background-color: #ffffff;
+  border-radius: 12px;
+  padding: 1rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s ease;
+}
+
+.bookmark-card:hover {
+  transform: translateY(-4px);
+}
+
+/* ✅ 알림창 */
+.MuiSnackbar-root {
+  top: 16px !important;
+}
+
+/* ✅ 비어있는 경우 텍스트 */
+.section-empty {
+  font-size: 0.95rem;
+  color: #6b7280;
 }

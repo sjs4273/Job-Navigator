@@ -74,7 +74,7 @@ export default function BookmarkCard({ bookmarkedJobs: initialJobs }) {
   };
 
   return (
-    <Box sx={{ maxWidth: 800, mx: 'auto' }}>
+    <Box sx={{ maxWidth: 800, mx: 'auto' , mt: 2 }}>
       <Slider {...settings}>
         {bookmarkedJobs.map((bookmark) => (
           <Box key={bookmark.bookmark_job_id} sx={{ px: 0.75 }}>
