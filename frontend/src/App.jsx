@@ -38,7 +38,6 @@ function App() {
         <Route path="/analysis" element={<Jobanalysispage />} />
         <Route path="/analysis-result" element={<AnalysisResult />} />
         <Route path="/roadmap-visual" element={<RoadmapVisual />} />
-
         {/* ✅ 분석된 이력서 상세 결과 대시보드 */}
         <Route path="/resume-analysis/:resumeId" element={<ResumeAnalysisDashboard />} />
 
