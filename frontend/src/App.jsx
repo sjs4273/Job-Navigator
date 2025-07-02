@@ -13,7 +13,6 @@ import Jobanalysispage from './pages/Jobanalysispage';
 import AnalysisResult from './pages/AnalysisResult';
 import MyPage from './pages/MyPage';
 import RoadmapVisual from './pages/RoadmapVisual';
-import PDFRoadmapPage from './pages/PDFRoadmapPage';
 import ResumeAnalysisDashboard from './pages/ResumeAnalysisDashboard';
 import './global.css';
 
@@ -39,7 +38,6 @@ function App() {
         <Route path="/analysis" element={<Jobanalysispage />} />
         <Route path="/analysis-result" element={<AnalysisResult />} />
         <Route path="/roadmap-visual" element={<RoadmapVisual />} />
-        <Route path="/roadmap" element={<PDFRoadmapPage />} />
 
         {/* ✅ 분석된 이력서 상세 결과 대시보드 */}
         <Route path="/resume-analysis/:resumeId" element={<ResumeAnalysisDashboard />} />
