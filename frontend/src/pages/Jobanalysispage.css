@@ -2,10 +2,10 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin: 0 auto; /* 가운데 정렬 */
+  margin: 0 auto;
   padding: 16px 24px;
   width: fit-content;
-  min-width: 650px; /* section과 동일 폭 */
+  min-width: 650px;
 }
 
 .analysis-tab-group {
@@ -22,7 +22,7 @@
   cursor: pointer;
 }
 
-.analysis-tab.active  {
+.analysis-tab.active {
   background-color: #1e90ff;
   color: white;
 }
@@ -45,9 +45,8 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: fit-content;
-  min-width: 600px;
-  min-height: 400px;
+  width: 600px;
+  height: 450px;
   max-width: 90%;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
   background-color: #fff;
@@ -59,10 +58,11 @@
 }
 
 .analysis-section h3 {
-  margin: 20px 0 20px;
+  margin: 32px 0 24px; /* ✅ 간격 넓힘 */
   font-size: 18px;
   font-weight: 600;
   color: #333;
+  text-align: center;
 }
 
 .analysis-button-group {
