@@ -1,41 +1,83 @@
-/* ✅ 로그인 컨테이너 */
 .social-login-wrapper {
   max-width: 250px;
   margin: 100px auto;
   padding: 20px;
-  text-align: center;
   display: flex;
   flex-direction: column;
   gap: 12px;
 }
 
-/* ✅ 공통 버튼 스타일 */
+/* ✅ 공통 소셜 버튼 스타일 */
 .social-button {
-  width: 250px;         /* 구글 버튼 기준 */
-  height: 48px;
+  width: 100%;
+  height: 40px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border: none;
-  padding: 0;
-  background: none;
-  border-radius: 6px;
-  overflow: hidden;     /* 이미지가 버튼 크기에 딱 맞도록 자르기 */
+  position: relative;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 500;
+  font-family: Roboto, sans-serif;
+  box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px,
+              rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
   cursor: pointer;
+  border: none;
+  gap: 10px;
+  transition: background-color 0.2s ease, box-shadow 0.2s ease;
 }
 
-/* ✅ 네이버 이미지 버튼 */
-.naver-img-button {
+/* ✅ 아이콘 */
+.social-button img {
+  height: 18px;
+  width: auto;
+  margin-left: 7px;
+}
+
+/* ✅ 버튼 텍스트 */
+.social-button .button-text {
+  text-align: left;
+  display: block;
   width: 100%;
-  height: 100%;
-  object-fit: cover;    /* 이미지 비율 맞춤 및 꽉 채우기 */
+  padding-left: 25px;
 }
 
-/* ✅ 카카오 이미지 버튼 */
-.kakao-img-button {
+/* ✅ 네이버 버튼 */
+.naver-button {
+  background-color: #03C75A;
+  color: white;
+}
+
+.naver-button:hover {
+  background-color: #02b650;
+}
+
+/* ✅ 카카오 버튼 */
+.kakao-button {
+  background-color: #FEE500;
+  color: #3C1E1E;
+}
+
+.kakao-button:hover {
+  background-color: #e8d700;
+}
+
+/* ✅ 구글 버튼 */
+.google-button {
   width: 100%;
-  height: 100%;
-  object-fit: cover;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  border-radius: 4px;
+  box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px,
+              rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
+  background-color: white;
+  overflow: hidden;
+  transition: background-color 0.2s ease, box-shadow 0.2s ease;
 }
 
-/* ✅ 구글 버튼은 SDK가 직접 렌더링하므로 별도 스타일 필요 없음 */
+.google-button:hover {
+  background-color: #f5f5f5;
+}

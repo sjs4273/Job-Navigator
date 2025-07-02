@@ -1,3 +1,4 @@
+// 📄 SocialLoginButton.jsx
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./SocialLoginButton.css";
@@ -15,10 +16,9 @@ export default function SocialLoginButton({ setUserInfo }) {
     const queryParams = new URLSearchParams(window.location.search);
     localStorage.removeItem("userInfo");
 
-    // 네이버
+    // ✅ 네이버 콜백
     const naverCode = queryParams.get("code");
     const naverState = queryParams.get("state");
-
     if (naverCode && naverState) {
       fetch(`${API_BASE_URL}/api/v1/auth/naver-login`, {
         method: "POST",
@@ -26,12 +26,7 @@ export default function SocialLoginButton({ setUserInfo }) {
         body: JSON.stringify({ code: naverCode, state: naverState }),
       })
         .then(async (res) => {
-          if (!res.ok) {
-            const error = await res.json();
-            alert("네이버 로그인 실패: " + (error.detail || "알 수 없는 오류"));
-            navigate("/login");
-            return;
-          }
+          if (!res.ok) throw await res.json();
           const user = await res.json();
           localStorage.setItem("access_token", user.access_token);
           localStorage.setItem("userInfo", JSON.stringify(user));
@@ -39,13 +34,13 @@ export default function SocialLoginButton({ setUserInfo }) {
           navigate("/");
         })
         .catch(() => {
-          alert("네이버 로그인 중 네트워크 오류 발생");
+          alert("네이버 로그인 실패");
           navigate("/login");
         });
       return;
     }
 
-    // 카카오
+    // ✅ 카카오 콜백
     const kakaoCode = queryParams.get("code");
     if (kakaoCode && !naverState) {
       fetch(`${API_BASE_URL}/api/v1/auth/kakao-login`, {
@@ -54,12 +49,7 @@ export default function SocialLoginButton({ setUserInfo }) {
         body: JSON.stringify({ code: kakaoCode }),
       })
         .then(async (res) => {
-          if (!res.ok) {
-            const error = await res.json();
-            alert("카카오 로그인 실패: " + (error.detail || "알 수 없는 오류"));
-            navigate("/login");
-            return;
-          }
+          if (!res.ok) throw await res.json();
           const user = await res.json();
           localStorage.setItem("access_token", user.access_token);
           localStorage.setItem("userInfo", JSON.stringify(user));
@@ -67,13 +57,13 @@ export default function SocialLoginButton({ setUserInfo }) {
           navigate("/");
         })
         .catch(() => {
-          alert("카카오 로그인 중 네트워크 오류 발생");
+          alert("카카오 로그인 실패");
           navigate("/login");
         });
       return;
     }
 
-    // 구글
+    // ✅ 구글 SDK 렌더링
     if (window.google && GOOGLE_CLIENT_ID) {
       window.google.accounts.id.initialize({
         client_id: GOOGLE_CLIENT_ID,
@@ -95,19 +85,14 @@ export default function SocialLoginButton({ setUserInfo }) {
         body: JSON.stringify({ id_token_str: id_token }),
       });
 
-      if (!res.ok) {
-        const error = await res.json();
-        alert("구글 로그인 실패: " + (error.detail || "알 수 없는 오류"));
-        return;
-      }
-
+      if (!res.ok) throw await res.json();
       const data = await res.json();
       localStorage.setItem("access_token", data.access_token);
       localStorage.setItem("userInfo", JSON.stringify(data));
       setUserInfo(data);
       navigate("/");
     } catch {
-      alert("구글 로그인 중 네트워크 오류 발생");
+      alert("구글 로그인 중 오류 발생");
     }
   };
 
@@ -125,16 +110,21 @@ export default function SocialLoginButton({ setUserInfo }) {
 
   return (
     <div className="social-login-wrapper">
-      <div className="social-button google" style={{ padding: 0, border: "none" }}>
+      {/* ✅ Google 버튼 */}
+      <div className="social-button google-button">
         <div id="google-login-btn" style={{ width: "100%" }} />
       </div>
 
-      <button className="social-button naver" onClick={handleNaverLogin}>
-        <img src="/naver.png" alt="네이버 로그인" className="naver-img-button" />
+      {/* ✅ Naver 버튼 */}
+      <button className="social-button naver-button" onClick={handleNaverLogin}>
+        <img src="/icons/naver.svg" alt="Naver" />
+        <span className="button-text">Naver 계정으로 로그인</span>
       </button>
 
-      <button className="social-button kakao" onClick={handleKakaoLogin}>
-        <img src="/kakao.png" alt="카카오 로그인" className="kakao-img-button" />
+      {/* ✅ Kakao 버튼 */}
+      <button className="social-button kakao-button" onClick={handleKakaoLogin}>
+        <img src="/icons/kakao.svg" alt="Kakao" />
+        <span className="button-text">Kakao 계정으로 로그인</span>
       </button>
     </div>
   );
