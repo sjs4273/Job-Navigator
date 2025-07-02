@@ -130,9 +130,11 @@ export default function ResumeAnalysisPage() {
                 <FaCheckCircle
                   size={48}
                   color="#22c55e"
-                  style={{ marginBottom: '10px' }}
+                  style={{ marginBottom: '4px' }}
                 />
-                <span className="file-name">{selectedFileName}</span>
+                <div style={{ marginTop: '8px', fontWeight: '600' }}>
+                  {selectedFileName}
+                </div>
                 <p className="file-uploaded-msg">
                   ✅ 파일이 업로드 준비되었습니다!
                 </p>
