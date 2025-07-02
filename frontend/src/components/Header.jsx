@@ -1,8 +1,7 @@
+// 📄 Header.jsx
 import { Link, useNavigate } from 'react-router-dom';
 import {
   Box,
-  Divider,
-  Stack,
   Button,
   Avatar,
   IconButton,
@@ -11,23 +10,24 @@ import {
 } from '@mui/material';
 import { useState, useEffect } from 'react';
 import './Header.css';
-import LoginModal from '../components/LoginModal'; // ✅ 모달 컴포넌트 추가
+import LoginModal from '../components/LoginModal';
 
 export default function Header({ userInfo, setUserInfo }) {
   const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = useState(null);
-  const [loginOpen, setLoginOpen] = useState(false); // ✅ 모달 상태 추가
+  const [loginOpen, setLoginOpen] = useState(false);
 
   const handleLogout = () => {
-    localStorage.removeItem('userInfo');
-    localStorage.removeItem('token');
-    localStorage.removeItem('access_token');
-    localStorage.removeItem('userId');
-    localStorage.removeItem('userNick');
-    localStorage.removeItem('signupData');
-    localStorage.removeItem('kakao_state');
-    localStorage.removeItem('com.naverid.oauth.state_token');
-
+    [
+      'userInfo',
+      'token',
+      'access_token',
+      'userId',
+      'userNick',
+      'signupData',
+      'kakao_state',
+      'com.naverid.oauth.state_token',
+    ].forEach((key) => localStorage.removeItem(key));
     setUserInfo(null);
     navigate('/');
   };
@@ -45,73 +45,58 @@ export default function Header({ userInfo, setUserInfo }) {
   return (
     <>
       <header className="header">
-        <Link to="/">
-          <img src="logo.png" alt="로고" className="logo" />
-        </Link>
-
-        <div className="auth-links">
-          {userInfo ? (
-            <>
-              <IconButton onClick={handleMenuOpen}>
-                <Avatar
-                  src={
-                    userInfo?.profile_image?.startsWith('http')
-                      ? userInfo.profile_image
-                      : `${import.meta.env.VITE_API_BASE_URL}${userInfo.profile_image}?t=${new Date().getTime()}`
-                  }
-                  sx={{
-                    width: 36,
-                    height: 36,
-                    border: '1.5px solid #e0e0e0',
-                    '&:hover': {
-                      borderColor: 'rgb(194, 194, 194)',
-                    },
-                  }}
-                />
-              </IconButton>
-              <Menu
-                anchorEl={anchorEl}
-                open={Boolean(anchorEl)}
-                onClose={handleMenuClose}
-              >
-                <MenuItem
-                  onClick={() => {
-                    handleMenuClose();
-                    navigate('/mypage');
-                  }}
+        <div className="header-top">
+          <Link to="/">
+            <img src="logo.png" alt="로고" className="logo" />
+          </Link>
+          <div className="auth-links">
+            {userInfo ? (
+              <>
+                <IconButton onClick={handleMenuOpen}>
+                  <Avatar
+                    src={
+                      userInfo?.profile_image?.startsWith('http')
+                        ? userInfo.profile_image
+                        : `${import.meta.env.VITE_API_BASE_URL}${userInfo.profile_image}?t=${new Date().getTime()}`
+                    }
+                    sx={{
+                      width: 36,
+                      height: 36,
+                      border: '1.5px solid #e0e0e0',
+                      '&:hover': { borderColor: 'rgb(194, 194, 194)' },
+                    }}
+                  />
+                </IconButton>
+                <Menu
+                  anchorEl={anchorEl}
+                  open={Boolean(anchorEl)}
+                  onClose={handleMenuClose}
                 >
-                  마이페이지
-                </MenuItem>
-                <MenuItem
-                  onClick={() => {
-                    handleMenuClose();
-                    handleLogout();
-                  }}
-                >
-                  로그아웃
-                </MenuItem>
-              </Menu>
-            </>
-          ) : (
-            <Button onClick={() => setLoginOpen(true)}>로그인</Button> // ✅ 모달로 로그인 열기
-          )}
+                  <MenuItem
+                    onClick={() => {
+                      handleMenuClose();
+                      navigate('/mypage');
+                    }}
+                  >
+                    마이페이지
+                  </MenuItem>
+                  <MenuItem
+                    onClick={() => {
+                      handleMenuClose();
+                      handleLogout();
+                    }}
+                  >
+                    로그아웃
+                  </MenuItem>
+                </Menu>
+              </>
+            ) : (
+              <Button onClick={() => setLoginOpen(true)}>로그인</Button>
+            )}
+          </div>
         </div>
-      </header>
 
-      <LoginModal
-        open={loginOpen}
-        onClose={() => setLoginOpen(false)}
-        setUserInfo={setUserInfo}
-      />
-
-      <Box>
-        <Divider />
-        <Stack
-          direction="row"
-          spacing={4}
-          justifyContent="center"
-          sx={{ my: 1 }}
-        >
+        <div className="header-menu">
           {[
             { label: '트렌드 분석', link: '/trend' },
             { label: '채용 공고', link: '/jobs' },
@@ -122,19 +107,23 @@ export default function Header({ userInfo, setUserInfo }) {
               onClick={() => navigate(link)}
               variant="text"
               sx={{
-                backgroundColor: 'transparent',
-                color: '#333333',
                 fontSize: 15,
                 fontWeight: 600,
+                color: '#333',
                 '&:hover': { color: '#1976d2' },
               }}
             >
               {label}
             </Button>
           ))}
-        </Stack>
-        <Divider />
-      </Box>
+        </div>
+      </header>
+
+      <LoginModal
+        open={loginOpen}
+        onClose={() => setLoginOpen(false)}
+        setUserInfo={setUserInfo}
+      />
     </>
   );
 }
