@@ -1,113 +1,112 @@
+/* ResumeAnalysisPage.css */
+
 .analysis-top-bar {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin: 0 auto;
-  padding: 16px 24px;
-  width: fit-content;
-  min-width: 650px;
+  padding: 16px;
 }
 
 .analysis-tab-group {
   display: flex;
-  gap: 10px;
 }
 
 .analysis-tab {
-  padding: 8px 16px;
+  background: none;
   border: none;
-  background-color: #eee;
-  color: black;
-  border-radius: 4px;
+  padding: 10px 16px;
   cursor: pointer;
+  font-size: 16px;
+  color: #333;
 }
 
 .analysis-tab.active {
-  background-color: #1e90ff;
-  color: white;
+  border-bottom: 2px solid #2563eb;
+  color: #2563eb;
 }
 
 .analysis-analyze-btn {
-  padding: 8px 20px;
-  background-color: black;
+  background-color: #2563eb;
   color: white;
   border: none;
-  border-radius: 4px;
+  padding: 10px 20px;
+  border-radius: 8px;
   cursor: pointer;
-  font-weight: 500;
+  font-weight: bold;
+}
+
+.analysis-analyze-btn:hover {
+  background-color: #1e4ac9;
 }
 
 .analysis-section {
-  border: 1px solid #ddd;
-  border-radius: 12px;
-  margin: 20px auto;
-  padding: 20px 24px;
+  display: flex;
+  justify-content: center;
+  margin-top: 40px;
+}
+
+.resume-input-button-row {
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+.resume-drop-area {
   width: 600px;
   height: 450px;
-  max-width: 90%;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-  background-color: #fff;
-  transition: all 0.2s ease;
-}
-
-.analysis-section:hover {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-.resume-input-button-row {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-  margin-top: 100px; /* 중앙 위치 조절 */
-}
-
-.resume-square-label {
-  width: 200px;
-  height: 200px;
-  border: 2px dashed #ccc;
-  border-radius: 8px;
+  border: 2px dashed #aaa;
+  border-radius: 12px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  color: #888;
-  font-size: 14px;
-  cursor: pointer;
   text-align: center;
+  cursor: pointer;
+  transition:
+    border-color 0.4s,
+    background-color 0.4s;
   position: relative;
 }
 
-.resume-drop-area {
-  width: 200px;
-  height: 200px;
-  border: 2px dashed #ccc;
-  border-radius: 8px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center; /* 세로 가운데 */
-  align-items: center; /* 가로 가운데 */
-  color: #888;
-  font-size: 14px;
-  cursor: pointer;
-  text-align: center;
-  transition: all 0.2s ease;
-  margin: auto; /* 박스를 부모 안에서 가운데 정렬 */
-}
-
 .resume-drop-area.drag-over {
-  border-color: #1e90ff;
+  border-color: #2563eb;
   background-color: #f0f8ff;
 }
 
-.resume-square-input {
-  display: none;
+.resume-drop-area.uploaded {
+  border-color: #22c55e;
+  background-color: #f0fdf4;
 }
 
-.file-name-display {
+.large-text {
+  font-size: 18px;
+  color: #555;
+}
+
+.file-name {
+  font-weight: bold;
+  font-size: 18px;
+  color: #2563eb;
+}
+
+.file-uploaded-msg {
   margin-top: 10px;
-  font-size: 14px;
-  color: #333;
-  text-align: center;
+  color: #22c55e;
+  opacity: 0;
+  animation: fadeIn 1s forwards;
+}
+
+.resume-square-input {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+}
+
+@keyframes fadeIn {
+  to {
+    opacity: 1;
+  }
 }
