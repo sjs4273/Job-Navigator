@@ -1,0 +1,22 @@
+/* 📄 src/pages/PDFRoadmapPage.css */
+
+.roadmap-title {
+  text-align: center;
+  margin: 20px 0;
+}
+
+.roadmap-save-btn {
+  display: block;
+  margin: 30px auto;
+  padding: 10px 20px;
+  background: #0d6efd;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.roadmap-save-btn:hover {
+  background: #084298;
+}
