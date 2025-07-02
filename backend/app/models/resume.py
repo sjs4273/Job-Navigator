@@ -29,5 +29,8 @@ class ResumeORM(Base):
     # 업로드 일시
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
+    # ✅ GPT 분석 결과 (JSON)
+    gpt_response = Column(JSONType)
+
     # 관계 설정
     user = relationship("UserORM", backref="resumes")

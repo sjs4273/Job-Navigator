@@ -48,6 +48,10 @@ def get_settings() -> dict:
         "JWT_SECRET_KEY": os.getenv("JWT_SECRET_KEY", ""),
         "JWT_ALGORITHM": os.getenv("JWT_ALGORITHM", "HS256"),
         "ACCESS_TOKEN_EXPIRE_MINUTES": int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", 10)),
+    
+        # ✅ OpenAI 설정
+        "OPENAI_API_KEY": os.getenv("OPENAI_API_KEY", ""),
+
     }
 
 
@@ -78,3 +82,7 @@ def get_jwt_algorithm() -> str:
 
 def get_access_token_expiry_minutes() -> int:
     return int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", 10))
+
+# ✅ OpenAI API 키 Getter
+def get_openai_api_key() -> str:
+    return os.getenv("OPENAI_API_KEY", "")

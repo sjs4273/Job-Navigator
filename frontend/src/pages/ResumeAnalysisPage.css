@@ -1,56 +1,112 @@
-.resume-tab-bar {
+/* ResumeAnalysisPage.css */
+
+.analysis-top-bar {
   display: flex;
-  gap: 12px;
-  justify-content: flex-start;
-  width: 400px;
-  margin-left: -110px;
-}
-
-.resume-tab2 {
-  padding: 8px 16px;
-  border: none;
-  background-color: #eee;
-  color: black;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.resume-tab-active2 {
-  background-color: #1e90ff;
-  color: white;
-  padding: 8px 16px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.resume-pdf-upload-container {
-  margin-top: 80px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
-  gap: 16px;
+  padding: 16px;
+}
+
+.analysis-tab-group {
+  display: flex;
+}
+
+.analysis-tab {
+  background: none;
+  border: none;
+  padding: 10px 16px;
+  cursor: pointer;
+  font-size: 16px;
+  color: #333;
+}
+
+.analysis-tab.active {
+  border-bottom: 2px solid #2563eb;
+  color: #2563eb;
+}
+
+.analysis-analyze-btn {
+  background-color: #2563eb;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.analysis-analyze-btn:hover {
+  background-color: #1e4ac9;
+}
+
+.analysis-section {
+  display: flex;
+  justify-content: center;
+  margin-top: 40px;
 }
 
 .resume-input-button-row {
   display: flex;
-  gap: 8px;
+  flex-direction: column;
   align-items: center;
 }
-
-.resume-pdf-input {
-  width: 400px;
-  padding: 8px;
-  border: 1px solid #999;
-  border-radius: 4px;
+.resume-drop-area {
+  width: 600px;
+  height: 450px;
+  border: 2px dashed #aaa;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  cursor: pointer;
+  transition:
+    border-color 0.4s,
+    background-color 0.4s;
+  position: relative;
 }
 
-.resume-pdf-upload-button {
-  background-color: black;
-  color: white;
-  padding: 8px 16px;
-  border: none;
-  border-radius: 4px;
+.resume-drop-area.drag-over {
+  border-color: #2563eb;
+  background-color: #f0f8ff;
+}
+
+.resume-drop-area.uploaded {
+  border-color: #22c55e;
+  background-color: #f0fdf4;
+}
+
+.large-text {
+  font-size: 18px;
+  color: #555;
+}
+
+.file-name {
+  font-weight: bold;
+  font-size: 18px;
+  color: #2563eb;
+}
+
+.file-uploaded-msg {
+  margin-top: 10px;
+  color: #22c55e;
+  opacity: 0;
+  animation: fadeIn 1s forwards;
+}
+
+.resume-square-input {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
   cursor: pointer;
+}
+
+@keyframes fadeIn {
+  to {
+    opacity: 1;
+  }
 }

@@ -55,4 +55,6 @@ app.include_router(bookmark.router, prefix="/api/v1/bookmarks", tags=["Bookmark"
 app.include_router(trend.router, prefix="/api/v1/trends", tags=["Trends"])
 app.include_router(jobanalysis.router, prefix="/api/v1", tags=["JobAnalysis"])
 # ✅ Swagger JWT 인증 커스터마이징 적용
+
+app.openapi_schema = None
 app.openapi = lambda: custom_openapi(app)

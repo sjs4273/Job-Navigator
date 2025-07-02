@@ -1,13 +1,16 @@
+# /backend/app/service/keyword_service.py
+
 import os
 import uuid
 import shutil
 import logging
 from fastapi import UploadFile
 from sqlalchemy.orm import Session
-from ai.extractor import extract_text_from_pdf, extract_keywords_from_text  # 텍스트 → 키워드 분리
+from ai.extractor import extract_text_from_pdf, extract_keywords_from_text
 from app.core.database import SessionLocal
 from app.models.resume import ResumeORM
 from app.models.user import UserORM
+from app.services.job_classifier import classify_job_category
 
 logger = logging.getLogger(__name__)
 
@@ -42,6 +45,7 @@ async def extract_and_save_keywords(current_user: UserORM, pdf_file: UploadFile)
 
     # 3. 텍스트 기반 키워드 추출
     keywords = extract_keywords_from_text(text)
+    job_category = classify_job_category(keywords)  # ✅ 직무 분류
     logger.info(f"🧠 키워드 추출 결과: {keywords}")
 
     # 4. DB 저장
@@ -51,7 +55,8 @@ async def extract_and_save_keywords(current_user: UserORM, pdf_file: UploadFile)
             user_id=current_user.user_id,
             file_path=file_path,
             extracted_keywords=keywords,
-            job_category="",  # 추후 분류 예정
+            resume_text=text,  # ✅ 이 줄이 필수입니다
+            job_category=job_category,   # 추후 자동 분류 예정
         )
         db.add(resume_entry)
         db.commit()

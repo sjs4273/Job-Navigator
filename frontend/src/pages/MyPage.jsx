@@ -4,7 +4,6 @@ import {
   Box,
   Avatar,
   Typography,
-  Chip,
   Paper,
   IconButton,
   Snackbar,
@@ -17,11 +16,14 @@ import {
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import EditIcon from '@mui/icons-material/Edit';
 import BookmarkCard from '../components/BookmarkCard';
+import { useNavigate } from 'react-router-dom';
 
 export default function MyPage({ userInfo, setUserInfo }) {
+  const navigate = useNavigate();
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [user, setUser] = useState(null);
   const [bookmarkedJobs, setBookmarkedJobs] = useState([]);
+  const [analyzedResumes, setAnalyzedResumes] = useState([]);
 
   const handleImageChange = async (e) => {
     const file = e.target.files[0];
@@ -32,7 +34,6 @@ export default function MyPage({ userInfo, setUserInfo }) {
 
     try {
       const token = localStorage.getItem('access_token');
-
       const res = await fetch(
         `${import.meta.env.VITE_API_BASE_URL}/api/v1/users/update-image`,
         {
@@ -83,15 +84,33 @@ export default function MyPage({ userInfo, setUserInfo }) {
           }
         );
         const result = await res.json();
-        console.log('즐겨찾기 응답:', result, Array.isArray(result));
-
         setBookmarkedJobs(result);
       } catch (err) {
         console.error('❌ 즐겨찾기 공고 불러오기 실패:', err);
       }
     };
 
+    const fetchAnalyzedResumes = async () => {
+      try {
+        const token = localStorage.getItem('access_token');
+        const res = await fetch(
+          `${import.meta.env.VITE_API_BASE_URL}/api/v1/resume`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        const result = await res.json();
+        const filtered = result.filter((r) => r.gpt_response);
+        setAnalyzedResumes(filtered);
+      } catch (err) {
+        console.error('❌ 이력서 목록 불러오기 실패:', err);
+      }
+    };
+
     fetchBookmarkedJobs();
+    fetchAnalyzedResumes();
   }, []);
 
   useEffect(() => {
@@ -113,6 +132,7 @@ export default function MyPage({ userInfo, setUserInfo }) {
 
   return (
     <Box className="mypage-container">
+      {/* 프로필 카드 */}
       <Paper elevation={3} className="profile-card">
         <Box sx={{ display: 'flex', alignItems: 'center', padding: '1rem' }}>
           <Box sx={{ position: 'relative', width: 80, height: 80 }}>
@@ -149,7 +169,7 @@ export default function MyPage({ userInfo, setUserInfo }) {
           <Box sx={{ marginLeft: '1.5rem' }}>
             <Typography variant="h6">{user.name || '이름 없음'}</Typography>
             <Typography variant="body2" color="text.secondary">
-              {user.email || '이메일 없음'}f
+              {user.email || '이메일 없음'}
             </Typography>
             <Typography variant="body2" color="text.secondary">
               {user.description || ''}
@@ -158,14 +178,21 @@ export default function MyPage({ userInfo, setUserInfo }) {
         </Box>
       </Paper>
 
-      
-      {/* 로드맵 */}
+      {/* 로드맵 + 이력서 */}
       <Box className="section-box" sx={{ mt: 4, mb: 6 }}>
         <Typography variant="subtitle1" className="section-title">
           나의 로드맵
         </Typography>
 
-        {(user?.roadmaps || []).length > 0 ? (
+        {/* ✅ 로드맵 없고 분석된 이력서도 없을 경우만 표시 */}
+        {(user?.roadmaps || []).length === 0 && analyzedResumes.length === 0 && (
+          <Typography variant="body2" color="text.secondary">
+            저장된 로드맵이 없습니다.
+          </Typography>
+        )}
+
+        {/* ✅ 로드맵 있을 경우만 출력 */}
+        {(user?.roadmaps || []).length > 0 &&
           user.roadmaps.map((rm, rmIdx) => (
             <Accordion key={rmIdx} sx={{ mt: 1 }}>
               <AccordionSummary expandIcon={<ExpandMoreIcon />}>
@@ -192,16 +219,37 @@ export default function MyPage({ userInfo, setUserInfo }) {
                 </Button>
               </AccordionDetails>
             </Accordion>
-          ))
-        ) : (
-          <Typography variant="body2" color="text.secondary">
-            저장된 로드맵이 없습니다.
-          </Typography>
+          ))}
+
+        {/* ✅ 분석된 이력서 목록 */}
+        {analyzedResumes.length > 0 && (
+          <Box sx={{ mt: 4 }}>
+            <Typography variant="subtitle2" gutterBottom>
+              분석된 이력서 보기
+            </Typography>
+            {analyzedResumes.map((resume) => (
+              <Paper
+                key={resume.resume_id}
+                elevation={1}
+                sx={{
+                  p: 1.5,
+                  mb: 1,
+                  cursor: 'pointer',
+                  '&:hover': { bgcolor: '#f3f4f6' },
+                }}
+                onClick={() => navigate(`/resume-analysis/${resume.resume_id}`)}
+              >
+                <Typography variant="body2">{resume.filename}</Typography>
+                <Typography variant="caption" color="text.secondary">
+                  업로드일: {formatDate(resume.created_at || resume.uploaded_at)}
+                </Typography>
+              </Paper>
+            ))}
+          </Box>
         )}
       </Box>
 
-
-      {/* 즐겨찾기 공고 데이터 매핑 */}
+      {/* 즐겨찾기 */}
       <Box className="section-box" sx={{ mt: 4, mb: 6 }}>
         <Typography variant="subtitle1" className="section-title">
           즐겨찾기한 채용 공고
@@ -217,6 +265,7 @@ export default function MyPage({ userInfo, setUserInfo }) {
         )}
       </Box>
 
+      {/* 스낵바 알림 */}
       <Snackbar
         open={snackbarOpen}
         autoHideDuration={2200}

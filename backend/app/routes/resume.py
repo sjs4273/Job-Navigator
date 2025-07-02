@@ -4,6 +4,8 @@ from fastapi import APIRouter, UploadFile, File, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.routes.auth_utils.jwt_utils import get_current_user
 from app.services.keyword_service import extract_and_save_keywords
+from app.services.resume_analysis_service import analyze_resume_with_gpt
+from app.core.database import get_db
 from app.core.database import SessionLocal
 from app.models.resume import ResumeORM
 from app.models.user import UserORM
@@ -62,3 +64,16 @@ async def get_resume_detail(resume_id: int, current_user: UserORM = Depends(get_
     if not resume:
         raise HTTPException(status_code=404, detail="해당 이력서를 찾을 수 없습니다.")
     return ResumeOut.model_validate(resume)
+
+
+# ✅ 4. 분석 엔드포인트
+@router.post("/{resume_id}/analysis")
+async def analyze_resume_api(
+    resume_id: int,
+    current_user: UserORM = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """
+    특정 이력서를 기반으로 GPT에게 커리어 분석을 요청합니다.
+    """
+    return await analyze_resume_with_gpt(db, resume_id, current_user.user_id)
