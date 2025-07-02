@@ -9,7 +9,7 @@ import {
   Menu,
   MenuItem,
 } from '@mui/material';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import './Header.css';
 
 export default function Header({ userInfo, setUserInfo }) {
@@ -17,14 +17,14 @@ export default function Header({ userInfo, setUserInfo }) {
   const [anchorEl, setAnchorEl] = useState(null);
 
   const handleLogout = () => {
-    localStorage.removeItem("userInfo");
-    localStorage.removeItem("token");
-    localStorage.removeItem("access_token");
-    localStorage.removeItem("userId");
-    localStorage.removeItem("userNick");
-    localStorage.removeItem("signupData");
-    localStorage.removeItem("kakao_state");
-    localStorage.removeItem("com.naverid.oauth.state_token");
+    localStorage.removeItem('userInfo');
+    localStorage.removeItem('token');
+    localStorage.removeItem('access_token');
+    localStorage.removeItem('userId');
+    localStorage.removeItem('userNick');
+    localStorage.removeItem('signupData');
+    localStorage.removeItem('kakao_state');
+    localStorage.removeItem('com.naverid.oauth.state_token');
 
     setUserInfo(null);
     navigate('/');
@@ -33,6 +33,12 @@ export default function Header({ userInfo, setUserInfo }) {
   const handleMenuOpen = (event) => setAnchorEl(event.currentTarget);
   const handleMenuClose = () => setAnchorEl(null);
 
+  useEffect(() => {
+    const storedUser = localStorage.getItem('userInfo');
+    if (storedUser) {
+      setUserInfo(JSON.parse(storedUser));
+    }
+  }, []);
   return (
     <>
       <header className="header">
@@ -45,9 +51,19 @@ export default function Header({ userInfo, setUserInfo }) {
             <>
               <IconButton onClick={handleMenuOpen}>
                 <Avatar
-                  src={userInfo.profile_image}
-                  alt="프로필"
-                  sx={{ width: 36, height: 36 }}
+                  src={
+                    userInfo?.profile_image?.startsWith('http')
+                      ? userInfo.profile_image
+                      : `${import.meta.env.VITE_API_BASE_URL}${userInfo.profile_image}?t=${new Date().getTime()}`
+                  }
+                  sx={{
+                    width: 36,
+                    height: 36,
+                    border: '1.5px solid #e0e0e0',
+                    '&:hover': {
+                      borderColor: 'rgb(194, 194, 194)',
+                    },
+                  }}
                 />
               </IconButton>
               <Menu
@@ -55,10 +71,20 @@ export default function Header({ userInfo, setUserInfo }) {
                 open={Boolean(anchorEl)}
                 onClose={handleMenuClose}
               >
-                <MenuItem onClick={() => { handleMenuClose(); navigate('/mypage'); }}>
+                <MenuItem
+                  onClick={() => {
+                    handleMenuClose();
+                    navigate('/mypage');
+                  }}
+                >
                   마이페이지
                 </MenuItem>
-                <MenuItem onClick={() => { handleMenuClose(); handleLogout(); }}>
+                <MenuItem
+                  onClick={() => {
+                    handleMenuClose();
+                    handleLogout();
+                  }}
+                >
                   로그아웃
                 </MenuItem>
               </Menu>
@@ -71,10 +97,16 @@ export default function Header({ userInfo, setUserInfo }) {
 
       <Box>
         <Divider />
-        <Stack direction="row" spacing={4} justifyContent="center" sx={{ my: 1 }}>
-          {[{ label: '트렌드 분석', link: '/trend' },
+        <Stack
+          direction="row"
+          spacing={4}
+          justifyContent="center"
+          sx={{ my: 1 }}
+        >
+          {[
+            { label: '트렌드 분석', link: '/trend' },
             { label: '채용 공고', link: '/jobs' },
-            { label: '이력서 분석', link: userInfo ? '/resume' : '/analysis' }
+            { label: '이력서 분석', link: userInfo ? '/resume' : '/analysis' },
           ].map(({ label, link }) => (
             <Button
               key={label}
