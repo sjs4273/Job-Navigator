@@ -24,8 +24,8 @@ function MainPage() {
       <section className="message-section">
         <h2>개발자들 요즘머함?</h2>
         <p>
-          자신에게 필요한 기술스택을 추천받고 싶으면{' '}
-          <br className="mobile-break"></br>계정을 만들거나 로그인하세요.
+          🔍 맞춤 기술 스택이 궁금하신가요? <br className="mobile-break" />
+          로그인하거나 계정을 만들어 바로 확인해보세요!
         </p>
         <Button
           className="shake-button"
@@ -48,7 +48,14 @@ function MainPage() {
         >
           취업 가능한지 알려드림 →
         </Button>
+
+        {/* ✅ 아래로 스크롤 유도 */}
+        <div className="scroll-indicator">
+          <p className="scroll-text">아래로 스크롤</p>
+          <div className="scroll-arrow">▼</div>
+        </div>
       </section>
+
       <ServiceSummarySection />
     </div>
   );

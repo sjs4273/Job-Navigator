@@ -49,7 +49,7 @@
 .message-section {
   padding: 3rem 1rem;
   text-align: center;
-  margin-bottom: 30rem;  /* 🔽 아래로 여백을 추가 */
+  margin-bottom: 1rem;  /* 🔽 아래로 여백을 추가 */
 }
 
 
@@ -61,4 +61,38 @@
 .message-section p {
   margin-top: 0.5rem;
   color: #555;
+}
+
+.scroll-indicator {
+  text-align: center;
+  margin-top: 350px;
+  animation: fadeIn 1s ease-in-out;
+}
+
+.scroll-text {
+  font-size: 14px;
+  color: #888;
+  margin-bottom: 4px;
+}
+
+.scroll-arrow {
+  font-size: 20px;
+  color: #3a82f7;
+  animation: bounce 1.6s infinite;
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+    opacity: 0.6;
+  }
+  50% {
+    transform: translateY(6px);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
