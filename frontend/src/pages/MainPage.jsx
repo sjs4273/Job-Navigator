@@ -3,6 +3,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@mui/material';
+import ServiceSummarySection from '../components/ServiceSummarySection';
 
 import './MainPage.css';
 
@@ -48,6 +49,7 @@ function MainPage() {
           취업 가능한지 알려드림 →
         </Button>
       </section>
+      <ServiceSummarySection />
     </div>
   );
 }

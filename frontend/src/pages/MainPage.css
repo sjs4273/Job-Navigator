@@ -49,7 +49,9 @@
 .message-section {
   padding: 3rem 1rem;
   text-align: center;
+  margin-bottom: 30rem;  /* 🔽 아래로 여백을 추가 */
 }
+
 
 .message-section h2 {
   margin-bottom: 1.5rem;
