@@ -74,7 +74,7 @@ function JobCard({ job, bookmarkIds = [] }) {
           borderRadius: '16px',
           boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
           p: 2,
-          mb: 2,
+          mb: 4,
           position: 'relative',
         }}
       >
@@ -148,7 +148,6 @@ function JobCard({ job, bookmarkIds = [] }) {
         </Collapse>
       </Card>
 
-      {/* ✅ 로그인 필요 Snackbar 추가 */}
       {/* 로그인 요구 Dialog */}
       <LoginRequiredDialog
         open={openLoginDialog}
