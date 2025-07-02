@@ -11,7 +11,7 @@ from app.routes import user
 from fastapi.staticfiles import StaticFiles
 from app.routes import resume
 from app.core.swagger import custom_openapi
-from app.routes import jobanalysis
+
 # ✅ 환경 변수 로드 및 설정 초기화
 load_env()
 settings = get_settings()
@@ -53,6 +53,6 @@ app.include_router(user.router, prefix="/api/v1/users", tags=["User"])
 app.include_router(resume.router, prefix="/api/v1/resume", tags=["Resume"])
 app.include_router(bookmark.router, prefix="/api/v1/bookmarks", tags=["Bookmark"])
 app.include_router(trend.router, prefix="/api/v1/trends", tags=["Trends"])
-app.include_router(jobanalysis.router, prefix="/api/v1", tags=["JobAnalysis"])
+
 # ✅ Swagger JWT 인증 커스터마이징 적용
 app.openapi = lambda: custom_openapi(app)
