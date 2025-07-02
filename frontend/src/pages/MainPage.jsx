@@ -24,8 +24,8 @@ function MainPage() {
       <section className="message-section">
         <h2>개발자들 요즘머함?</h2>
         <p>
-          🔍 맞춤 기술 스택이 궁금하신가요? <br className="mobile-break" />
-          로그인하거나 계정을 만들어 바로 확인해보세요!
+          🔍 개인 맞춤 이력서 분석이 필요하신가요? <br className="mobile-break" />
+         로그인하여 바로 확인해보세요!
         </p>
         <Button
           className="shake-button"
