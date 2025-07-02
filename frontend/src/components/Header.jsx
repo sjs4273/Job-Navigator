@@ -11,10 +11,12 @@ import {
 } from '@mui/material';
 import { useState, useEffect } from 'react';
 import './Header.css';
+import LoginModal from '../components/LoginModal'; // ✅ 모달 컴포넌트 추가
 
 export default function Header({ userInfo, setUserInfo }) {
   const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = useState(null);
+  const [loginOpen, setLoginOpen] = useState(false); // ✅ 모달 상태 추가
 
   const handleLogout = () => {
     localStorage.removeItem('userInfo');
@@ -39,6 +41,7 @@ export default function Header({ userInfo, setUserInfo }) {
       setUserInfo(JSON.parse(storedUser));
     }
   }, []);
+
   return (
     <>
       <header className="header">
@@ -90,10 +93,16 @@ export default function Header({ userInfo, setUserInfo }) {
               </Menu>
             </>
           ) : (
-            <Link to="/login">로그인</Link>
+            <Button onClick={() => setLoginOpen(true)}>로그인</Button> // ✅ 모달로 로그인 열기
           )}
         </div>
       </header>
+
+      <LoginModal
+        open={loginOpen}
+        onClose={() => setLoginOpen(false)}
+        setUserInfo={setUserInfo}
+      />
 
       <Box>
         <Divider />
