@@ -22,7 +22,7 @@ describe('Jobs 컴포넌트', () => {
 
   beforeEach(() => {
     vi.resetAllMocks();
-    import.meta.env.VITE_API_BASE_URL = 'http://localhost:8000';
+    //import.meta.env.VITE_API_BASE_URL = 'http://localhost:8000';
   });
 
   it('로딩 상태를 보여준다', () => {

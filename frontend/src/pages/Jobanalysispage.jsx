@@ -82,7 +82,7 @@ function Analysis() {
       }
 
       // ✅ 백엔드에 분석 요청 보내기
-      const res = await fetch('http://localhost:8000/api/v1/roadmap', {
+      const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/v1/roadmap`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
