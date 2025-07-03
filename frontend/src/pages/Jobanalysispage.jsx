@@ -10,19 +10,17 @@ import {
   TextField,
 } from '@mui/material';
 import './Jobanalysispage.css';
+import AnalysisTopBar from '../components/AnalysisTopBar';
 
-// ✅ 메인 Analysis 컴포넌트 정의
+// ✅ Analysis 컴포넌트 정의
 function Analysis() {
   const navigate = useNavigate();
 
-  // 🚩 선택된 직군 상태
-  const [selectedJob, setSelectedJob] = useState('Backend');
-  // 🚩 선택된 언어 상태
-  const [selectedLanguage, setSelectedLanguage] = useState(null);
-  // 🚩 선택된 프레임워크/도구 상태 (여러 개 선택 가능)
-  const [selectedFrameworks, setSelectedFrameworks] = useState([]);
-  // 🚩 추가 입력한 기술 상태
-  const [extraSkills, setExtraSkills] = useState('');
+  // ✅ 상태 변수 정의
+  const [selectedJob, setSelectedJob] = useState('Backend'); // 선택된 직군
+  const [selectedLanguage, setSelectedLanguage] = useState(null); // 선택된 언어
+  const [selectedFrameworks, setSelectedFrameworks] = useState([]); // 선택된 프레임워크/도구
+  const [extraSkills, setExtraSkills] = useState(''); // 추가 입력한 기술
 
   // ✅ 언어별 프레임워크/도구 매핑
   const frameworkMap = {
@@ -69,7 +67,7 @@ function Analysis() {
     'AL/ML': ['Python', 'R', 'SQL', 'TensorLang'],
   };
 
-  // ✅ 분석 버튼 클릭 시 호출되는 함수 (API 요청 → 결과 페이지 이동)
+  // ✅ 분석 버튼 클릭 시 실행되는 함수
   const generateGptRoadmap = async () => {
     if (!selectedLanguage) {
       alert('언어를 선택해주세요!');
@@ -77,13 +75,13 @@ function Analysis() {
     }
 
     try {
-      // 모든 선택된 기술 통합
+      // 선택한 언어, 프레임워크, 추가 기술 모두 통합
       const allSkills = [selectedLanguage, ...selectedFrameworks];
       if (extraSkills.trim() !== '') {
         allSkills.push(extraSkills.trim());
       }
 
-      // API 요청
+      // ✅ 백엔드에 분석 요청 보내기
       const res = await fetch('http://localhost:8000/api/v1/roadmap', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -97,7 +95,7 @@ function Analysis() {
 
       const result = await res.json();
 
-      // 결과 페이지로 이동
+      // ✅ 결과 페이지로 이동하면서 데이터 전달
       navigate('/analysis-result', {
         state: {
           result,
@@ -119,20 +117,10 @@ function Analysis() {
 
   return (
     <div>
-      {/* ✅ 상단 탭 메뉴 + 분석 버튼 */}
-      <div className="analysis-top-bar">
-        <div className="analysis-tab-group">
-          <button className="analysis-tab" onClick={() => navigate('/resume')}>
-            PDF분석
-          </button>
-          <button className="analysis-tab active">직무분석</button>
-        </div>
-        <button className="analysis-analyze-btn" onClick={generateGptRoadmap}>
-          분석시작
-        </button>
-      </div>
+      {/* ✅ 상단 공통 탭 바 (PDF 분석, 직무 분석, 분석시작 버튼 포함) */}
+      <AnalysisTopBar activeTab="job" onAnalyzeClick={generateGptRoadmap} />
 
-      {/* ✅ 메인 카드 영역 */}
+      {/* ✅ 메인 카드 컨테이너 */}
       <Box sx={{ display: 'flex', justifyContent: 'center', mt: 3 }}>
         <Card
           sx={{
@@ -154,7 +142,6 @@ function Analysis() {
                   variant="text"
                   className={selectedJob === job ? 'selected' : ''}
                   onClick={() => {
-                    // 직군 변경 시 선택 초기화
                     setSelectedJob(job);
                     setSelectedLanguage(null);
                     setSelectedFrameworks([]);
@@ -188,7 +175,6 @@ function Analysis() {
                       variant="text"
                       className={selectedLanguage === lang ? 'selected' : ''}
                       onClick={() => {
-                        // 언어 선택 시 프레임워크 및 추가 입력 초기화
                         setSelectedLanguage(lang);
                         setSelectedFrameworks([]);
                         setExtraSkills('');
@@ -206,7 +192,7 @@ function Analysis() {
                   ))}
                 </Box>
 
-                {/* ✅ 선택된 언어에 따른 프레임워크 선택 영역 */}
+                {/* ✅ 선택된 언어에 따른 프레임워크/도구 선택 영역 */}
                 {selectedLanguage && (
                   <>
                     <Divider sx={{ my: 2 }} />
@@ -237,7 +223,7 @@ function Analysis() {
                       )}
                     </Box>
 
-                    {/* ✅ 추가 입력 영역 (선택지에 없는 기술, 자격증 등) */}
+                    {/* ✅ 추가 기술 및 자격증 입력 영역 */}
                     <Divider sx={{ my: 2 }} />
                     <Typography variant="h6" align="center">
                       선택지에 없는 기술, 자격증, 스펙
