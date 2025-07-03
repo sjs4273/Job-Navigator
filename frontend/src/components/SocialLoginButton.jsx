@@ -70,6 +70,7 @@ export default function SocialLoginButton({ setUserInfo, onClose }) {
       window.google.accounts.id.initialize({
         client_id: GOOGLE_CLIENT_ID,
         callback: handleGoogleLogin,
+        auto_select: false,
       });
       window.google.accounts.id.renderButton(
         document.getElementById("google-login-btn"),
