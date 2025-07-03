@@ -1,4 +1,4 @@
-name: Deploy to NCP VM (Frontend: Nginx, Backend: FastAPI)
+name: Deploy to NCP VM - Frontend Nginx, Backend FastAPI
 
 on:
   push:
@@ -22,26 +22,20 @@ jobs:
       run: |
         ssh -i key.pem -o StrictHostKeyChecking=no ${{ secrets.NCP_USER }}@${{ secrets.NCP_HOST }} <<EOF
         set -e
-
         echo "✅ 배포 시작: Job-Navigator"
         cd ~/Job-Navigator
-
         echo "🔄 최신 코드 가져오기"
         git reset --hard
         git pull origin main
-
         echo "📦 프론트엔드 빌드 (Nginx가 서빙)"
         cd frontend
         npm install
         npm run build
         cd ..
-
         echo "🐍 백엔드 의존성 설치"
         cd backend
         pip install -r requirements.txt
-
         echo "🔁 FastAPI systemd 서비스 재시작"
         sudo systemctl restart jobnav-backend
-
         echo "✅ 배포 완료!"
         EOF
