@@ -3,7 +3,7 @@
 from fastapi import APIRouter, UploadFile, File, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.routes.auth_utils.jwt_utils import get_current_user
-from app.services.keyword_service import extract_and_save_keywords
+from app.services.resume_service import extract_and_save_keywords, delete_resume_by_id
 from app.services.resume_analysis_service import analyze_resume_with_gpt
 from app.core.database import get_db
 from app.core.database import SessionLocal
@@ -77,3 +77,15 @@ async def analyze_resume_api(
     특정 이력서를 기반으로 GPT에게 커리어 분석을 요청합니다.
     """
     return await analyze_resume_with_gpt(db, resume_id, current_user.user_id)
+
+@router.delete("/{resume_id}")
+async def delete_resume(
+    resume_id: int,
+    current_user: UserORM = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """
+    특정 이력서(resume_id)를 삭제합니다.
+    """
+    delete_resume_by_id(db, resume_id, current_user.user_id)
+    return {"detail": f"이력서(id={resume_id})가 성공적으로 삭제되었습니다."}

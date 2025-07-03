@@ -68,3 +68,35 @@ async def extract_and_save_keywords(current_user: UserORM, pdf_file: UploadFile)
         raise e
     finally:
         db.close()
+
+def delete_resume_by_id(db: Session, resume_id: int, user_id: int) -> None:
+    """
+    주어진 resume_id와 user_id를 기반으로 이력서를 삭제합니다.
+
+    Parameters:
+        db (Session): SQLAlchemy DB 세션
+        resume_id (int): 삭제할 Resume ID
+        user_id (int): 현재 로그인한 사용자 ID
+
+    Raises:
+        HTTPException: 이력서가 없거나 권한이 없을 경우
+    """
+    resume = db.query(ResumeORM).filter(
+        ResumeORM.resume_id == resume_id,
+        ResumeORM.user_id == user_id
+    ).first()
+
+    if not resume:
+        raise HTTPException(status_code=404, detail="삭제할 이력서를 찾을 수 없습니다.")
+
+    # 저장된 PDF 파일 삭제 시도
+    try:
+        if resume.file_path and os.path.exists(resume.file_path):
+            os.remove(resume.file_path)
+            logger.info(f"🗑️ PDF 파일 삭제 완료: {resume.file_path}")
+    except Exception as file_error:
+        logger.warning(f"⚠️ 파일 삭제 중 오류 발생: {file_error}")
+
+    db.delete(resume)
+    db.commit()
+    logger.info(f"✅ 이력서 DB 삭제 완료 (resume_id={resume_id})")
