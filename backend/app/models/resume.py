@@ -17,6 +17,9 @@ class ResumeORM(Base):
     # 이력서 파일 경로
     file_path = Column(String(500))
 
+    # 파일 이름
+    filename = Column(String, nullable=True)
+
     # 추출된 키워드 (JSON 배열)
     extracted_keywords = Column(JSONType)
 

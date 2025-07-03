@@ -54,13 +54,17 @@ async def extract_and_save_keywords(current_user: UserORM, pdf_file: UploadFile)
         resume_entry = ResumeORM(
             user_id=current_user.user_id,
             file_path=file_path,
+            filename=filename,
             extracted_keywords=keywords,
             resume_text=text,  # ✅ 이 줄이 필수입니다
             job_category=job_category,   # 추후 자동 분류 예정
         )
+        logger.info(filename)
+        logger.info("💾 ResumeORM 객체 생성 완료")
         db.add(resume_entry)
         db.commit()
         db.refresh(resume_entry)
+        logger.info(f"✅ ResumeORM 저장 완료: resume_id={resume_entry.resume_id}")
         return resume_entry
     except Exception as e:
         db.rollback()

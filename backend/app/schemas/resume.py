@@ -1,18 +1,19 @@
 from pydantic import BaseModel
-from typing import List, Optional, Any  # ✅ Optional 추가
+from typing import List, Optional, Any
 from datetime import datetime
 
 # ✅ 이력서 조회 응답 스키마 (Pydantic v2 기준 + user_id 포함)
 class ResumeOut(BaseModel):
-    resume_id: int                     # 이력서 ID
-    user_id: int                       # 사용자 ID
-    file_path: str                     # 저장된 파일 경로
-    extracted_keywords: List[str]      # 추출된 키워드 목록
-    job_category: str                  # 기술 분류 결과 (예: 백엔드, 프론트엔드)
-    resume_text: Optional[str]         # ✅ 변경: None 허용
-    created_at: datetime               # 업로드 시간
-    gpt_response: Optional[Any]        # ✅ GPT 분석 결과 포함
+    resume_id: int
+    user_id: int
+    file_path: Optional[str] = None           # ✅ 변경: None 허용
+    filename: Optional[str]  # ✅ 추가
+    extracted_keywords: List[str]
+    job_category: str
+    resume_text: Optional[str] = None         # 이미 허용됨
+    created_at: datetime
+    gpt_response: Optional[Any] = None
 
     model_config = {
-        "from_attributes": True        # ✅ Pydantic v2 방식: ORM 객체 → 스키마 변환 허용
+        "from_attributes": True
     }
