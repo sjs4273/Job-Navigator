@@ -74,7 +74,7 @@ function JobCard({ job, bookmarkIds = [] }) {
           borderRadius: '16px',
           boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
           p: 2,
-          mb: 2,
+          mb: 4,
           position: 'relative',
         }}
       >
@@ -86,8 +86,15 @@ function JobCard({ job, bookmarkIds = [] }) {
             <Typography variant="h6" fontWeight="bold" noWrap={!expanded}>
               {job.title}
             </Typography>
-            <Typography variant="subtitle2" color="text.secondary">
-              {job.company} · {job.location}
+            <Typography
+              variant="subtitle2"
+              color="text.secondary"
+              noWrap={!expanded}
+            >
+              {expanded || job.company.length <= 15
+                ? job.company
+                : `${job.company.slice(0, 15)}...`}{' '}
+              · {job.location}
             </Typography>
             <Typography variant="body2" mt={1} color="text.secondary">
               📅 마감: {job.due_date_text || '미정'}
@@ -148,7 +155,6 @@ function JobCard({ job, bookmarkIds = [] }) {
         </Collapse>
       </Card>
 
-      {/* ✅ 로그인 필요 Snackbar 추가 */}
       {/* 로그인 요구 Dialog */}
       <LoginRequiredDialog
         open={openLoginDialog}

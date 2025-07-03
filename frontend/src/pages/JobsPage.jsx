@@ -11,11 +11,11 @@ import SearchIcon from '@mui/icons-material/Search';
 import JobCard from '../components/JobCard';
 import Pagination from '../components/Pagination';
 import JobFilter from '../components/JobFilter';
+import './JobsPage.css';
 
-// ✅ 경력 필터 매핑
 const experienceMap = {
   무관: { min: null, max: null },
-  '신입 포함': { min: 0, max: 0 },
+  '신입 포함': { min: 0, max: 100 },
   '1년 이상': { min: 1, max: null },
   '3년 이상': { min: 3, max: null },
   '5년 이상': { min: 5, max: null },
@@ -37,7 +37,7 @@ function Jobs() {
     experience: '',
   });
 
-  // ✅ 서버에 페이지 + 필터 + 검색 쿼리 요청
+  // ✅ 서버에서 전체 공고 가져오기 (검색어는 서버에 안 보냄)
   useEffect(() => {
     const params = new URLSearchParams({
       page: currentPage,
@@ -46,9 +46,8 @@ function Jobs() {
 
     if (filters.job_type) params.append('job_type', filters.job_type);
     if (filters.location) params.append('location', filters.location);
-    if (search) params.append('tech_stack', search); // 또는 'keyword', 'query' 등 변경 가능
+    if (filters.tech_stack) params.append('tech_stack', filters.tech_stack);
 
-    // ✅ 경력 필터를 숫자 범위로 변환하여 추가
     const { min, max } = experienceMap[filters.experience] || {};
     if (min !== null && min !== undefined) {
       params.append('min_experience', min);
@@ -66,7 +65,7 @@ function Jobs() {
         setTotalCount(data.total_count);
       })
       .catch(console.error);
-  }, [currentPage, filters, search]);
+  }, [currentPage, filters]);
 
   useEffect(() => {
     const token = localStorage.getItem('access_token');
@@ -77,88 +76,61 @@ function Jobs() {
     })
       .then((res) => res.json())
       .then((data) => {
-        const ids = data.map((b) => b.job_post_id); // ✅ 즐겨찾기 ID 목록 추출
+        const ids = data.map((b) => b.job_post_id);
         setBookmarkIds(ids);
       })
       .catch(console.error);
   }, []);
 
+  // ✅ 검색 실행 함수
   const handleSearch = () => {
-    setSearch(input);
+    setSearch(input); // 입력값 저장
     setCurrentPage(1);
   };
+
+  // ✅ 제목/회사명 기준 필터링
+  const filteredJobs = jobs.filter(
+    (job) =>
+      job.title.toLowerCase().includes(search.toLowerCase()) ||
+      job.company.toLowerCase().includes(search.toLowerCase())
+  );
 
   const totalPages = Math.ceil(totalCount / jobsPerPage);
 
   return (
-    <Container maxWidth="md" sx={{ mt: 4 }}>
-      {/* 🔍 검색 입력 */}
-      <Box
-        display="flex"
-        alignItems="center"
-        justifyContent="center"
-        gap={1}
-        sx={{ mb: 3 }}
-      >
-        <TextField
-          sx={{
-            width: '85%',
-            boxShadow: '0 4px 4px rgba(0, 0, 0, 0.1)',
-            '& .MuiOutlinedInput-root': {
-              '& fieldset': {
-                borderColor: '#888',
-              },
-              '& .MuiInputBase-input::placeholder': {
-                color: '#444',
-                opacity: 1,
-              },
-            },
-          }}
-          fullWidth
-          variant="outlined"
-          placeholder="채용공고 제목 및 회사를 입력하세요..."
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                <SearchIcon />
-              </InputAdornment>
-            ),
-          }}
-        />
-        <Button
-          variant="contained"
-          onClick={handleSearch}
-          sx={{ height: '45px', width: '70px' }}
-        >
-          검색
-        </Button>
-      </Box>
-
-      {/* 🎯 필터 선택 */}
+    <Container maxWidth="md" sx={{ mt: 9 }}>
+      {/* 필터 */}
       <JobFilter filters={filters} onChange={setFilters} />
 
-      {/* 📝 채용공고 카드 */}
-      <Box display="flex" flexWrap="wrap" justifyContent="center" gap={3}>
-        {jobs.map((job) => (
-          <Box
-            key={job.id}
-            sx={{
-              width: {
-                xs: '100%', // 모바일
-                sm: '48%', // 태블릿
-                md: '400px', // 데스크탑
-              },
-              minWidth: '280px', // 너무 작아지지 않게 최소 너비 제한
-            }}
-          >
-            <JobCard job={job} bookmarkIds={bookmarkIds} />
-          </Box>
-        ))}
+      {/* 카드 리스트 (2열 구조 유지) */}
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'center',
+          gap: 3,
+          alignItems: 'flex-start',
+          flexWrap: 'wrap',
+        }}
+      >
+        {/* 왼쪽 열 */}
+        <Box sx={{ flex: 1, maxWidth: 380 }}>
+          {filteredJobs
+            .filter((_, i) => i % 2 === 0)
+            .map((job) => (
+              <JobCard key={job.id} job={job} bookmarkIds={bookmarkIds} />
+            ))}
+        </Box>
+
+        {/* 오른쪽 열 */}
+        <Box sx={{ flex: 1, maxWidth: 380 }}>
+          {filteredJobs
+            .filter((_, i) => i % 2 === 1)
+            .map((job) => (
+              <JobCard key={job.id} job={job} bookmarkIds={bookmarkIds} />
+            ))}
+        </Box>
       </Box>
 
-      {/* ⏩ 페이지네이션 */}
       <Pagination
         currentPage={currentPage}
         totalPages={totalPages}

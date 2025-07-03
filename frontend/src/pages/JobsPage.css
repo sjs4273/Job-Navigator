@@ -1,0 +1,46 @@
+.pill {
+  all: unset;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 16px;
+  margin: 4px 6px 4px 0;
+  font-size: 14px;
+  font-weight: 500;
+  color: #374151;
+  background-color: #ffffff;
+  border: 1.5px solid #d1d5db;
+  border-radius: 9999px;
+  cursor: pointer;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.pill:hover {
+  background-color: #f3f4f6;
+}
+
+.pill.active {
+  background-color: #2563eb;
+  color: white;
+  border-color: #2563eb;
+}
+.filter-tab-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+/* 하위 옵션 버튼 영역 */
+.filter-option-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  max-width: 700px;
+  gap: 10px;
+  margin-top: 5px;
+}

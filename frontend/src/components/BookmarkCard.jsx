@@ -62,22 +62,50 @@ export default function BookmarkCard({ bookmarkedJobs: initialJobs }) {
     dots: false,
     infinite: false,
     speed: 500,
+    arrows: true,
     slidesToShow: 3,
     slidesToScroll: 1,
-    arrows: true,
     prevArrow: <CustomArrow direction="left" />,
     nextArrow: <CustomArrow direction="right" />,
     responsive: [
-      { breakpoint: 1024, settings: { slidesToShow: 2 } },
-      { breakpoint: 600, settings: { slidesToShow: 1 } },
+      {
+        breakpoint: 900,
+        settings: { slidesToShow: 2 },
+      },
+      {
+        breakpoint: 600,
+        settings: { slidesToShow: 1 },
+      },
     ],
   };
 
   return (
-    <Box sx={{ maxWidth: 800, mx: 'auto' , mt: 2 }}>
+    <Box
+      sx={{
+        mt: 2,
+        mx: 'auto',
+        width: '100%',
+        maxWidth: {
+          xs: 340, // 모바일
+          sm: 500, // 작은 태블릿
+          md: 800, // 일반 데스크탑
+          lg: 900, // 큰 데스크탑
+        },
+        '& .slick-slide > div': {
+          display: 'flex',
+          justifyContent: 'center',
+          px: {
+            xs: 0.5,
+            sm: 1,
+            md: 1.5,
+            lg: 2,
+          },
+        },
+      }}
+    >
       <Slider {...settings}>
         {bookmarkedJobs.map((bookmark) => (
-          <Box key={bookmark.bookmark_job_id} sx={{ px: 0.75 }}>
+          <Box key={bookmark.bookmark_job_id}>
             <JobCard
               job_post_id={bookmark.job_post_id}
               liked={bookmark.liked}
@@ -108,12 +136,12 @@ function CustomArrow({ direction, onClick }) {
       sx={{
         position: 'absolute',
         top: '40%',
-        [isLeft ? 'left' : 'right']: -40,
+        [isLeft ? 'left' : 'right']: -20,
         zIndex: 2,
         cursor: 'pointer',
         backgroundColor: 'white',
         borderRadius: '50%',
-        p: '6px',
+        p: 'px',
       }}
     >
       {isLeft ? (
@@ -160,6 +188,7 @@ function JobCard({ job_post_id, liked, onUnlike }) {
       sx={{
         width: 220,
         height: expanded ? 'auto' : 220,
+        mx: 'auto', // ✅ 카드 자체 가운데
         borderRadius: 3,
         boxShadow: 3,
         mb: 2,

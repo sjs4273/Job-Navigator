@@ -13,24 +13,56 @@ function Pagination({ currentPage, totalPages, onPageChange }) {
   );
 
   return (
-    <Stack direction="row" spacing={1} justifyContent="center" mt={4} mb={4}>
+    <Stack direction="row" spacing={1} justifyContent="center" mt={5} mb={5}>
       {startPage > 1 && (
-        <IconButton onClick={() => onPageChange(startPage - 1)} color="primary">
+        <IconButton
+          onClick={() => onPageChange(startPage - 1)}
+          sx={{
+            backgroundColor: 'transparent',
+            border: 'none',
+            '&:hover': {
+              backgroundColor: 'transparent',
+            },
+          }}
+        >
           <ChevronLeftIcon />
         </IconButton>
       )}
+
       {visiblePages.map((page) => (
         <Button
           key={page}
-          variant={page === currentPage ? 'contained' : 'outlined'}
           onClick={() => onPageChange(page)}
-          sx={{ minWidth: '40px' }}
+          sx={{
+            minWidth: 36,
+            height: 36,
+            px: 0,
+            borderRadius: '10px',
+            backgroundColor: page === currentPage ? '#007BFF' : '#eee',
+            color: page === currentPage ? '#fff' : '#555',
+            fontWeight: page === currentPage ? 'bold' : 'normal',
+            '&:hover': {
+              backgroundColor: page === currentPage ? '#0066cc' : '#ddd',
+            },
+            boxShadow:
+              page === currentPage ? '0px 2px 6px rgba(0,0,0,0.2)' : 'none',
+          }}
         >
           {page}
         </Button>
       ))}
+
       {endPage < totalPages && (
-        <IconButton onClick={() => onPageChange(endPage + 1)} color="primary">
+        <IconButton
+          onClick={() => onPageChange(endPage + 1)}
+          sx={{
+            backgroundColor: 'transparent',
+            border: 'none',
+            '&:hover': {
+              backgroundColor: 'transparent',
+            },
+          }}
+        >
           <ChevronRightIcon />
         </IconButton>
       )}
