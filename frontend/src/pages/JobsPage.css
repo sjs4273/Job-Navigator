@@ -1,3 +1,4 @@
+
 .pill {
   all: unset;
   display: inline-flex;
@@ -12,10 +13,7 @@
   border: 1.5px solid #d1d5db;
   border-radius: 9999px;
   cursor: pointer;
-  transition:
-    background-color 0.2s ease,
-    color 0.2s ease,
-    border-color 0.2s ease;
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
 }
 
 .pill:hover {
@@ -30,7 +28,7 @@
 .filter-tab-wrapper {
   display: flex;
   flex-wrap: wrap;
-  justify-content: flex-start;
+  justify-content: flex-start;  /* ✅ 왼쪽 정렬 */
   gap: 10px;
   margin-bottom: 10px;
 }
@@ -39,7 +37,7 @@
 .filter-option-wrapper {
   display: flex;
   flex-wrap: wrap;
-  justify-content: flex-start;
+  justify-content: flex-start;  /* ✅ 왼쪽 정렬 */
   max-width: 700px;
   gap: 10px;
   margin-top: 5px;

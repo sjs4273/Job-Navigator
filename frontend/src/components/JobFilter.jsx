@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Box } from '@mui/material';
+import { Box, Chip, Stack } from '@mui/material';
 import '../pages/JobsPage.css';
 
 const FILTER_KEYS = ['직무유형', '지역', '경력'];
@@ -15,23 +15,8 @@ const FILTER_OPTIONS = {
   지역: [
     { label: '전체', value: '' },
     ...[
-      '서울',
-      '경기',
-      '인천',
-      '대전',
-      '부산',
-      '광주',
-      '대구',
-      '울산',
-      '세종',
-      '강원',
-      '충북',
-      '충남',
-      '전북',
-      '전남',
-      '경북',
-      '경남',
-      '제주',
+      '서울', '경기', '인천', '대전', '부산', '광주', '대구', '울산', '세종',
+      '강원', '충북', '충남', '전북', '전남', '경북', '경남', '제주',
     ].map((region) => ({ label: region, value: region })),
   ],
   경력: [
@@ -44,9 +29,8 @@ const FILTER_OPTIONS = {
   ],
 };
 
-// ✅ 기술스택 매핑 (직무유형 → 기술 목록)
 const JOB_TYPE_TECH_STACK = {
-  프론트엔드: ['React', , 'TypeScript', 'Tailwind', 'Next.js', 'Flutter'],
+  프론트엔드: ['React', 'TypeScript', 'Tailwind', 'Next.js', 'Flutter'],
   백엔드: ['Node.js', 'Python', 'Java', 'JavaScript', 'C', 'Git', 'Docker'],
   모바일: ['Swift', 'Kotlin', 'REST API', 'Flutter', 'iOS', 'Android'],
   데이터: ['NLP', 'SQL', 'PyTorch', 'Linux', 'AWS', 'OpenCV', 'C'],
@@ -59,44 +43,102 @@ const keyMap = {
 };
 
 const JobFilter = ({ filters, onChange }) => {
-  const [activeTab, setActiveTab] = useState('직무유형');
+  const [activeTab, setActiveTab] = useState(null);
+  const [selectedOrder, setSelectedOrder] = useState([]);
+
+  const handleTabClick = (category) => {
+    const key = keyMap[category];
+    const isOpen = activeTab === category;
+
+    if (isOpen) {
+      const updated = { ...filters, [key]: '' };
+      if (category === '직무유형') updated.tech_stack = '';
+      setSelectedOrder((prev) => prev.filter((k) => k !== key && k !== 'tech_stack'));
+      onChange(updated);
+      setActiveTab(null);
+    } else {
+      setActiveTab(category);
+    }
+  };
 
   const handleSelect = (category, value) => {
     const key = keyMap[category];
-    const current = filters[key];
+    const isSame = filters[key] === value;
 
     const updated = {
       ...filters,
-      [key]: current === value ? '' : value, // 토글
+      [key]: isSame ? '' : value,
     };
+    if (category === '직무유형') updated.tech_stack = '';
 
-    // 기술스택 초기화 (직무유형 바꿀 때만)
-    if (category === '직무유형') {
-      updated.tech_stack = '';
+    if (!isSame) {
+      setSelectedOrder((prev) => (prev.includes(key) ? prev : [...prev, key]));
+    } else {
+      setSelectedOrder((prev) => prev.filter((k) => k !== key && k !== 'tech_stack'));
     }
 
     onChange(updated);
   };
 
+  const handleDelete = (key) => {
+    const updated = { ...filters, [key]: '' };
+    if (key === 'job_type') updated.tech_stack = '';
+    setSelectedOrder((prev) => prev.filter((k) => k !== key && k !== 'tech_stack'));
+    onChange(updated);
+  };
+
+  const handleDeleteTech = () => {
+    setSelectedOrder((prev) => prev.filter((k) => k !== 'tech_stack'));
+    onChange({ ...filters, tech_stack: '' });
+  };
+
+  const renderSelectedChips = () => {
+    return selectedOrder.map((key) => {
+      const value = filters[key];
+      if (!value) return null;
+
+      let label = value;
+      if (key === 'job_type') {
+        label = FILTER_OPTIONS['직무유형'].find((opt) => opt.value === value)?.label || value;
+      }
+
+      return (
+        <Chip
+          key={key}
+          label={label}
+          onDelete={() =>
+            key === 'tech_stack' ? handleDeleteTech() : handleDelete(key)
+          }
+          sx={{ mr: 1, mb: 1 }}
+        />
+      );
+    });
+  };
+
   return (
-    <Box sx={{ mb: 3, ml: { xs: 0, sm: 10 }, minHeight: '100px' }}>
-      {/* 상단 탭 */}
+    <Box sx={{ mb: 3, ml: { xs: 0, sm: 5 } }}>
+      {/* 🔷 상단 탭 */}
       <div className="filter-tab-wrapper top-tab">
-        {FILTER_KEYS.map((key) => (
-          <button
-            key={key}
-            className={`pill ${activeTab === key ? 'active' : ''}`}
-            onClick={() => setActiveTab(key)}
-          >
-            {key}
-          </button>
-        ))}
+        {FILTER_KEYS.map((key) => {
+          const keyName = keyMap[key];
+          const isSelected =
+            filters[keyName] !== '' || (key === '직무유형' && filters.tech_stack);
+          return (
+            <button
+              key={key}
+              className={`pill ${isSelected ? 'active' : ''}`}
+              onClick={() => handleTabClick(key)}
+            >
+              {key}
+            </button>
+          );
+        })}
       </div>
 
-      {/* 선택된 필터 옵션 */}
+      {/* 🔽 하위 필터 옵션 */}
       {activeTab && (
         <>
-          <div className="filter-option-wrapper">
+          <div className="filter-option-wrapper" style={{ marginBottom: '12px' }}>
             {FILTER_OPTIONS[activeTab].map(({ label, value }) => {
               const key = keyMap[activeTab];
               const isActive = filters[key] === value;
@@ -112,31 +154,45 @@ const JobFilter = ({ filters, onChange }) => {
             })}
           </div>
 
-          {/* ✅ 직무유형이 선택된 경우 → 해당 기술스택 보여주기 */}
-          {activeTab === '직무유형' &&
-            FILTER_OPTIONS['직무유형']
-              .filter(({ value }) => value && filters.job_type === value)
-              .map(({ label }) => (
-                <div className="filter-option-wrapper" key={label}>
-                  {JOB_TYPE_TECH_STACK[label]?.map((tech) => {
-                    const isActive = filters.tech_stack === tech;
-                    return (
-                      <button
-                        key={tech}
-                        className={`pill ${isActive ? 'active' : ''}`}
-                        onClick={() =>
-                          onChange({
-                            ...filters,
-                            tech_stack: isActive ? '' : tech,
-                          })
-                        }
-                      >
-                        {tech}
-                      </button>
-                    );
-                  })}
-                </div>
-              ))}
+          {/* 기술스택 필터 */}
+          {activeTab === '직무유형' && filters.job_type && (
+            <div className="filter-option-wrapper" style={{ marginBottom: '12px' }}>
+              {JOB_TYPE_TECH_STACK[
+                FILTER_OPTIONS['직무유형'].find((opt) => opt.value === filters.job_type)?.label
+              ]?.map((tech) => {
+                const isActive = filters.tech_stack === tech;
+                return (
+                  <button
+                    key={tech}
+                    className={`pill ${isActive ? 'active' : ''}`}
+                    onClick={() => {
+                      const updated = {
+                        ...filters,
+                        tech_stack: isActive ? '' : tech,
+                      };
+
+                      setSelectedOrder((prev) =>
+                        isActive
+                          ? prev.filter((k) => k !== 'tech_stack')
+                          : prev.includes('tech_stack')
+                          ? prev
+                          : [...prev, 'tech_stack']
+                      );
+
+                      onChange(updated);
+                    }}
+                  >
+                    {tech}
+                  </button>
+                );
+              })}
+            </div>
+          )}
+
+          {/* ✅ 선택된 필터 Chip 출력 */}
+          <Stack direction="row" flexWrap="wrap" sx={{ mb: 1, mt: '10px' }}>
+            {renderSelectedChips()}
+          </Stack>
         </>
       )}
     </Box>
