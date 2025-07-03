@@ -13,10 +13,9 @@ import Pagination from '../components/Pagination';
 import JobFilter from '../components/JobFilter';
 import './JobsPage.css';
 
-// ✅ 경력 필터 매핑
 const experienceMap = {
   무관: { min: null, max: null },
-  '신입 포함': { min: 0, max: 0 },
+  '신입 포함': { min: 0, max: 100 },
   '1년 이상': { min: 1, max: null },
   '3년 이상': { min: 3, max: null },
   '5년 이상': { min: 5, max: null },
@@ -38,7 +37,7 @@ function Jobs() {
     experience: '',
   });
 
-  // ✅ 서버에 페이지 + 필터 + 검색 쿼리 요청
+  // ✅ 서버에서 전체 공고 가져오기 (검색어는 서버에 안 보냄)
   useEffect(() => {
     const params = new URLSearchParams({
       page: currentPage,
@@ -47,9 +46,8 @@ function Jobs() {
 
     if (filters.job_type) params.append('job_type', filters.job_type);
     if (filters.location) params.append('location', filters.location);
-    if (search) params.append('tech_stack', search); // 또는 'keyword', 'query' 등 변경 가능
+    if (filters.tech_stack) params.append('tech_stack', filters.tech_stack);
 
-    // ✅ 경력 필터를 숫자 범위로 변환하여 추가
     const { min, max } = experienceMap[filters.experience] || {};
     if (min !== null && min !== undefined) {
       params.append('min_experience', min);
@@ -67,7 +65,7 @@ function Jobs() {
         setTotalCount(data.total_count);
       })
       .catch(console.error);
-  }, [currentPage, filters, search]);
+  }, [currentPage, filters]);
 
   useEffect(() => {
     const token = localStorage.getItem('access_token');
@@ -78,50 +76,33 @@ function Jobs() {
     })
       .then((res) => res.json())
       .then((data) => {
-        const ids = data.map((b) => b.job_post_id); // 즐겨찾기 ID 목록 추출
+        const ids = data.map((b) => b.job_post_id);
         setBookmarkIds(ids);
       })
       .catch(console.error);
   }, []);
 
+  // ✅ 검색 실행 함수
   const handleSearch = () => {
-    setSearch(input);
+    setSearch(input); // 입력값 저장
     setCurrentPage(1);
   };
 
+  // ✅ 제목/회사명 기준 필터링
+  const filteredJobs = jobs.filter(
+    (job) =>
+      job.title.toLowerCase().includes(search.toLowerCase()) ||
+      job.company.toLowerCase().includes(search.toLowerCase())
+  );
+
   const totalPages = Math.ceil(totalCount / jobsPerPage);
-  useEffect(() => {
-    // 필터 값이 바뀔 때마다 실행됨
-    console.log('현재 필터:', filters);
-  }, [filters]);
+
   return (
-    <Container maxWidth="md" sx={{ mt: 4 }}>
-      {/* 검색 입력 */}
-      <Box className="search-bar">
-        <TextField
-          className="search-input"
-          variant="outlined"
-          placeholder="채용공고 제목 및 회사를 입력하세요..."
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                <SearchIcon />
-              </InputAdornment>
-            ),
-          }}
-        />
-
-        <Button className="search-btn" onClick={handleSearch}>
-          검색
-        </Button>
-      </Box>
-
-      {/* 필터 선택 */}
+    <Container maxWidth="md" sx={{ mt: 9 }}>
+      {/* 필터 */}
       <JobFilter filters={filters} onChange={setFilters} />
 
-      {/* 채용공고 카드 */}
+      {/* 카드 리스트 (2열 구조 유지) */}
       <Box
         sx={{
           display: 'flex',
@@ -132,8 +113,8 @@ function Jobs() {
         }}
       >
         {/* 왼쪽 열 */}
-        <Box sx={{ flex: 1, maxWidth: 350 }}>
-          {jobs
+        <Box sx={{ flex: 1, maxWidth: 380 }}>
+          {filteredJobs
             .filter((_, i) => i % 2 === 0)
             .map((job) => (
               <JobCard key={job.id} job={job} bookmarkIds={bookmarkIds} />
@@ -141,8 +122,8 @@ function Jobs() {
         </Box>
 
         {/* 오른쪽 열 */}
-        <Box sx={{ flex: 1, maxWidth: 350 }}>
-          {jobs
+        <Box sx={{ flex: 1, maxWidth: 380 }}>
+          {filteredJobs
             .filter((_, i) => i % 2 === 1)
             .map((job) => (
               <JobCard key={job.id} job={job} bookmarkIds={bookmarkIds} />
@@ -150,7 +131,6 @@ function Jobs() {
         </Box>
       </Box>
 
-      {/* ⏩ 페이지네이션 */}
       <Pagination
         currentPage={currentPage}
         totalPages={totalPages}

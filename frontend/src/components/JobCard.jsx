@@ -86,8 +86,15 @@ function JobCard({ job, bookmarkIds = [] }) {
             <Typography variant="h6" fontWeight="bold" noWrap={!expanded}>
               {job.title}
             </Typography>
-            <Typography variant="subtitle2" color="text.secondary">
-              {job.company} · {job.location}
+            <Typography
+              variant="subtitle2"
+              color="text.secondary"
+              noWrap={!expanded}
+            >
+              {expanded || job.company.length <= 15
+                ? job.company
+                : `${job.company.slice(0, 15)}...`}{' '}
+              · {job.location}
             </Typography>
             <Typography variant="body2" mt={1} color="text.secondary">
               📅 마감: {job.due_date_text || '미정'}

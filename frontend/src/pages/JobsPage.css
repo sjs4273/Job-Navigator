@@ -1,62 +1,3 @@
-.search-bar {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 10px;
-  width: 100%;
-  max-width: 700px;
-  margin-left: auto;
-  margin-right: auto;
-  margin-top: 70px;
-}
-
-.search-input {
-  flex: 1;
-}
-
-.search-input .MuiInputBase-root {
-  box-shadow: none;
-  outline: none;
-}
-.search-input input {
-  outline: none !important;
-  box-shadow: none !important;
-}
-
-.search-input .MuiInputBase-root:hover {
-  box-shadow: none !important;
-  outline: none !important;
-}
-
-.search-input
-  .MuiOutlinedInput-root.Mui-focused
-  .MuiOutlinedInput-notchedOutline {
-  border-color: #e0e3e7 !important;
-  border-width: 1px !important;
-}
-
-.search-input .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline {
-  border-color: #e0e3e7 !important;
-}
-.search-input .MuiOutlinedInput-root {
-  box-shadow: none !important;
-  height: 45px;
-}
-
-.search-btn.MuiButton-root {
-  height: 48px;
-  min-width: 50px;
-  color: rgb(73, 73, 73);
-  font-weight: 500;
-  padding: 0 24px;
-  text-transform: none;
-  box-shadow: none;
-}
-
-
-/* 공통 pill 스타일 (상위 탭 + 하위 옵션 둘 다 사용) */
-
-
 .pill {
   all: unset;
   display: inline-flex;
@@ -71,7 +12,10 @@
   border: 1.5px solid #d1d5db;
   border-radius: 9999px;
   cursor: pointer;
-  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease,
+    border-color 0.2s ease;
 }
 
 .pill:hover {
@@ -86,7 +30,7 @@
 .filter-tab-wrapper {
   display: flex;
   flex-wrap: wrap;
-  justify-content: flex-start;  /* ✅ 왼쪽 정렬 */
+  justify-content: flex-start;
   gap: 10px;
   margin-bottom: 10px;
 }
@@ -95,7 +39,7 @@
 .filter-option-wrapper {
   display: flex;
   flex-wrap: wrap;
-  justify-content: flex-start;  /* ✅ 왼쪽 정렬 */
+  justify-content: flex-start;
   max-width: 700px;
   gap: 10px;
   margin-top: 5px;
