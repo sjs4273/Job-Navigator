@@ -1,13 +1,6 @@
 // 📄 Header.jsx
 import { Link, useNavigate } from 'react-router-dom';
-import {
-  Box,
-  Button,
-  Avatar,
-  IconButton,
-  Menu,
-  MenuItem,
-} from '@mui/material';
+import { Box, Button, Avatar, IconButton, Menu, MenuItem } from '@mui/material';
 import { useState, useEffect } from 'react';
 import './Header.css';
 import LoginModal from '../components/LoginModal';
@@ -100,7 +93,6 @@ export default function Header({ userInfo, setUserInfo }) {
           {[
             { label: '트렌드 분석', link: '/trend' },
             { label: '채용 공고', link: '/jobs' },
-            { label: '이력서 분석', link: userInfo ? '/resume' : '/analysis' },
           ].map(({ label, link }) => (
             <Button
               key={label}
@@ -116,9 +108,31 @@ export default function Header({ userInfo, setUserInfo }) {
               {label}
             </Button>
           ))}
+
+          {/* ✅ 이력서 분석 버튼: 로그인 여부 조건 분기 */}
+          <Button
+            key="이력서 분석"
+            onClick={() => {
+              if (userInfo) {
+                navigate('/resume');
+              } else {
+                setLoginOpen(true);
+              }
+            }}
+            variant="text"
+            sx={{
+              fontSize: 15,
+              fontWeight: 600,
+              color: '#333',
+              '&:hover': { color: '#1976d2' },
+            }}
+          >
+            이력서 분석
+          </Button>
         </div>
       </header>
 
+      {/* ✅ 로그인 모달 컴포넌트 */}
       <LoginModal
         open={loginOpen}
         onClose={() => setLoginOpen(false)}
