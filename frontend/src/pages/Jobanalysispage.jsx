@@ -121,13 +121,13 @@ function Analysis() {
       <AnalysisTopBar activeTab="job" onAnalyzeClick={generateGptRoadmap} />
 
       {/* ✅ 메인 카드 컨테이너 */}
-      <Box sx={{ display: 'flex', justifyContent: 'center', mt: 3 }}>
+      <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2.5 }}>
         <Card
           sx={{
-            width: '600px',
+            width: '650px',
             maxWidth: '90%',
             borderRadius: 3,
-            boxShadow: 4,
+            border: '1px solid #aaa',
           }}
         >
           <CardContent>
