@@ -12,7 +12,7 @@ export default function ServiceSummarySection() {
   return (
     <>
       <div className="service-summary-section">
-        <h2>요즘머함은 이런 걸 제공해요! 수정해볼까요오오오오</h2>
+        <h2>요즘머함은 이런 걸 제공해요!</h2>
         <div className="service-cards">
           {services.map((service, idx) => (
             <div key={idx} className="service-card">
