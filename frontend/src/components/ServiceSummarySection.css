@@ -1,0 +1,139 @@
+.service-summary-section {
+    padding-top: 10px;
+    padding-bottom: 60px;
+    background-color: #f9fbff;
+    text-align: center;
+  }
+  
+  .service-summary-section h2 {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 40px;
+    margin-top: 40px;
+    color: #333;
+  }
+  
+  .service-cards {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 24px;
+  }
+  
+  .service-card {
+    background: white;
+    border: 1px solid #e3e8ef;
+    border-radius: 16px;
+    padding: 24px;
+    width: 240px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s ease;
+  }
+  
+  .service-card:hover {
+    transform: translateY(-4px);
+  }
+  
+  .service-card .icon {
+    margin-bottom: 16px;
+    color: #3b82f6;
+  }
+  
+  .service-card h3 {
+    font-size: 18px;
+    margin-bottom: 10px;
+    color: #111827;
+  }
+  
+  .service-card p {
+    font-size: 14px;
+    color: #6b7280;
+  }
+  
+  .flow-section {
+    margin-top: 80px;
+    text-align: center;
+    padding: 2rem 1rem;
+    background-color: #f8f9fd;
+  }
+  
+  .flow-steps {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 2rem;
+    margin-top: 3rem;
+  }
+  
+  .flow-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 140px;
+    font-size: 0.95rem;
+  }
+  
+  .flow-icon {
+    color: #3a82f7;
+  }
+  
+  /* 후기 섹션 (마퀴 스타일) */
+  .review-marquee-section {
+    margin-top: 3rem;
+    padding: 2rem 1rem;
+    margin-bottom: 60px;
+    text-align: center;
+    overflow: hidden;
+  }
+  
+  .review-marquee-section h2 {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 3rem;
+    color: #333;
+  }
+  
+  .marquee-wrapper {
+    width: 100%;
+    overflow: hidden;
+    position: relative;
+  }
+  
+  .marquee-content {
+    display: flex;
+    gap: 2rem;
+    animation: scrollMarquee 20s linear infinite;
+  }
+  
+  @keyframes scrollMarquee {
+    from {
+      transform: translateX(0%);
+    }
+    to {
+      transform: translateX(-50%);
+    }
+  }
+  
+  .review-card {
+    min-width: 280px;
+    max-width: 280px;
+    flex-shrink: 0;
+    background-color: #f1f3f5;
+    border-radius: 12px;
+    padding: 1.2rem;
+    box-shadow: 0 0 4px rgba(0, 0, 0, 0.06);
+    text-align: left;
+  }
+  
+  .review-card .quote {
+    font-size: 0.95rem;
+    line-height: 1.6;
+  }
+  
+  .review-card .name {
+    display: block;
+    margin-top: 0.8rem;
+    font-size: 0.85rem;
+    color: #555;
+  }
+  

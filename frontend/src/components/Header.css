@@ -1,47 +1,53 @@
-/* 헤더 */
+/* 📄 Header.css */
+
 .header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background-color: white;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+/* ✅ 상단: 로고 + 로그인 버튼 정렬 */
+.header-top {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1rem 2rem 0.2rem;
+  padding: 0.8rem 2rem 0.5rem;
+  width: 100%;
+  box-sizing: border-box;
 }
 
+/* 로고 */
 .logo {
   width: 120px;
   height: 45px;
   cursor: pointer;
 }
 
-@media (max-width: 640px) {
-  .logo {
-    width: 100px;
-    height: 38px;
-  }
-}
-
-@media (max-width: 640px) {
-  .header {
-    padding: 1rem 1rem 0.2rem; /* 좌우 패딩 줄임 */
-  }
-}
-
-.mobile-break {
-  display: none;
-}
-
-@media (max-width: 640px) {
-  .mobile-break {
-    display: inline;
-  }
-}
-
 .auth-links {
-  margin-top: 15px;
   display: flex;
+  align-items: center;
+  white-space: nowrap; /* ✅ 줄바꿈 방지 */
+  overflow: hidden;     /* ✅ 오버플로 방지 */
+}
+
+/* 메뉴 영역 */
+.header-menu {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  padding: 0.6rem 0;
+  border-top: 1px solid #eee;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .auth-links .divider {
-  color: #999!important;
+  color: #999 !important;
   margin: -2.5px 1.2rem 0.6rem !important;
 }
 
@@ -51,7 +57,28 @@
   font-weight: 500;
   font-size: 14px;
 }
-
 .auth-links a:hover {
   color: #1976d2;
+}
+
+/* 반응형 */
+@media (max-width: 640px) {
+  .logo {
+    width: 100px;
+    height: 38px;
+  }
+
+  .header-top {
+    padding: 0.8rem 1rem 0.4rem;
+  }
+
+  .header-menu {
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .auth-links {
+    max-width: 100px; /* ✅ 모바일에서 너비 제한 */
+    justify-content: flex-end;
+  }
 }

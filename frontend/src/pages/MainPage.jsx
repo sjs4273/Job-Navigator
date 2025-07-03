@@ -1,15 +1,42 @@
-// 📄 파일명: src/pages/MainPage.jsx
-
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Button } from '@mui/material';
-
+import ServiceSummarySection from '../components/ServiceSummarySection';
+import LoginModal from '../components/LoginModal';
 import './MainPage.css';
 
-function MainPage() {
+function MainPage({ userInfo, setUserInfo }) {
+  const navigate = useNavigate();
+  const [loginOpen, setLoginOpen] = useState(false);
+  const [redirectPath, setRedirectPath] = useState(null);
+
+  const handleButtonClick = () => {
+    const token = localStorage.getItem('access_token');
+    if (token) {
+      navigate('/resume');
+    } else {
+      localStorage.setItem('redirectPath', '/resume');
+      setRedirectPath('/resume');
+      setLoginOpen(true);
+    }
+  };
+
+  useEffect(() => {
+    const storedRedirect = localStorage.getItem('redirectPath');
+
+    if (userInfo && storedRedirect) {
+      navigate(storedRedirect);
+      localStorage.removeItem('redirectPath');
+      setRedirectPath(null);
+    }
+
+    if (userInfo) {
+      setLoginOpen(false);
+    }
+  }, [userInfo, navigate]);
+
   return (
     <div className="main-container">
-      {/* 이미지 섹션 */}
       <section className="image-section">
         <div className="image-container">
           <img src="/main_person1.png" alt="일러스트1" />
@@ -19,17 +46,16 @@ function MainPage() {
         </div>
       </section>
 
-      {/* 메시지 섹션 */}
       <section className="message-section">
         <h2>개발자들 요즘머함?</h2>
         <p>
-          자신에게 필요한 기술스택을 추천받고 싶으면{' '}
-          <br className="mobile-break"></br>계정을 만들거나 로그인하세요.
+          🔍 개인 맞춤 이력서 분석이 필요하신가요?{' '}
+          <br className="mobile-break" />
+          로그인하여 바로 확인해보세요!
         </p>
         <Button
           className="shake-button"
-          component={Link}
-          to="/resume"
+          onClick={handleButtonClick}
           variant="contained"
           sx={{
             mt: 4,
@@ -47,7 +73,20 @@ function MainPage() {
         >
           취업 가능한지 알려드림 →
         </Button>
+
+        <div className="scroll-indicator">
+          <p className="scroll-text">아래로 스크롤</p>
+          <div className="scroll-arrow">▼</div>
+        </div>
       </section>
+
+      <ServiceSummarySection />
+
+      <LoginModal
+        open={loginOpen}
+        onClose={() => setLoginOpen(false)}
+        setUserInfo={setUserInfo}
+      />
     </div>
   );
 }
