@@ -1,121 +1,100 @@
 import React, { useState, useRef } from 'react';
 import './ResumeAnalysisPage.css';
 import { useNavigate } from 'react-router-dom';
-import { FaCheckCircle } from 'react-icons/fa'; // ✅ 업로드 완료 아이콘 추가
+import { FaCheckCircle } from 'react-icons/fa';
+import AnalysisTopBar from '../components/AnalysisTopBar';
 
+// ✅ ResumeAnalysisPage 컴포넌트 정의
 export default function ResumeAnalysisPage() {
-  // ✅ 페이지 이동용 훅
+  // 🚩 페이지 이동 훅
   const navigate = useNavigate();
 
-  // ✅ 업로드할 PDF 파일 객체 상태
+  // 🚩 PDF 파일 객체 상태
   const [pdfFile, setPdfFile] = useState(null);
-  // ✅ 선택된 파일 이름 상태
+  // 🚩 선택된 파일명 상태
   const [selectedFileName, setSelectedFileName] = useState('');
-  // ✅ 드래그 상태 여부
+  // 🚩 드래그 상태 표시용
   const [dragOver, setDragOver] = useState(false);
-  // ✅ input 엘리먼트를 제어하기 위한 ref
+  // 🚩 숨겨진 input 엘리먼트를 위한 ref
   const fileInputRef = useRef(null);
 
-  // ✅ 파일 선택 시 실행되는 함수 (클릭 or 드래그 후 drop)
+  // ✅ 파일 선택 시 (클릭 or drop 후 input change)
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      setPdfFile(file); // 선택된 파일 저장
-      setSelectedFileName(file.name); // 파일 이름 저장
+      setPdfFile(file);
+      setSelectedFileName(file.name);
     }
   };
 
-  // ✅ 드래그 영역에 파일이 올라올 때 실행
+  // ✅ 드래그 중일 때 상태 변경
   const handleDragOver = (e) => {
     e.preventDefault();
-    setDragOver(true); // 드래그 상태 true
+    setDragOver(true);
   };
 
-  // ✅ 드래그 영역에서 벗어날 때 실행
+  // ✅ 드래그가 영역을 떠날 때 상태 초기화
   const handleDragLeave = (e) => {
     e.preventDefault();
-    setDragOver(false); // 드래그 상태 false
+    setDragOver(false);
   };
 
-  // ✅ 파일을 드래그 영역에 놓았을 때 실행
+  // ✅ 파일을 drop 했을 때 실행
   const handleDrop = (e) => {
     e.preventDefault();
-    setDragOver(false); // 드래그 상태 false
+    setDragOver(false);
     const file = e.dataTransfer.files[0];
     if (file) {
-      setPdfFile(file); // 선택된 파일 저장
-      setSelectedFileName(file.name); // 파일 이름 저장
+      setPdfFile(file);
+      setSelectedFileName(file.name);
     }
   };
 
-  // ✅ PDF 업로드 및 분석 요청 함수
+  // ✅ PDF 파일 업로드 및 분석 요청 함수
   const uploadPDF = async () => {
     const token = localStorage.getItem('access_token');
 
+    // 로그인이 안 된 경우 알림 후 이동
     if (!token) {
       alert('로그인이 필요합니다.');
-      navigate('/login'); // 로그인 페이지로 이동
+      navigate('/login');
       return;
     }
 
+    // 파일이 선택되지 않은 경우 알림
     if (!pdfFile) {
       alert('PDF 파일을 선택해주세요!');
       return;
     }
 
     const formData = new FormData();
-    formData.append('pdf_file', pdfFile); // FormData에 파일 추가
+    formData.append('pdf_file', pdfFile);
 
     try {
       const response = await fetch('http://localhost:8000/api/v1/resume/', {
         method: 'POST',
-        headers: {
-          Authorization: `Bearer ${token}`, // 인증 토큰 추가
-        },
+        headers: { Authorization: `Bearer ${token}` },
         body: formData,
       });
 
       if (!response.ok) throw new Error('서버 오류');
 
       const result = await response.json();
-      console.log('✅ 분석 결과:', result);
 
-      // 결과 페이지로 이동하면서 분석 데이터 전달
+      // 분석 결과 페이지로 이동하며 데이터 전달
       navigate('/roadmap', { state: { analysisResult: result } });
     } catch (error) {
-      console.error('❌ 요청 중 오류:', error);
+      console.error(error);
       alert('파일 업로드 중 오류가 발생했습니다.');
     }
   };
 
   return (
     <div>
-      {/* ✅ 상단 탭 및 분석 시작 버튼 */}
-      <div className="analysis-top-bar">
-        <div className="analysis-tab-group">
-          {/* 현재 페이지 (PDF 분석) */}
-          <button type="button" className="analysis-tab active">
-            PDF분석
-          </button>
-          {/* 다른 페이지 (직무 분석) */}
-          <button
-            type="button"
-            className="analysis-tab"
-            onClick={() => navigate('/analysis')}
-          >
-            직무분석
-          </button>
-        </div>
-        <button
-          type="button"
-          className="analysis-analyze-btn"
-          onClick={uploadPDF}
-        >
-          분석시작
-        </button>
-      </div>
+      {/* ✅ 상단 탭 + 분석 버튼 공통 컴포넌트 */}
+      <AnalysisTopBar activeTab="pdf" onAnalyzeClick={uploadPDF} />
 
-      {/* ✅ PDF 업로드 영역 */}
+      {/* ✅ PDF 파일 업로드 영역 */}
       <section className="analysis-section">
         <div className="resume-input-button-row">
           <div
@@ -124,30 +103,31 @@ export default function ResumeAnalysisPage() {
             onDragLeave={handleDragLeave}
             onDrop={handleDrop}
           >
-            {/* 파일이 선택된 경우: 아이콘 + 파일명 + 메시지 */}
+            {/* ✅ 파일이 선택된 경우: 아이콘 + 파일명 + 안내 문구 표시 */}
             {selectedFileName ? (
               <>
                 <FaCheckCircle
                   size={48}
                   color="#22c55e"
-                  style={{ marginBottom: '10px' }}
+                  style={{ marginBottom: '4px' }}
                 />
-                <span className="file-name">{selectedFileName}</span>
+                <div style={{ marginTop: '8px', fontWeight: '600' }}>
+                  {selectedFileName}
+                </div>
                 <p className="file-uploaded-msg">
                   ✅ 파일이 업로드 준비되었습니다!
                 </p>
               </>
             ) : (
-              // 파일이 없으면 안내 문구
-              <>
-                <p className="large-text">
-                  업로드할 PDF 파일을
-                  <br />
-                  올려주세요
-                </p>
-              </>
+              // ✅ 파일이 선택되지 않은 경우 안내 문구
+              <p className="large-text">
+                업로드할 PDF 파일을
+                <br />
+                올려주세요
+              </p>
             )}
-            {/* 숨겨진 input (파일 선택) */}
+
+            {/* ✅ 숨겨진 파일 input: 클릭 또는 영역 클릭 시 동작 */}
             <input
               type="file"
               accept="application/pdf"
