@@ -1,9 +1,12 @@
+// 📄 src/pages/ResumeAnalysisPage.jsx
 import React, { useState, useRef } from 'react';
 import './ResumeAnalysisPage.css';
 import { useNavigate } from 'react-router-dom';
 import { FaCheckCircle } from 'react-icons/fa';
 import AnalysisTopBar from '../components/AnalysisTopBar';
-import { CircularProgress, Box } from '@mui/material'; // ✅ MUI 스피너 추가
+import AnimatedStepper from '../components/AnimatedStepper';
+import JobIntroCards from '../components/JobIntroCards';
+import { Box, Typography } from '@mui/material';
 
 export default function ResumeAnalysisPage() {
   const navigate = useNavigate();
@@ -11,7 +14,7 @@ export default function ResumeAnalysisPage() {
   const [pdfFile, setPdfFile] = useState(null);
   const [selectedFileName, setSelectedFileName] = useState('');
   const [dragOver, setDragOver] = useState(false);
-  const [loading, setLoading] = useState(false); // ✅ 로딩 상태 추가
+  const [loading, setLoading] = useState(false);
   const fileInputRef = useRef(null);
 
   const handleFileChange = (e) => {
@@ -42,7 +45,6 @@ export default function ResumeAnalysisPage() {
     }
   };
 
-  // ✅ PDF 업로드 + GPT 분석 + 대시보드 이동
   const uploadPDF = async () => {
     const token = localStorage.getItem('access_token');
 
@@ -60,7 +62,7 @@ export default function ResumeAnalysisPage() {
     const formData = new FormData();
     formData.append('pdf_file', pdfFile);
 
-    setLoading(true); // ✅ 로딩 시작
+    setLoading(true);
     try {
       const uploadRes = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/v1/resume/`, {
         method: 'POST',
@@ -84,21 +86,28 @@ export default function ResumeAnalysisPage() {
       console.error('❌ 분석 실패:', error);
       alert('분석 중 오류가 발생했습니다.');
     } finally {
-      setLoading(false); // ✅ 로딩 종료
+      setLoading(false);
     }
   };
 
   return (
     <div>
-      {/* ✅ 상단 탭 및 분석 버튼 */}
       <AnalysisTopBar activeTab="pdf" onAnalyzeClick={uploadPDF} />
 
-      {/* ✅ 로딩 중일 경우 스피너 표시 */}
       {loading ? (
-        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '30vh' }}>
-          <CircularProgress />
-          <span style={{ marginLeft: '12px', fontSize: '16px' }}>분석 중입니다...</span>
-        </Box>
+        <>
+          <Box sx={{ mt: 15, textAlign: 'center' }}>
+            <Typography variant="h6" sx={{ mb: 1 }}>
+              🔍 이력서를 분석하고 있어요...
+            </Typography>
+            <Typography variant="body2" sx={{ color: 'gray' }}>
+              AI가 기술 키워드, 시장 트렌드, 직무 적합도를 기반으로 인사이트를 생성 중입니다.
+            </Typography>
+          </Box>
+
+          <AnimatedStepper currentStep={3} />
+          <JobIntroCards />
+        </>
       ) : (
         <section className="analysis-section">
           <div className="resume-input-button-row">
@@ -122,7 +131,6 @@ export default function ResumeAnalysisPage() {
                   올려주세요
                 </p>
               )}
-
               <input
                 type="file"
                 accept="application/pdf"

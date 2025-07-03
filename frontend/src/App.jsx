@@ -14,7 +14,9 @@ import AnalysisResult from './pages/AnalysisResult';
 import MyPage from './pages/MyPage';
 import RoadmapVisual from './pages/RoadmapVisual';
 import ResumeAnalysisDashboard from './pages/ResumeAnalysisDashboard';
+import ResumeAnalysisLoadingDemo from './pages/ResumeAnalysisLoadingDemo';
 import './global.css';
+
 
 function App() {
   const [userInfo, setUserInfo] = useState(null);
@@ -43,6 +45,7 @@ function App() {
 
         {/* ✅ 마이페이지 - 이미지 변경 시 userInfo 즉시 반영 */}
         <Route path="/mypage" element={<MyPage userInfo={userInfo} setUserInfo={setUserInfo} />} />
+        <Route path="/resume-loading-demo" element={<ResumeAnalysisLoadingDemo />} />
       </Routes>
     </>
   );
