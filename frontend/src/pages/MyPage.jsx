@@ -15,6 +15,7 @@ import {
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Close';
 import BookmarkCard from '../components/BookmarkCard';
 import { useNavigate } from 'react-router-dom';
 
@@ -69,6 +70,29 @@ export default function MyPage({ userInfo, setUserInfo }) {
     localStorage.setItem('userInfo', JSON.stringify(updatedUser));
     setUser(updatedUser);
     setUserInfo(updatedUser);
+  };
+
+  const handleDeleteResume = async (resumeId) => {
+    if (!window.confirm('이 이력서를 삭제하시겠습니까?')) return;
+
+    try {
+      const token = localStorage.getItem('access_token');
+      await fetch(
+        `${import.meta.env.VITE_API_BASE_URL}/api/v1/resume/${resumeId}`,
+        {
+          method: 'DELETE',
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      setAnalyzedResumes((prev) =>
+        prev.filter((resume) => resume.resume_id !== resumeId)
+      );
+    } catch (err) {
+      console.error('❌ 이력서 삭제 실패:', err);
+      alert('이력서 삭제 중 오류가 발생했습니다.');
+    }
   };
 
   useEffect(() => {
@@ -184,14 +208,12 @@ export default function MyPage({ userInfo, setUserInfo }) {
           나의 로드맵
         </Typography>
 
-        {/* ✅ 로드맵 없고 분석된 이력서도 없을 경우만 표시 */}
         {(user?.roadmaps || []).length === 0 && analyzedResumes.length === 0 && (
           <Typography variant="body2" color="text.secondary">
             저장된 로드맵이 없습니다.
           </Typography>
         )}
 
-        {/* ✅ 로드맵 있을 경우만 출력 */}
         {(user?.roadmaps || []).length > 0 &&
           user.roadmaps.map((rm, rmIdx) => (
             <Accordion key={rmIdx} sx={{ mt: 1 }}>
@@ -221,7 +243,6 @@ export default function MyPage({ userInfo, setUserInfo }) {
             </Accordion>
           ))}
 
-        {/* ✅ 분석된 이력서 목록 */}
         {analyzedResumes.length > 0 && (
           <Box sx={{ mt: 4 }}>
             <Typography variant="subtitle2" gutterBottom>
@@ -234,15 +255,27 @@ export default function MyPage({ userInfo, setUserInfo }) {
                 sx={{
                   p: 1.5,
                   mb: 1,
+                  position: 'relative',
                   cursor: 'pointer',
                   '&:hover': { bgcolor: '#f3f4f6' },
                 }}
-                onClick={() => navigate(`/resume-analysis/${resume.resume_id}`)}
               >
-                <Typography variant="body2">{resume.filename}</Typography>
-                <Typography variant="caption" color="text.secondary">
-                  업로드일: {formatDate(resume.created_at || resume.uploaded_at)}
-                </Typography>
+                <Box onClick={() => navigate(`/resume-analysis/${resume.resume_id}`)}>
+                  <Typography variant="body2">{resume.filename}</Typography>
+                  <Typography variant="caption" color="text.secondary">
+                    업로드일: {formatDate(resume.created_at || resume.uploaded_at)}
+                  </Typography>
+                </Box>
+                <IconButton
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleDeleteResume(resume.resume_id);
+                  }}
+                  size="small"
+                  sx={{ position: 'absolute', top: 8, right: 8 }}
+                >
+                  <DeleteIcon fontSize="small" />
+                </IconButton>
               </Paper>
             ))}
           </Box>
