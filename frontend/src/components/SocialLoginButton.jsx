@@ -1,4 +1,3 @@
-// 📄 SocialLoginButton.jsx
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./SocialLoginButton.css";
@@ -9,7 +8,7 @@ const KAKAO_CLIENT_ID = import.meta.env.VITE_KAKAO_CLIENT_ID;
 const KAKAO_REDIRECT_URI = import.meta.env.VITE_KAKAO_REDIRECT_URI;
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-export default function SocialLoginButton({ setUserInfo }) {
+export default function SocialLoginButton({ setUserInfo, onClose }) {
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -19,6 +18,7 @@ export default function SocialLoginButton({ setUserInfo }) {
     // ✅ 네이버 콜백
     const naverCode = queryParams.get("code");
     const naverState = queryParams.get("state");
+
     if (naverCode && naverState) {
       fetch(`${API_BASE_URL}/api/v1/auth/naver-login`, {
         method: "POST",
@@ -31,6 +31,7 @@ export default function SocialLoginButton({ setUserInfo }) {
           localStorage.setItem("access_token", user.access_token);
           localStorage.setItem("userInfo", JSON.stringify(user));
           setUserInfo(user);
+          onClose?.(); // ✅ 모달 닫기
           navigate("/");
         })
         .catch(() => {
@@ -54,6 +55,7 @@ export default function SocialLoginButton({ setUserInfo }) {
           localStorage.setItem("access_token", user.access_token);
           localStorage.setItem("userInfo", JSON.stringify(user));
           setUserInfo(user);
+          onClose?.(); // ✅ 모달 닫기
           navigate("/");
         })
         .catch(() => {
@@ -90,6 +92,7 @@ export default function SocialLoginButton({ setUserInfo }) {
       localStorage.setItem("access_token", data.access_token);
       localStorage.setItem("userInfo", JSON.stringify(data));
       setUserInfo(data);
+      onClose?.(); // ✅ 모달 닫기
       navigate("/");
     } catch {
       alert("구글 로그인 중 오류 발생");
