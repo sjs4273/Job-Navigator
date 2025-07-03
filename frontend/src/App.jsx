@@ -33,7 +33,7 @@ function App() {
       <Header userInfo={userInfo} setUserInfo={setUserInfo} />
       <Routes>
         <Route path="/" element={<MainPage />} />
-        <Route path="/login" element={<LoginPage setUserInfo={setUserInfo} />} />
+        <Route path="/" element={<MainPage userInfo={userInfo} setUserInfo={setUserInfo} />} />
         <Route path="/jobs" element={<Jobs />} />
         <Route path="/trend" element={<TrendPage />} />
         <Route path="/resume" element={<ResumeAnalysisPage />} />
