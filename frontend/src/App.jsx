@@ -10,6 +10,7 @@ import TrendPage from './pages/TrendPage';
 import ResumeAnalysisPage from './pages/ResumeAnalysisPage';
 import Header from './components/Header';
 import MyPage from './pages/MyPage';
+import Footer from './components/Footer'; // ✅ Footer 컴포넌트 import
 import ResumeAnalysisDashboard from './pages/ResumeAnalysisDashboard';
 import ResumeAnalysisLoadingDemo from './pages/ResumeAnalysisLoadingDemo';
 import SocialLoginRedirectHandler from './pages/SocialLoginRedirectHandler';
@@ -43,6 +44,7 @@ function App() {
         <Route path="/resume-loading-demo" element={<ResumeAnalysisLoadingDemo />} />
         <Route path="/login" element={<SocialLoginRedirectHandler setUserInfo={setUserInfo} />} />
       </Routes>
+      <Footer />
     </>
   );
 }
