@@ -46,6 +46,7 @@ function App() {
         {/* ✅ 마이페이지 - 이미지 변경 시 userInfo 즉시 반영 */}
         <Route path="/mypage" element={<MyPage userInfo={userInfo} setUserInfo={setUserInfo} />} />
         <Route path="/resume-loading-demo" element={<ResumeAnalysisLoadingDemo />} />
+        <Route path="/login" element={<SocialLoginRedirectHandler setUserInfo={setUserInfo} />} />
       </Routes>
     </>
   );
