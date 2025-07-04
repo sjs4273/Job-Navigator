@@ -1,5 +1,6 @@
 from sqlalchemy.orm import Session
 from typing import Optional
+from sqlalchemy import String
 
 # ✅ ORM: DB 테이블 매핑
 from app.models.job import JobORM
