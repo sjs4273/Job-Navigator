@@ -15,6 +15,7 @@ import MyPage from './pages/MyPage';
 import RoadmapVisual from './pages/RoadmapVisual';
 import ResumeAnalysisDashboard from './pages/ResumeAnalysisDashboard';
 import ResumeAnalysisLoadingDemo from './pages/ResumeAnalysisLoadingDemo';
+import SocialLoginRedirectHandler from './pages/SocialLoginRedirectHandler';
 import './global.css';
 
 
