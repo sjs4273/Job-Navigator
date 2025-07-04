@@ -1,14 +1,10 @@
 // frontend/src/components/AnalysisTopBar.jsx
 
 import React from 'react';
-import { Box, Button } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
+import { Box, Button, Typography } from '@mui/material';
 
 // ✅ AnalysisTopBar 컴포넌트: 상단 공통 탭과 분석 시작 버튼
 export default function AnalysisTopBar({ activeTab, onAnalyzeClick }) {
-  // 🚩 페이지 이동을 위한 훅
-  const navigate = useNavigate();
-
   return (
     <Box
       sx={{
@@ -21,39 +17,23 @@ export default function AnalysisTopBar({ activeTab, onAnalyzeClick }) {
         minWidth: '650px',
       }}
     >
-      {/* ✅ 좌측: PDF 분석 / 직무 분석 탭 버튼 그룹 */}
-      <Box sx={{ display: 'flex', gap: '10px' }}>
-        {/* PDF 분석 버튼 */}
-        <Button
-          variant="contained"
-          onClick={() => navigate('/resume')} // 클릭 시 PDF 분석 페이지 이동
+      {/* ✅ 좌측: PDF 분석 텍스트만 남김 */}
+      <Box sx={{ display: 'flex', gap: '10px', marginLeft: '23px' }}>
+        <Box
           sx={{
             backgroundColor: activeTab === 'pdf' ? '#1e90ff' : '#eee', // 선택된 탭 색상
             color: activeTab === 'pdf' ? '#fff' : '#000', // 글자 색
             borderRadius: '4px',
-            '&:hover': {
-              backgroundColor: activeTab === 'pdf' ? '#1976d2' : '#ddd', // hover 색상
-            },
+            padding: '6px 16px',
+            fontWeight: 500,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            cursor: 'default', // 클릭 불가능하게
           }}
         >
           PDF 분석
-        </Button>
-
-        {/* 직무 분석 버튼 */}
-        <Button
-          variant="contained"
-          onClick={() => navigate('/analysis')} // 클릭 시 직무 분석 페이지 이동
-          sx={{
-            backgroundColor: activeTab === 'job' ? '#1e90ff' : '#eee',
-            color: activeTab === 'job' ? '#fff' : '#000',
-            borderRadius: '4px',
-            '&:hover': {
-              backgroundColor: activeTab === 'job' ? '#1976d2' : '#ddd',
-            },
-          }}
-        >
-          직무 분석
-        </Button>
+        </Box>
       </Box>
 
       {/* ✅ 우측: 분석 시작 버튼 */}

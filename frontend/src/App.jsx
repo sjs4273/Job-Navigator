@@ -9,10 +9,7 @@ import Jobs from './pages/JobsPage';
 import TrendPage from './pages/TrendPage';
 import ResumeAnalysisPage from './pages/ResumeAnalysisPage';
 import Header from './components/Header';
-import Jobanalysispage from './pages/Jobanalysispage';
-import AnalysisResult from './pages/AnalysisResult';
 import MyPage from './pages/MyPage';
-import RoadmapVisual from './pages/RoadmapVisual';
 import ResumeAnalysisDashboard from './pages/ResumeAnalysisDashboard';
 import ResumeAnalysisLoadingDemo from './pages/ResumeAnalysisLoadingDemo';
 import SocialLoginRedirectHandler from './pages/SocialLoginRedirectHandler';
@@ -38,9 +35,6 @@ function App() {
         <Route path="/jobs" element={<Jobs />} />
         <Route path="/trend" element={<TrendPage />} />
         <Route path="/resume" element={<ResumeAnalysisPage />} />
-        <Route path="/analysis" element={<Jobanalysispage />} />
-        <Route path="/analysis-result" element={<AnalysisResult />} />
-        <Route path="/roadmap-visual" element={<RoadmapVisual />} />
         {/* ✅ 분석된 이력서 상세 결과 대시보드 */}
         <Route path="/resume-analysis/:resumeId" element={<ResumeAnalysisDashboard />} />
 
